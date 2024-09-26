@@ -1,6 +1,9 @@
 using Assets.Common.Interfaces;
 using UnityEngine;
 
+/// <summary>
+/// all projectile collision checks should be triggers.
+/// </summary>
 public abstract class Projectile : MonoBehaviour
 {
     public abstract int Damage { get; }

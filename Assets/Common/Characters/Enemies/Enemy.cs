@@ -18,10 +18,20 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             this.life = LifeMax;
         }
     }
+    /// <summary>
+    /// return false to make the enemy not die. 
+    /// You can also do whatever else you want here.
+    /// </summary>
     public virtual bool PreKill()
     {
         return true;
     }
+    /// <summary>
+    /// is called when the enemy takes damage.
+    ///<br>The life of the enemy is subtracted before this method is called.
+    ///</br> 
+    /// </summary>
+    /// <param name="damageTaken"></param>
     public virtual void OnHit(int damageTaken)
     {
 
