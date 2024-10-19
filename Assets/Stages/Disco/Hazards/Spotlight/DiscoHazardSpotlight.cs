@@ -13,8 +13,10 @@ public class DiscoHazardSpotlight : MonoBehaviour
     [SerializeField] bool flip;
     [SerializeField] bool flipLight;
     [SerializeField] float angleRelativeToPivot = Mathf.PI / 2;
-    [SerializeField] MeshRenderer shadowMeshRenderer;
-    [SerializeField] Mesh shadowMesh;
+    [SerializeField] float armLength1;
+    [SerializeField] float armLength2;
+    [SerializeField] float lightDistanceFromPivotNeeded;
+
     void Update()
     {
 
