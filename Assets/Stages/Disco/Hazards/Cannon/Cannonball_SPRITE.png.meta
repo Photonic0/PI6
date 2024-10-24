@@ -1,7 +1,10 @@
 fileFormatVersion: 2
-guid: 7326af2324389374c8d9d3e15afc064a
+guid: abc7c432062eab345929dbbb37223db9
 TextureImporter:
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      213: -2413806693520163455
+    second: Circle
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -48,12 +51,12 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 256
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: -1
+  spriteTessellationDetail: 0
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -65,7 +68,7 @@ TextureImporter:
   ignorePngGamma: 0
   applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 0
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -81,18 +84,6 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -128,7 +119,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: WebGL
+    buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -143,70 +134,92 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DiscoHazardCannonSupport_0
+      name: Circle
       rect:
         serializedVersion: 2
-        x: 5
-        y: 102
-        width: 66
-        height: 45
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 56f983249d319a74592f34fb2b11a365
-      internalID: -1421644005
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: DiscoHazardCannonSupport_1
-      rect:
-        serializedVersion: 2
-        x: 4
-        y: 50
-        width: 69
-        height: 46
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 523ec9f897874554cb2693b160d3ca31
-      internalID: 1148084914
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: DiscoHazardCannonSupport_2
-      rect:
-        serializedVersion: 2
-        x: 6
+        x: 0
         y: 0
-        width: 65
-        height: 48
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
+      outline:
+      - - {x: 33, y: 128}
+        - {x: -33, y: 128}
+        - {x: -95, y: 95}
+        - {x: -128, y: 33}
+        - {x: -128, y: -33}
+        - {x: -95, y: -95}
+        - {x: -33, y: -128}
+        - {x: 33, y: -128}
+        - {x: 95, y: -95}
+        - {x: 128, y: -33}
+        - {x: 128, y: 33}
+        - {x: 95, y: 95}
+      physicsShape:
+      - - {x: 0, y: 128}
+        - {x: -39, y: 121}
+        - {x: -75, y: 103}
+        - {x: -103, y: 75}
+        - {x: -121, y: 39}
+        - {x: -128, y: 0}
+        - {x: -121, y: -39}
+        - {x: -103, y: -75}
+        - {x: -75, y: -103}
+        - {x: -39, y: -121}
+        - {x: 0, y: -128}
+        - {x: 39, y: -121}
+        - {x: 75, y: -103}
+        - {x: 103, y: -75}
+        - {x: 121, y: -39}
+        - {x: 128, y: 0}
+        - {x: 121, y: 39}
+        - {x: 103, y: 75}
+        - {x: 75, y: 103}
+        - {x: 39, y: 121}
       tessellationDetail: 0
       bones: []
-      spriteID: 0581c05246c686743a8ddfe593b2e6b3
-      internalID: -442896862
+      spriteID: 18d3544e99f608ed0800000000000000
+      internalID: -2413806693520163455
       vertices: []
       indices: 
       edges: []
       weights: []
-    outline: []
-    physicsShape: []
+    outline:
+    - - {x: 33, y: 128}
+      - {x: -33, y: 128}
+      - {x: -95, y: 95}
+      - {x: -128, y: 33}
+      - {x: -128, y: -33}
+      - {x: -95, y: -95}
+      - {x: -33, y: -128}
+      - {x: 33, y: -128}
+      - {x: 95, y: -95}
+      - {x: 128, y: -33}
+      - {x: 128, y: 33}
+      - {x: 95, y: 95}
+    physicsShape:
+    - - {x: 0, y: 128}
+      - {x: -39, y: 121}
+      - {x: -75, y: 103}
+      - {x: -103, y: 75}
+      - {x: -121, y: 39}
+      - {x: -128, y: 0}
+      - {x: -121, y: -39}
+      - {x: -103, y: -75}
+      - {x: -75, y: -103}
+      - {x: -39, y: -121}
+      - {x: 0, y: -128}
+      - {x: 39, y: -121}
+      - {x: 75, y: -103}
+      - {x: 103, y: -75}
+      - {x: 121, y: -39}
+      - {x: 128, y: 0}
+      - {x: 121, y: 39}
+      - {x: 103, y: 75}
+      - {x: 75, y: 103}
+      - {x: 39, y: 121}
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
@@ -216,9 +229,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      DiscoHazardCannonSupport_1: 1148084914
-      DiscoHazardCannonSupport_2: -442896862
-      DiscoHazardCannonSupport_0: -1421644005
+      Circle: -2413806693520163455
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 
