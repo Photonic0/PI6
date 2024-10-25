@@ -1,26 +1,16 @@
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cannonball_SCRIPT : MonoBehaviour
+public class Cannonball_SCRIPT : Projectile
 {
     public ParticleSystem destructionParticles;
+    public override int Damage => 4;
     
-    void OnCollisionEnter2D(Collision2D collision)
+    public override void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            PlayerHit();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    void PlayerHit()
-    {
-        print("Player atingido");
+        base.OnTriggerEnter2D(collision);
         Destroy(gameObject);
     }
 

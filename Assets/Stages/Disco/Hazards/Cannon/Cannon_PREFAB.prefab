@@ -128,14 +128,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8123050751387628647}
-  m_LocalRotation: {x: 0, y: 0, z: 0.35429102, w: 0.93513525}
+  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
   m_LocalPosition: {x: -1.26, y: 1.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8123050751882122652}
   m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 41.5}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
 --- !u!1 &8123050751714306606
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +168,7 @@ Transform:
   - {fileID: 8123050751214318258}
   - {fileID: 8123050751882122652}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8123050751714306600
 MonoBehaviour:
@@ -183,11 +183,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 119288584254023411, guid: b34f97ef073c0c6418cadf7201b25c86, type: 3}
-  target: {fileID: 0}
   firePoint: {fileID: 8123050751387628647}
   projectileSpeed: 5
   fireRate: 1
-  maxDistanceToFire: 3
+  maxDistanceToFire: 10
 --- !u!1 &8123050751882122653
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,6 +198,7 @@ GameObject:
   - component: {fileID: 8123050751882122652}
   - component: {fileID: 8123050751882122654}
   - component: {fileID: 8123050751882122655}
+  - component: {fileID: 4515371973327346221}
   m_Layer: 0
   m_Name: DiscoHazardCannonBarrel_0
   m_TagString: Untagged
@@ -213,7 +213,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8123050751882122653}
-  m_LocalRotation: {x: -0, y: -0, z: 0.40253314, w: 0.9154054}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -221,7 +221,7 @@ Transform:
   - {fileID: 8123050751387628646}
   m_Father: {fileID: 8123050751714306601}
   m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 47.473}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8123050751882122654
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -294,3 +294,15 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4515371973327346221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8123050751882122653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a4898edf52d42540b88268882e9efb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -24,9 +24,9 @@ public class DiscoHazardSpotlight : MonoBehaviour
         Vector2 from = lerpPointA.position;
         Vector2 target = lerpPointB.position;
         Vector2 toPos = Vector2.Lerp(from, target, minDist + (1 - minDist) * t);
-        float armLength1 = armClose.transform.lossyScale.y;
-        float armLength2 = armFar.transform.lossyScale.y;
-        float lightDistanceFromPivotNeeded = spotlightBody.lossyScale.x * .5f;
+        /*float armLength1 = armClose.transform.lossyScale.y;
+        float armLength2 = armFar.transform.lossyScale.y;*/
+        //float lightDistanceFromPivotNeeded = spotlightBody.lossyScale.x * .5f;
        
         Vector2 jointPoint = flip ? GetJointPointInverted(from, toPos, armLength1, armLength2) : GetJointPoint(from, toPos, armLength1, armLength2);
         Vector2 arm2Tip = jointPoint - (jointPoint - toPos).normalized * armLength2;
@@ -121,5 +121,5 @@ public class DiscoHazardSpotlight : MonoBehaviour
         return from + offset;
     }
 
-
+    
 }

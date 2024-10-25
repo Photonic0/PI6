@@ -20,6 +20,5 @@ public class MainMenuButtons : MonoBehaviour
     public void LoadTyphoonStage()
     {
         GameManager.CleanupCheckpoints();
-
     }
 }
