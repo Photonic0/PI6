@@ -19,6 +19,9 @@ public class MainMenuButtons : MonoBehaviour
     }
     public void LoadTyphoonStage()
     {
+
         GameManager.CleanupCheckpoints();
+        CommonSounds.PlayButtonSound(cameraAudioSource);
+        SceneManager.LoadScene(SceneIndices.TyphoonStage);
     }
 }

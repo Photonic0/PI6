@@ -7,7 +7,7 @@ using UnityEngine;
 public abstract class Projectile : MonoBehaviour
 {
     public abstract int Damage { get; }
-    public virtual void OnHit(IDamageable damageable)
+    public virtual void OnHit(GameObject objectHit)
     {
 
     }
@@ -15,7 +15,7 @@ public abstract class Projectile : MonoBehaviour
     {
         if (collision.TryGetComponent(out IDamageable damageable))
         {
-            OnHit(damageable);
+            OnHit(collision.gameObject);
             damageable.Damage(Damage);
         }
     }

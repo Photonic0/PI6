@@ -348,6 +348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fc9d8555a8b65244972171593cc235c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug_FPS: -1
   playerControl: {fileID: 0}
   playerRenderer: {fileID: 0}
   playerLife: {fileID: 0}

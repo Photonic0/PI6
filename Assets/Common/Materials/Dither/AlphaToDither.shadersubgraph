@@ -8,11 +8,18 @@
         },
         {
             "m_Id": "afcf44a77d7046c7a5c3d56649890fbc"
+        },
+        {
+            "m_Id": "fc2fbde08765475d9c8ea011b9c81518"
         }
     ],
     "m_Keywords": [],
     "m_Dropdowns": [],
-    "m_CategoryData": [],
+    "m_CategoryData": [
+        {
+            "m_Id": "a2beded3d6894ab9817eb0b9228ce63c"
+        }
+    ],
     "m_Nodes": [
         {
             "m_Id": "82ee23d3eab649a3b6f5c3c8ff077c44"
@@ -1602,6 +1609,24 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.CategoryData",
+    "m_ObjectId": "a2beded3d6894ab9817eb0b9228ce63c",
+    "m_Name": "",
+    "m_ChildObjectList": [
+        {
+            "m_Id": "f78f34439a1a41caa7865a27d43916c8"
+        },
+        {
+            "m_Id": "afcf44a77d7046c7a5c3d56649890fbc"
+        },
+        {
+            "m_Id": "fc2fbde08765475d9c8ea011b9c81518"
+        }
+    ]
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.ComparisonNode",
     "m_ObjectId": "a324879f43374a48adfba00ee93503e2",
     "m_Group": {
@@ -1704,10 +1729,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -397.5,
-            "y": 13.499969482421875,
-            "width": 0.0,
-            "height": 0.0
+            "x": -909.0,
+            "y": 429.0,
+            "width": 115.0,
+            "height": 34.000030517578128
         }
     },
     "m_Slots": [
@@ -2030,5 +2055,33 @@
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "fc2fbde08765475d9c8ea011b9c81518",
+    "m_Guid": {
+        "m_GuidSerialized": "48a92e0c-6c41-4209-b7e0-b12e9787b572"
+    },
+    "m_Name": "_Alpha",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "_Alpha",
+    "m_DefaultReferenceName": "_Alpha",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
 }
 

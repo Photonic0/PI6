@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] int debug_FPS = -1;
+
     public static GameManager instance;
     public PlayerControl playerControl;
     public static PlayerControl PlayerControl => instance.playerControl;
@@ -33,6 +35,10 @@ public class GameManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
+    }
+    private void Update()
+    {
+        Application.targetFrameRate = debug_FPS;
     }
     //call when transitioning stages
     public static void CleanupCheckpoints()

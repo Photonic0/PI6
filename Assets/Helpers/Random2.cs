@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Helpers
@@ -27,7 +27,7 @@ namespace Assets.Helpers
             return Random.Range(0, x) == 0;
         }
         public static Vector2 CenteredRect(float width, float height)
-        {    
+        {
             float x = width * Random.value;
             float y = height * Random.value;
             x -= width / 2;
@@ -57,6 +57,26 @@ namespace Assets.Helpers
             float angle = Random.value * Mathf.PI * 2;
             return new Vector2(Mathf.Cos(angle) * dist, Mathf.Sin(angle) * dist);
         }
+
+        public static float FloatWithExcludedRange(float min, float max, float excludedRangeMin, float excludedRangeMax)
+        {
+            excludedRangeMax = Mathf.Clamp(excludedRangeMax, min, max);
+            excludedRangeMin = Mathf.Clamp(excludedRangeMin, min, excludedRangeMax);
+            float lowerRange = excludedRangeMin - min;
+            float upperRange = max - excludedRangeMax;
+            float totalRange = lowerRange + upperRange;
+            float randomValue = Random.value * totalRange;
+            if (randomValue < lowerRange)
+            {
+                return min + randomValue;
+            }
+            else
+            {
+                return excludedRangeMax + (randomValue - lowerRange);
+            }
+        }
+
+
         public static float Float(float min, float max)
         {
             return Random.value * (max - min) + min;

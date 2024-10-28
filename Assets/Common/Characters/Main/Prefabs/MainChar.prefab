@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 850899467058443465}
   - component: {fileID: 9045837780711509410}
   - component: {fileID: 5272845753827951947}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ArmNormal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 11
   m_Sprite: {fileID: -701715507, guid: 1ebf9c9232dea1242aba9c2f90651953, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
@@ -123,9 +123,9 @@ GameObject:
   - component: {fileID: 4856387944039684434}
   - component: {fileID: -7989776954300564212}
   - component: {fileID: -3523046779834472282}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MainChar
-  m_TagString: Player
+  m_TagString: ChFr_Main
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -166,7 +166,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 3b483680344e41543b66684afb3fcd74, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

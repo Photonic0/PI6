@@ -1,45 +1,28 @@
-using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.InteropServices;
-using System.Diagnostics.Tracing;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Assets.Common.Consts;
+using UnityEngine;
 
-public class DiscoHazardSpotlightLightCone : MonoBehaviour
+public class DiscoHazardSpotlightLightCone : MonoBehaviour, IMusicSyncable
 {
-   [SerializeField] PolygonCollider2D collider;
-   [SerializeField] SpriteRenderer spriterenderer;
-   private float repeatInterval = 120f / 144f;
-   private bool LightsOn = true;
+    [SerializeField] new PolygonCollider2D collider;
+    [SerializeField] SpriteRenderer spriterenderer;
 
-
-    void OnTriggerEnter2D(Collider2D collision) 
+    private void Start()
     {
-        print("colidiu");
-        GameManager.PlayerLife.Damage(4);
+        DiscoMusicEventManager.AddSyncableObject(this);
+    }
+    public int BeatsPerAction => 4;
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag(Tags.Player))
+        {
+            GameManager.PlayerLife.Damage(4);
+        }
     }
 
-    void Start()
+    public void DoMusicSyncedAction()
     {
-        InvokeRepeating("ExecuteRepeatingFunction", 0f, repeatInterval);
-    }
-
-    void ExecuteRepeatingFunction()
-    {
-        
-        if (LightsOn)
-        {
-            collider.enabled = false;
-            spriterenderer.enabled = false;
-            LightsOn = !LightsOn;
-        }
-        
-        else
-        {
-            collider.enabled = true;
-            spriterenderer.enabled = true;
-            LightsOn = !LightsOn;
-        }
+        collider.enabled = !collider.enabled;
+        spriterenderer.enabled = collider.enabled;
     }
 }

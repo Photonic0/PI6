@@ -4,6 +4,17 @@ namespace Assets.Systems
 {
     public static class Easings
     {
+        public static float SqrInOut(float t)
+        {
+            if (t < 0.5f)
+            {
+                return 2 * t * t;
+            }
+            else
+            {
+                return -2 * t * t + 4 * t - 1;
+            }
+        }
         public static float Out(float progress, float exponent)
         {
             progress = 1 - progress;

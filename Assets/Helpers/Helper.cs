@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Common.Consts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -232,6 +233,7 @@ namespace Assets.Helpers
             }
             return -1;
         }
+
         public static Color OffsetHueBy(this Color c, float normalizedAmount)
         {
             Color.RGBToHSV(c, out float h, out float s, out float v);
@@ -254,7 +256,7 @@ namespace Assets.Helpers
         }
         public static bool TileCollision(Collision2D collision)
         {
-            return collision.collider is CompositeCollider2D;
+            return collision.gameObject.CompareTag(Tags.Tiles);
         }
     }
 }
