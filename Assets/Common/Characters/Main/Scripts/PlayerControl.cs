@@ -126,7 +126,6 @@ public class PlayerControl : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         GetOverlapBoxParams(out Vector2 point, out Vector2 size);
-        Debug.Log("tile layer: " + (int)tileLayer);
         if (Physics2D.OverlapBox(point, size, 0, tileLayer))
         {
             jumpTimeLeft = MaxJumpTime;

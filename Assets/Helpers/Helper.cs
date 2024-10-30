@@ -258,5 +258,9 @@ namespace Assets.Helpers
         {
             return collision.gameObject.CompareTag(Tags.Tiles);
         }
+        /// <summary>
+        /// miliseconds to fps
+        /// </summary>
+        public static float MsToFps(float milliseconds) => 1000.0f / milliseconds;
     }
 }

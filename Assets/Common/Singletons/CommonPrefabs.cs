@@ -11,6 +11,8 @@ public class CommonPrefabs : MonoBehaviour
     [SerializeField] GameObject typhoonShot;
     public static GameObject DeathParticles => instance.deathParticles;
     [SerializeField] GameObject deathParticles;
+    public static GameObject SimpleLightningLineRenderer => instance.simpleLightningLineRenderer;
+    [SerializeField] GameObject simpleLightningLineRenderer;
     private void Awake()
     {
         if (instance != null && instance != this)

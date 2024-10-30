@@ -1393,6 +1393,7 @@ MonoBehaviour:
   basicShot: {fileID: 8522272443395395501, guid: 9e4656c48f7886645b20702ff6c8f832, type: 3}
   typhoonShot: {fileID: 0}
   deathParticles: {fileID: 197887250256626328, guid: 57416f8280b17154fb0b85f708a81a61, type: 3}
+  simpleLightningLineRenderer: {fileID: 3526582334892086128, guid: fce86271316ace14798af73b67e8d6e7, type: 3}
 --- !u!4 &1528186878
 Transform:
   m_ObjectHideFlags: 0

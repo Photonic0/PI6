@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Helpers
 {
@@ -75,7 +74,6 @@ namespace Assets.Helpers
                 return excludedRangeMax + (randomValue - lowerRange);
             }
         }
-
 
         public static float Float(float min, float max)
         {

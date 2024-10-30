@@ -1,4 +1,5 @@
 using Assets.Common.Characters.Main.Scripts;
+using Assets.Common.Effects.Lightning;
 using Assets.Helpers;
 using UnityEngine;
 
@@ -19,12 +20,9 @@ public class TyphoonEnemyLightningCloud : Enemy
     [SerializeField] Transform parent;
     [SerializeField] ParticleSystem deathParticle;
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] LineRenderer lightningBoltRenderer;
-    Vector2 lightningOrigin;
-    Vector2 lightningEnd;
+    [SerializeField] SimpleLightningRenderer lightningEffect;
     float timer;
     int state;
-    Vector2 lightningEndPoint;
     Vector2 attackDirection;
     private void Update()
     {
@@ -82,69 +80,44 @@ public class TyphoonEnemyLightningCloud : Enemy
         }
         else if (timer < AttackDuration + AttackTelegraphDuration)
         {
-            lightningBoltRenderer.enabled = true;
-            RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, tilesLayer);
-            Vector2 start = transform.position + new Vector3(0, -0.3f);
-            Vector2 end = hit.point;
-            LightningVisual(start, end);
-            lightningOrigin = start;
-            lightningEnd = end;
-            Collider2D playerCollider = Physics2D.OverlapBox((start + end) / 2, new Vector2(0.1f, (start - end).magnitude), attackDirection.Atan2Deg(), playerLayer);
+            GetBoxParams(out Vector2 start, out Vector2 end, out Vector2 boxCenter, out Vector2 boxSize);
+            if (!lightningEffect.gameObject.activeInHierarchy)
+            {
+                lightningEffect.ActivateAndSetAttributes(0.1f, start, end, AttackDuration);
+            }
+            Collider2D playerCollider = Physics2D.OverlapBox(boxCenter, boxSize, attackDirection.Atan2Deg(), playerLayer);
             if (playerCollider != null)
             {
                 if (playerCollider.TryGetComponent(out PlayerLife player))
                 {
                     player.Damage(4);
                 }
+#if UNITY_EDITOR
                 else
                 {
-#if UNITY_EDITOR
                     Debug.Log("lightning collision wasn't player?? was " + playerCollider.name + "instead");
-#endif
                 }
+#endif
             }
         }
         else
         {
             timer = 0;
-            lightningBoltRenderer.enabled = false;
+            //not necessary because method ActivateAndSetAttributes already sets a duration in which it will deactivate
+            //lightningEffect.enabled = false;
             state = StateIDIdle;
         }
     }
-    void LightningVisual(Vector2 start, Vector2 end)
+
+    private void GetBoxParams(out Vector2 start, out Vector2 end, out Vector2 boxCenter, out Vector2 boxSize)
     {
-        Vector2 deltaPos = end - start;
-        int pointsAmount = (int)Mathf.Max(deltaPos.magnitude, 2) + 2;
-        Vector2 direction = deltaPos.normalized;
-        Vector2 normal = new(-direction.y, direction.x);
-        //confusing name
-        float[] pointsTs = new float[pointsAmount];
-        pointsTs[0] = 0;
-        pointsTs[^1] = 1;
-        for (int i = 1; i < pointsAmount - 1; i++)
-        {
-            pointsTs[i] = Random.value;
-        }
-        System.Array.Sort(pointsTs);
-        Vector3[] positions = new Vector3[pointsAmount];
-        float prevDeviation = 0;//so the first one is not near the middle
-        for (int i = 0; i < pointsAmount; i++)
-        {
-            float t = pointsTs[i];
-            Vector2 position = Vector2.Lerp(start, end, t);
-            float dist = Mathf.Min((end - position).magnitude, (start - position).magnitude);
-            float deviationMult = Random2.FloatWithExcludedRange(-.8f, .8f, prevDeviation - .4f, prevDeviation + .4f);
-            prevDeviation = deviationMult;
-            deviationMult *= Mathf.InverseLerp(0, 1, dist);
-            position += normal * deviationMult;
-            positions[i] = position;
-        }
-        if (pointsAmount != lightningBoltRenderer.positionCount)
-        {
-            lightningBoltRenderer.positionCount = pointsAmount;
-        }
-        lightningBoltRenderer.SetPositions(positions);
+        RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, tilesLayer);
+        start = transform.position + new Vector3(0, -0.3f);
+        end = hit.point;
+        boxCenter = (start + end) / 2;
+        boxSize = new Vector2((start - end).magnitude, 0.1f);
     }
+
     public override void OnHit(int damageTaken)
     {
         if (life <= 0)
@@ -154,24 +127,4 @@ public class TyphoonEnemyLightningCloud : Enemy
             Destroy(parent.gameObject, 1);
         }
     }
-    //[SerializeField] float min;
-    //[SerializeField] float max;
-    //[SerializeField] float excludedRangeMin;
-    //[SerializeField] float excludedRangeMax;
-
-
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.DrawSphere(lightningOrigin, .1f);
-    //    Gizmos.color = Color.red;
-    //    Gizmos.DrawSphere(lightningEnd, .1f);
-    //    Gizmos.DrawSphere(Vector2.up * .2f + Helper.MouseWorld + new Vector2(min, 0), .1f);
-    //    Gizmos.DrawSphere(Vector2.up * .2f + Helper.MouseWorld + new Vector2(max, 0), .1f);
-    //    Gizmos.DrawSphere(Vector2.up * .2f + Helper.MouseWorld + new Vector2(excludedRangeMin, 0), .1f);
-    //    Gizmos.DrawSphere(Vector2.up * .2f + Helper.MouseWorld + new Vector2(excludedRangeMax, 0), .1f);
-    //    for (int i = 0; i < 100; i++)
-    //    {
-    //        Gizmos.DrawSphere(new Vector2(Random2.FloatWithExcludedRange(min, max, excludedRangeMin, excludedRangeMax), 0) + Helper.MouseWorld, 0.02f);
-    //    }
-    //}
 }
