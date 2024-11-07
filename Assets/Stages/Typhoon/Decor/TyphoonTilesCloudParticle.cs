@@ -7,6 +7,7 @@ public class TyphoonTilesCloudParticle : MonoBehaviour
     public new GameObject gameObject;
     public SpriteRenderer sprite;
     public new Transform transform;
+    public const float ParticleDuration = 4;
     public Vector3 velocity;
     float timer;
     [SerializeField] bool forceFaceDirection;
@@ -26,10 +27,10 @@ public class TyphoonTilesCloudParticle : MonoBehaviour
         timer += Time.deltaTime;
         transform.position += velocity * Time.deltaTime;
         Color spriteCol = sprite.color;
-        float opacity = Mathf.InverseLerp(0, 1, timer) * Mathf.InverseLerp(4, 3, timer);
+        float opacity = Mathf.InverseLerp(0, 1, timer) * Mathf.InverseLerp(ParticleDuration, ParticleDuration - 1, timer);
         spriteCol.a = opacity;
         sprite.color = spriteCol;
-        if(timer >= 4)
+        if(timer >= ParticleDuration)
         {
             timer = 0;
             gameObject.SetActive(false);

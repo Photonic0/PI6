@@ -4,6 +4,33 @@ namespace Assets.Helpers
 {
     public static class Gizmos2
     {
+        public static Mesh GetHDWireCircleMesh(Vector3 center, float radius, int baseVertexAmount = 20)
+        {
+            Mesh mesh = new();
+            baseVertexAmount = (int)(baseVertexAmount * radius);
+            Vector3[] vertices = new Vector3[baseVertexAmount];
+            Vector3[] normals = new Vector3[baseVertexAmount];
+            for (int i = 0; i < baseVertexAmount; i++)
+            {
+                float rotation = Helper.Remap(i, 0, baseVertexAmount - 2, 0, Mathf.PI * 2f, false);
+                Vector3 offset = rotation.PolarVector(radius);
+                vertices[i] = offset + center;
+                normals[i] = new Vector3(offset.y, offset.x, 0);
+
+            }
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            baseVertexAmount--;
+            baseVertexAmount *= 2;
+            int[] indices = new int[baseVertexAmount];
+            for (int i = 0; i < baseVertexAmount; i++)
+            {
+                indices[i] = i / 2;
+                indices[i] = i / 2 + 1;
+            }
+            mesh.SetIndices(indices, MeshTopology.LineStrip, 0);
+            return mesh;
+        }
         public static void DrawHDWireCircle(Vector3 center, float radius, int baseVertexAmount = 20)
         {
             Mesh mesh = new();
@@ -31,10 +58,20 @@ namespace Assets.Helpers
             mesh.SetIndices(indices, MeshTopology.LineStrip, 0);
             Gizmos.DrawWireMesh(mesh);
         }
-
-        public static void DrawRotatedRectangle(Vector2 center, Vector2 size, float angle, Color? color = null)
+        public static void DrawQuad(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight)
         {
-            float radians = angle * Mathf.Deg2Rad;
+            Mesh mesh = new();
+            Vector3[] vertices = new Vector3[4] { topLeft, topRight, bottomLeft, bottomRight };
+            Vector3[] normals = new Vector3[4] {Vector3.up, Vector3.up, Vector3.up, Vector3.up};
+            int[] indices = new int[] { 2, 1, 0, 1, 2, 3 };
+            mesh.vertices = vertices;
+            mesh.normals = normals;
+            mesh.SetIndices(indices, MeshTopology.Triangles, 0);
+            Gizmos.DrawMesh(mesh);
+        }
+        public static void DrawRotatedRectangle(Vector2 center, Vector2 size, float degrees, Color? color = null)
+        {
+            float radians = degrees * Mathf.Deg2Rad;
             float cos = Mathf.Cos(radians);
             float sin = Mathf.Sin(radians);
             Vector2 halfSize = size * 0.5f;
@@ -72,6 +109,18 @@ namespace Assets.Helpers
             {
                 Gizmos.color = prevColor;
             }
+        }
+        public static void DrawRectangle(float minX, float maxX, float minY, float maxY, Color? col = null)
+        {
+            Vector3 bottomLeft = new Vector3(minX, minY, 0);
+            Vector3 bottomRight = new Vector3(maxX, minY, 0);
+            Vector3 topRight = new Vector3(maxX, maxY, 0);
+            Vector3 topLeft = new Vector3(minX, maxY, 0);
+            Gizmos.color = col ?? Color.white;
+            Gizmos.DrawLine(bottomLeft, bottomRight);
+            Gizmos.DrawLine(bottomRight, topRight);
+            Gizmos.DrawLine(topRight, topLeft);
+            Gizmos.DrawLine(topLeft, bottomLeft);
         }
         public static void DrawSpheres(Vector2[] positions, float radius)
         {

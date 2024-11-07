@@ -9,6 +9,14 @@ namespace Assets.Helpers
             return chance >= Random.value;
         }
         public static bool Bool => Random.Range(0, 2) == 0;
+        public static Vector2 Direction
+        {
+            get
+            {
+                float angle = Random.value * Mathf.PI * 2;
+                return new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
+            }
+        }
         public static bool XInY(int x, int y)
         {
             //example

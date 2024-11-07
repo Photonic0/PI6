@@ -1,6 +1,5 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Systems;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -40,7 +39,9 @@ public class GameManager : MonoBehaviour
     {
         Application.targetFrameRate = debug_FPS;
     }
-    //call when transitioning stages
+    /// <summary>
+    /// call when transitioning stages
+    /// </summary>
     public static void CleanupCheckpoints()
     {
         latestCheckpointIndex = -1;

@@ -1,6 +1,5 @@
 ﻿using Assets.Common.Consts;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Helpers
@@ -9,7 +8,14 @@ namespace Assets.Helpers
     {
         public const float Tau = Mathf.PI * 2;
         public const float Phi = 1.61803398875f;
-        public static Vector2 MouseWorld { get => (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition); }
+        public const float CamerasZPos = -8.660254f;
+        public static Vector2 MouseWorld { get 
+            {
+                Camera cam = Camera.main;
+                Vector3 posToCheck = Input.mousePosition;
+                posToCheck.z = -CamerasZPos;
+                return (Vector2)cam.ScreenToWorldPoint(posToCheck); 
+            } }
         public static bool EnemyAggroCheck(Vector3 enemyPos, Vector3 playerPos, float aggroRange, float verticalRange = 8)
         {
             return Mathf.Abs(enemyPos.x - playerPos.x) < aggroRange && Mathf.Abs(enemyPos.y - playerPos.y) < verticalRange;
