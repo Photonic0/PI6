@@ -12,6 +12,7 @@ public class TyphoonEnemyCloud : Enemy
     public const float MinDistForRain = 2;
     public const float RainDelay = 0.25f;
     public const float RainFallSpeed = 7;
+    [SerializeField] new Transform transform;
     [SerializeField] Transform parent;
     [SerializeField] TyphoonEnemyCloudProjectile[] projPool;
     [SerializeField] Rigidbody2D rb;
@@ -23,6 +24,7 @@ public class TyphoonEnemyCloud : Enemy
         base.Start();
         state = 0;
         timer = 0;
+        TyphoonStageSingleton.AddToCloudEnemyArray(this);
     }
 
 
@@ -57,7 +59,16 @@ public class TyphoonEnemyCloud : Enemy
             timer += Time.deltaTime;
         }
         Vector2 playerPos = GameManager.PlayerControl.Position;
-        Vector2 toTargetPos = (playerPos + new Vector2(0, 2.5f) - rb.position).normalized;
+        Vector2 targetPos = playerPos + new Vector2(0, 2.5f);
+        Vector2 center = transform.position;
+        for (int i = 0; i < TyphoonStageSingleton.instance.cloudEnemies.Count; i++)
+        {
+            TyphoonEnemyCloud otherCloud = TyphoonStageSingleton.instance.cloudEnemies[i];
+            Vector2 deltaPos = center - (Vector2)otherCloud.transform.position;
+            targetPos += deltaPos.normalized * (3 - Mathf.Clamp(deltaPos.magnitude, 0, 3));
+        }
+        debug_DisplayTargetPos = targetPos;
+        Vector2 toTargetPos = (targetPos - rb.position).normalized;
         rb.velocity = Vector2.Lerp(rb.velocity, toTargetPos * MaxMoveSpeed, Time.deltaTime * 3);
         if(playerPos.y < transform.position.y && Mathf.Abs(playerPos.x - transform.position.x) < MinDistForRain && timer >= RainDelay)
         {
@@ -82,5 +93,15 @@ public class TyphoonEnemyCloud : Enemy
             deathParticle.Emit(50);
             Destroy(parent.gameObject, 1);
         }
+    }
+    Vector2 debug_DisplayTargetPos;
+    private void OnDestroy()
+    {
+        TyphoonStageSingleton.RemoveCloudEnemyFromList(this);
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(debug_DisplayTargetPos, transform.position);
+        Gizmos.DrawSphere(debug_DisplayTargetPos, .1f);
     }
 }

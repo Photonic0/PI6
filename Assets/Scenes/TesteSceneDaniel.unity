@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileSize: 1
-  debugRenderSize: 13
+  debugRenderSize: 17
 --- !u!4 &1380343457
 Transform:
   m_ObjectHideFlags: 0

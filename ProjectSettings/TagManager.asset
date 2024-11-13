@@ -17,10 +17,10 @@ TagManager:
   - CameraTriggers
   - Enemy
   - Player
-  - Checkpoints
+  - PlayerOnly
   - FriendlyProj
   - HostileProj
-  - 
+  - TilesOnly
   - 
   - 
   - 

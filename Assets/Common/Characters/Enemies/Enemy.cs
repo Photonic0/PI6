@@ -1,4 +1,5 @@
 using Assets.Common.Interfaces;
+using Assets.Helpers;
 using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour, IDamageable
@@ -19,8 +20,9 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         }
     }
     /// <summary>
-    /// return false to make the enemy not die. 
-    /// You can also do whatever else you want here.
+    /// return false to make the enemy not die. <br></br>
+    /// You can also do whatever else you want here. <br>
+    /// if you return false, the chance for restore drop will not be rolled, so keep that in mind.</br>
     /// </summary>
     public virtual bool PreKill()
     {
@@ -44,11 +46,19 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             life = LifeMax;
         }
         OnHit(damage);
-        if(life <= 0)
+        if (life <= 0)
         {
             if (PreKill())
             {
-               Destroy(gameObject);
+                bool spawnDrop = Random2.OneIn(7);
+#if UNITY_EDITOR
+                spawnDrop = true;
+#endif
+                if (spawnDrop)
+                {
+                    RestoreDrop.SpawnRestore(transform.position);
+                }
+                Destroy(gameObject);
             }
         }
     }

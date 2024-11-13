@@ -1,9 +1,5 @@
 using Assets.Common.Consts;
-using Assets.Systems;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class BasicShot : Projectile
 {
@@ -18,9 +14,9 @@ public class BasicShot : Projectile
     private void Update()
     {
         lifetime -= Time.deltaTime;
-        if(lifetime <= 0)
+        if (lifetime <= 0)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
         transform.position += (Vector3)(velocity * Time.deltaTime);
     }
@@ -29,8 +25,7 @@ public class BasicShot : Projectile
         base.OnTriggerEnter2D(collision);
         if (collision.CompareTag(Tags.Tiles) || collision.gameObject.layer == Layers.Enemy_FriendlyProj)
         {
-            
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }

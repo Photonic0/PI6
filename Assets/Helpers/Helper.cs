@@ -239,7 +239,44 @@ namespace Assets.Helpers
             }
             return -1;
         }
+        public static bool TryFindFreeIndex(GameObject[] objects, out int index)
+        {
+            for (int i = 0; i < objects.Length; i++)
+            {
+                if (!objects[i].activeInHierarchy)
+                {
+                    index = i;
+                    return true;
+                }
+            }
+            index = -1;
+            return false;
+        }
+        public static bool TryFindFreeIndex(GameObject[] objects, out GameObject obj)
+        {
 
+            for (int i = 0; i < objects.Length; i++)
+            {
+                if (!objects[i].activeInHierarchy)
+                {
+                    obj = objects[i];
+                    return true;
+                }
+            }
+            obj = null;
+            return false;
+        }
+        public static int FindFreeIndex(GameObject[] objects)
+        {
+            for (int i = 0; i < objects.Length; i++)
+            {
+                if (!objects[i].activeInHierarchy)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
         public static Color OffsetHueBy(this Color c, float normalizedAmount)
         {
             Color.RGBToHSV(c, out float h, out float s, out float v);

@@ -92,5 +92,11 @@ namespace Assets.Common.Effects.Lightning
             }
             lineRenderer.SetPositions(positions);
         }
+        public void Stop()
+        {
+            lifetimeTimer = duration + 1;
+            timer = 0;
+            gameObject.SetActive(false);
+        }
     }
 }

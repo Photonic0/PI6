@@ -1,9 +1,13 @@
 using Assets.Common.Characters.Main.Scripts;
+using Assets.Common.Consts;
 using Assets.Common.Systems;
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static bool Paused { get; private set; }
     [SerializeField] int debug_FPS = -1;
 
     public static GameManager instance;
@@ -50,5 +54,25 @@ public class GameManager : MonoBehaviour
     public static void CleanupCheckpointsButNotIndex()
     {
         checkpoints = null;
+    }
+
+    internal static void PauseGame()
+    {
+        Paused = true;
+        Time.timeScale = 0;
+        if (SceneManager.GetActiveScene().buildIndex == SceneIndices.DiscoStage)
+        {
+            DiscoMusicEventManager.PauseMusic();
+        }
+    }
+
+    internal static void UnpauseGame()
+    {
+        Paused = false;
+        Time.timeScale = 1;
+        if (SceneManager.GetActiveScene().buildIndex == SceneIndices.DiscoStage)
+        {
+            DiscoMusicEventManager.UnPauseMusic();
+        }
     }
 }

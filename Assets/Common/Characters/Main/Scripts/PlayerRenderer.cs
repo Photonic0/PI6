@@ -65,12 +65,20 @@ public class PlayerRenderer : MonoBehaviour
         float absVelX = Mathf.Abs(velocity.x);
         bool armCannon = playerControl.shootCooldown + .1f > 0;
 
+        bool? flip = null;
 
         if (absVelX > 0)
         {
-            bool flip = rb.velocity.x > 0;
-            bodySprite.flipX = flip;
-            armSprite.flipX = flip;
+            flip = rb.velocity.x > 0;
+        }
+        if (armCannon)
+        {
+            flip = Helper.MouseWorld.x > rb.position.x;
+        }
+        if (flip != null)
+        {
+            bodySprite.flipX = flip.Value;
+            armSprite.flipX = flip.Value;
         }
         if (velocity.y > 0f)
         {

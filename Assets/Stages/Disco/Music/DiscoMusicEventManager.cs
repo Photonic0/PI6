@@ -9,14 +9,15 @@ using UnityEngine.Tilemaps;
 public class DiscoMusicEventManager : MonoBehaviour
 {
     public const float BPM = 144f;
-    public const float SecondsPerBeat = 60f / BPM;
+    public const double SecondsPerBeat = 60.0 / BPM;
     public const int BeatsPerMusicSplit = 16;
-
+    public bool Paused { get; private set; }
     public static DiscoMusicEventManager instance;
     private double beatTimer;
     public int beatCounter;
     private List<IMusicSyncable> syncableObjects;
     [SerializeField] AudioSource musicAudioSource;
+    [SerializeField] AudioClip intro;
     [SerializeField] AudioClip[] musicSplits;
     [SerializeField] TilemapRenderer[] tileRenderers;
     [SerializeField] Material discoTileMaterialAsset;
@@ -25,8 +26,11 @@ public class DiscoMusicEventManager : MonoBehaviour
 
     void Awake()
     {
+#if UNITY_EDITOR
+        debugtext.gameObject.SetActive(true);
+#endif
         syncableObjects = new List<IMusicSyncable>();
-        if(instance != null && instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(this);
         }
@@ -35,12 +39,18 @@ public class DiscoMusicEventManager : MonoBehaviour
             beatTimer = 0;
             instance = this;
         }
-        SceneManager.sceneUnloaded += UnloadSingleton;        
+        
+        SceneManager.sceneUnloaded += UnloadSingleton;
+    }
+    private void Start()
+    {
+        musicAudioSource.PlayOneShot(intro);
+        beatTimer = -SecondsPerBeat * 10;//time for the beat timer to wait out the intro
     }
 
     private void UnloadSingleton(Scene arg0)
     {
-        if(arg0.buildIndex == SceneIndices.DiscoStage)
+        if (arg0.buildIndex == SceneIndices.DiscoStage)
         {
             instance = null;
             SceneManager.sceneUnloaded -= UnloadSingleton;
@@ -49,15 +59,20 @@ public class DiscoMusicEventManager : MonoBehaviour
 
     void Update()
     {
+        if (Paused)
+            return;
+
         beatTimer += Time.deltaTime;
-        if(beatTimer > SecondsPerBeat)
+        if (beatTimer > SecondsPerBeat)
         {
             beatTimer -= SecondsPerBeat;
 
             if (beatCounter % BeatsPerMusicSplit == 0)
             {
                 musicAudioSource.PlayOneShot(musicSplits[(beatCounter / BeatsPerMusicSplit) % musicSplits.Length]);
+#if UNITY_EDITOR
                 debugtext.text = "music split index playing: " + (beatCounter / BeatsPerMusicSplit % musicSplits.Length);
+#endif
             }
             beatCounter++;
             StartCoroutine(WaitABitToActuallyDoActionAfterPlayingSplit());
@@ -84,18 +99,34 @@ public class DiscoMusicEventManager : MonoBehaviour
             tileRenderers[i].material.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
         }
     }
+#if UNITY_EDITOR
     private static void Lag(int iterations)
     {
-        for(int i = 0;i < iterations;i++) 
+        for (int i = 0; i < iterations; i++)
         {
             Debug.Log(iterations);
         }
     }
+#endif
+
     public static void AddSyncableObject(IMusicSyncable syncableObj)
     {
         if (instance != null && syncableObj != null)
         {
             instance.syncableObjects.Add(syncableObj);
         }
+    }
+    public static void PauseMusic()
+    {
+        if (instance == null)
+            return;
+        instance.Paused = true;
+        instance.musicAudioSource.Pause();
+    }
+    public static void UnPauseMusic()
+    {
+        if(instance == null) return;
+        instance.Paused = false;
+        instance.musicAudioSource.UnPause();
     }
 }

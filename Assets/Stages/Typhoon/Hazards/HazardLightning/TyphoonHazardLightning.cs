@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class TyphoonHazardLightning : MonoBehaviour
 {
+    const float Downtime = 2;
+    const float ActiveTime = 3;
+
     [SerializeField] GameObject objToDeactivateWhenFar;
     bool inactive;
     [SerializeField] SimpleLightningRenderer lightningRenderer;
@@ -14,6 +17,10 @@ public class TyphoonHazardLightning : MonoBehaviour
     [SerializeField] Animator node1Animator;
     [SerializeField] Animator node2Animator;
     [SerializeField] new Transform transform;
+    [SerializeField] bool alwaysHarmful;
+    [SerializeField] new BoxCollider2D collider;
+    float timer = 0;
+
     Vector2 currentPos;
     const float DeactivationDist = 15;
 #if UNITY_EDITOR
@@ -28,16 +35,36 @@ public class TyphoonHazardLightning : MonoBehaviour
         inactive = true;
         node1Animator.CrossFade(TyphoonTilesLightningNodePair.RandAnimHash, 0);
         node2Animator.CrossFade(TyphoonTilesLightningNodePair.RandAnimHash, 0);
-        lightningRenderer.ActivateAndSetAttributes(0.1f, node1transform.position, node2transform.position, float.PositiveInfinity, .8f); ;
+        float duration = alwaysHarmful ? float.PositiveInfinity : ActiveTime;
+        lightningRenderer.ActivateAndSetAttributes(0.1f, node1transform.position, node2transform.position, duration, .8f); ;
     }
     void Update()
     {
-        if(!inactive)
+       
+        if (!inactive)
         {
             if (((Vector2)GameManager.PlayerPosition - currentPos).sqrMagnitude > DeactivationDist * DeactivationDist)
             {
                 objToDeactivateWhenFar.SetActive(false);
                 inactive = true;
+            }
+
+            if (!alwaysHarmful)
+            {
+                timer += Time.deltaTime;
+            }
+            if (timer < ActiveTime)
+            {
+                collider.enabled = true;
+            }
+            else if (timer < ActiveTime + Downtime)
+            {
+                collider.enabled = false;
+            }
+            else
+            {
+                timer %= ActiveTime;
+                lightningRenderer.ActivateAndSetAttributes(0.1f, node1transform.position, node2transform.position, ActiveTime - timer, .8f);
             }
         }
         else
@@ -48,7 +75,6 @@ public class TyphoonHazardLightning : MonoBehaviour
                 inactive = false;
             }
         }
-        
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

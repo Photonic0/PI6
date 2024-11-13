@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraModifier_Old : MonoBehaviour
 {
-    [SerializeField] BoxCollider2D collider;
+    [SerializeField] new BoxCollider2D collider;
     
     //MEANING:
     //0 MEANS FALSE

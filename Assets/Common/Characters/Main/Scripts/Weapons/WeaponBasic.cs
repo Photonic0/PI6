@@ -1,4 +1,5 @@
 ﻿using Assets.Common.Consts;
+using Assets.Helpers;
 using UnityEngine;
 
 namespace Assets.Common.Characters.Main.Scripts.Weapons
@@ -11,9 +12,10 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
 
         protected override float Use()
         {
-            GameObject obj = UnityEngine.Object.Instantiate(CommonPrefabs.BasicShot, CannonPosition, Quaternion.identity);
-            BasicShot basicShot = obj.GetComponent<BasicShot>();
-            basicShot.velocity = new Vector2(GameManager.PlayerRenderer.SpriteDirection * 9, 0);
+            if (!PlayerProjectilesPool.GetBasicShot(out BasicShot basicShot))
+                return 0;
+            basicShot.transform.position = CannonPosition;
+            basicShot.velocity = new Vector2(Mathf.Sign(Helper.MouseWorld.x - GameManager.PlayerPosition.x) * 10, 0);
             CommonSounds.PlayCommonShotSound(GameManager.PlayerControl.shootAudioSource);
             return .2f;   
         }

@@ -16,6 +16,10 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
     float timer = 0;
     int state;
 
+    private void Start()
+    {
+        timer = transform.position.x % HarmfulDuration;
+    }
     void Update()
     {
         switch (state)
@@ -35,14 +39,14 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
         {
             state = StateIDHarmless;
             animator.CrossFade(animHarmless, 0);
-            timer = 0;
+            timer %= HarmlessDuration;
         }
     }
     private void State_Harmless()
     {
         if(timer > HarmlessDuration)
         {
-            timer = 0;
+            timer %= HarmfulDuration;
             animator.CrossFade(animHarmful,0);
             state = StateIDHarmful;
         }

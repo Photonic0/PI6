@@ -1,5 +1,6 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Characters.Main.Scripts.Weapons;
+using Assets.Common.Consts;
 using System.Collections;
 using UnityEngine;
 
@@ -20,17 +21,19 @@ public class PlayerControl : MonoBehaviour
     const float MaxJumpTime = 0.15f;
     public const float KBTime = .3f;
     const float KBPushbackVelocity = 2;
+    //do control shoot mouse direction
+    //should face in mouse direction
     public Vector3 Position { get; private set; }
     private void Awake()//can do in awake because gamemanager instance will already be loaded from previous scene
     {
         GameManager.instance.playerControl = this;
+        weapon = PlayerWeaponManager.GetWeapon(PlayerWeaponManager.PlayerWeaponID.Basic);
     }
     private void Start()
     {
         transform = base.transform;
         Position = transform.position;
         shootCooldown = float.NegativeInfinity;
-        weapon ??= PlayerWeaponManager.GetWeapon(PlayerWeaponManager.PlayerWeaponID.Basic);
     }
     void Update()
     {
@@ -89,8 +92,9 @@ public class PlayerControl : MonoBehaviour
         if (shootCooldown <= 0 && Input.GetKey(shootKey))
         {
             weapon.TryUse(ref shootCooldown);
-        }
+        } 
     }
+   
     private void FixedUpdate()
     {
         StartCoroutine(WaitAndUpdateCachedPosition());

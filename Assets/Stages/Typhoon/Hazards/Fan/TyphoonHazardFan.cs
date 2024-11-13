@@ -1,4 +1,5 @@
 using Assets.Helpers;
+using UnityEditor;
 using UnityEngine;
 
 public class TyphoonHazardFan : MonoBehaviour
@@ -10,10 +11,12 @@ public class TyphoonHazardFan : MonoBehaviour
     const float OnDuration = 3;
     const float OffDuration = 2;
     const float WindColumnWidth = 2;//compensates for player width as well. It's going to be checking Rect x point
+    const float WindColumnHeight = 15;
+    const float WindPointBlankStrength = 30;
     [SerializeField] Animator animator;
     [SerializeField] new Transform transform;
     [SerializeField] ParticleSystem windParticleEmitter;
-    //state begins at 0, beaing on, so don't need to call particleSystem.Stop() inside Start() method.
+    //state begins at 0, being on, so don't need to call particleSystem.Stop() inside Start() method.
     void Update()
     {
         timer += Time.deltaTime;
@@ -45,7 +48,7 @@ public class TyphoonHazardFan : MonoBehaviour
         if (playerPos.x < center.x + halfWidth && playerPos.x > center.x - halfWidth && playerPos.y > center.y)
         {
             float deltaY = playerPos.y - center.y;
-            float pushSpeed = Helper.Remap(deltaY, 0, 15, 30, 1);
+            float pushSpeed = Helper.Remap(deltaY, 0, WindColumnHeight, WindPointBlankStrength, 1);
             Vector2 vel = GameManager.PlayerControl.rb.velocity;
             vel.y = Mathf.Max(pushSpeed, vel.y);
             GameManager.PlayerControl.rb.velocity = vel;
@@ -58,5 +61,10 @@ public class TyphoonHazardFan : MonoBehaviour
             timer = 0;
             animator.enabled = false;
         }
+    }
+    private void OnDrawGizmos()
+    {
+        Vector2 center = transform.position + new Vector3(0,WindColumnHeight / 2);
+        Gizmos2.DrawRotatedRectangle(center, new Vector2(WindColumnWidth, WindColumnHeight), 0);
     }
 }

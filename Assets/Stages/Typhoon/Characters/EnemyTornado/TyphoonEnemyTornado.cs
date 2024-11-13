@@ -60,7 +60,7 @@ public class TyphoonEnemyTornado : Enemy
     private void State_Aggrod()
     {
         AccelerateTowards(GameManager.PlayerControl.Position);
-        if (timer > ProjFireDelay)
+        if (timer > ProjFireDelay)    
         {
             timer -= ProjFireDelay;
             Vector2 toPlayer = (GameManager.PlayerControl.Position - transform.position).normalized;
@@ -80,9 +80,8 @@ public class TyphoonEnemyTornado : Enemy
     void AccelerateTowards(Vector2 targetPos)
     {
         Vector2 toTarget = (targetPos - (Vector2)transform.position).normalized;
-        //3000000 is placeholder value for debugging, makes the enemy shaky
-        Vector2 velocity = Vector2.Lerp(rb.velocity, toTarget * MoveSpeed, Time.deltaTime * 300000);
-        velocity = toTarget * MoveSpeed;
+        Vector2 velocity = Vector2.Lerp(rb.velocity, toTarget * MoveSpeed, Time.deltaTime);
+        //velocity = toTarget * MoveSpeed;
         rb.rotation = velocity.x * -6;
         rb.velocity = velocity;
     }

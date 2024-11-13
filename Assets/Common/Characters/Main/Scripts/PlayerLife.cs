@@ -1,5 +1,6 @@
 ﻿using Assets.Common.Consts;
 using Assets.Common.Interfaces;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -57,7 +58,7 @@ namespace Assets.Common.Characters.Main.Scripts
             {
                 this.life = LifeMax;
             }
-            UIManager.UpdatePlayerLifeBar(life);
+            UIManager.UpdatePlayerLifeBar(this.life);
         }
         public void HealMax()
         {

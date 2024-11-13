@@ -1,9 +1,11 @@
 using Assets.Common.Consts;
 using Assets.Helpers;
 using Assets.Systems;
+using System.Collections;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpikeBossAI : Enemy
 {
@@ -428,7 +430,13 @@ public class SpikeBossAI : Enemy
     {
         DeathParticle.Spawn(transform.position, FlipnoteColors.Yellow, audioSource);
         gameObject.SetActive(false);
+        StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
         return false;
+    }
+    IEnumerator ReturnToMainMenuAfter3SecAndUnlockUpgrade()
+    {
+        yield return new WaitForSecondsRealtime(3f);
+        SceneManager.LoadScene(SceneIndices.MainMenu);
     }
     private void OnDrawGizmos()
     {

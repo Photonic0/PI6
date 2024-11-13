@@ -171,6 +171,7 @@ public class SpikeEnemyThrower : Enemy
     {
         DiscardCurrentSpikeBall();
         Destroy(parentObject, 5);
+        EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position);
         return base.PreKill();
     }
 }

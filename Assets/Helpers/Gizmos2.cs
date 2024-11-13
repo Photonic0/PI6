@@ -1,7 +1,11 @@
-﻿using UnityEngine;
+﻿
+#if UNITY_EDITOR
+
+using UnityEngine;
 
 namespace Assets.Helpers
 {
+
     public static class Gizmos2
     {
         public static Mesh GetHDWireCircleMesh(Vector3 center, float radius, int baseVertexAmount = 20)
@@ -138,3 +142,4 @@ namespace Assets.Helpers
         }
     }
 }
+#endif
