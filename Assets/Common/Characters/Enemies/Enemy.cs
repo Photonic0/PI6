@@ -1,3 +1,4 @@
+using Assets.Common.Consts;
 using Assets.Common.Interfaces;
 using Assets.Helpers;
 using UnityEngine;
@@ -32,6 +33,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     /// is called when the enemy takes damage.
     ///<br>The life of the enemy is subtracted before this method is called.
     ///</br> 
+    ///<br>The base method is empty</br>
     /// </summary>
     /// <param name="damageTaken"></param>
     public virtual void OnHit(int damageTaken)
@@ -62,4 +64,5 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             }
         }
     }
+
 }

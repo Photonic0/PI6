@@ -21,7 +21,5 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
         {
             GameManager.LatestCheckpoint.RespawnAt();
         }
-
-
     }
 }

@@ -16,6 +16,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
                 return 0;
             basicShot.transform.position = CannonPosition;
             basicShot.velocity = new Vector2(Mathf.Sign(Helper.MouseWorld.x - GameManager.PlayerPosition.x) * 10, 0);
+            basicShot.gameObject.SetActive(true);
             CommonSounds.PlayCommonShotSound(GameManager.PlayerControl.shootAudioSource);
             return .2f;   
         }

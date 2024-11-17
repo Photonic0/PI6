@@ -1,12 +1,11 @@
 using Assets.Common.Consts;
 using Assets.Common.Interfaces;
 using Assets.Helpers;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DiscoShot : Projectile
 {
+    public GameObject parent;
     public override int Damage => 1;//multi hit 
     public GameObject[] sparkles;
     public float[] sparkleTimers;
@@ -17,9 +16,9 @@ public class DiscoShot : Projectile
     const short maxHits = 10;
     const float SparkleFrequency = 0.1f;
     [SerializeField] SpriteRenderer sprite;
-    [SerializeField] Rigidbody2D rb;
+    [SerializeField] SpriteRenderer outline;
+    public Rigidbody2D rb;
     bool exploded = false;
-    [SerializeField] LayerMask enemyLayer;
     private void Start()
     {
         ResetValues();  
@@ -46,8 +45,18 @@ public class DiscoShot : Projectile
         else
         {
             Vector2 vel = rb.velocity;
-            vel.x = Helper.Decay(vel.x, 0, 30);
-            vel.y = Helper.Decay(vel.y, 0, 30);
+            vel.x = Helper.Decay(vel.x, 0, 4);
+            vel.y = Helper.Decay(vel.y, 0, 4);
+            rb.velocity = vel;
+            Collider2D earlyExplosionDetection = Physics2D.OverlapCircle(transform.position, 0.35f, Layers.Enemy);
+            if(earlyExplosionDetection == null)
+            {
+                earlyExplosionDetection = Physics2D.OverlapCircle(transform.position, 0.35f, Layers.Tiles);
+            }
+            if (earlyExplosionDetection != null)
+            {
+                timer = 1.1f;
+            }
             if(timer > 1)
             {
                 hitTimer = hitRate;
@@ -60,6 +69,8 @@ public class DiscoShot : Projectile
                     sparkle.transform.position = transform.position + sparkleOffset;
                     sparkle.SetActive(true);
                 }
+                rb.velocity = Vector2.zero;
+                outline.enabled = false;
                 sprite.enabled = false;
             }
         }
@@ -71,6 +82,7 @@ public class DiscoShot : Projectile
             if(hitCounter > maxHits)
             {
                 gameObject.SetActive(false);
+                parent.SetActive(false);
                 ResetValues();
                 return;
             }
@@ -79,7 +91,7 @@ public class DiscoShot : Projectile
             {
                 hitTimer -= hitRate;
                 hitCounter++;
-                Collider2D[] hitObjs = Physics2D.OverlapBoxAll(transform.position, new Vector3(1,3), 0, enemyLayer);
+                Collider2D[] hitObjs = Physics2D.OverlapBoxAll(transform.position, new Vector3(1,3), 0, Layers.Enemy);
                 for (int i = 0; i < hitObjs.Length; i++)
                 {
                     GameObject obj = hitObjs[i].gameObject;
@@ -91,6 +103,11 @@ public class DiscoShot : Projectile
             }
         }
     }
+    private void OnDrawGizmos()
+    {
+        Gizmos2.DrawHDWireCircle(transform.position, .35f, 30);
+        Gizmos.DrawWireCube(transform.position, new Vector3(1, 3));
+    }
     public void ResetValues()
     {
         sparkleTimers = new float[sparkles.Length];
@@ -99,6 +116,8 @@ public class DiscoShot : Projectile
             sparkleTimers[i] = SparkleFrequency + 0.00001f;
             sparkles[i].SetActive(false);
         }
+        outline.enabled = true;
+        sprite.enabled = true;
         timer = 0;
         hitTimer = 0;
         hitCounter = 0;

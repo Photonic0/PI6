@@ -1,3 +1,4 @@
+using Assets.Common.Consts;
 using UnityEngine;
 
 public class TyphoonEnemyCloudProjectile : Projectile
@@ -5,6 +6,7 @@ public class TyphoonEnemyCloudProjectile : Projectile
     public override int Damage => 4;
     public Rigidbody2D rb;
     public float timer = 0;
+    public new Transform transform;
     private void Update()
     {
         timer += Time.deltaTime;
@@ -14,8 +16,17 @@ public class TyphoonEnemyCloudProjectile : Projectile
             gameObject.SetActive(false);
         }
     }
+    private void FixedUpdate()
+    {
+        if (Physics2D.OverlapCircle(transform.position, .1f, Layers.Tiles))
+        {
+            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position);
+            gameObject.SetActive(false);
+        }
+    }
     public override void OnHit(GameObject objectHit)
     {
         gameObject.SetActive(false);
     }
+    
 }

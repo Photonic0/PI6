@@ -10,6 +10,7 @@ public class CommonSounds : MonoBehaviour
     public static AudioClip[] WoodenFootsteps => instance.footSteps;
     [SerializeField] AudioClip[] footSteps;
     [SerializeField] AudioClip commonShot;
+    [SerializeField] AudioClip throwSfx;
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -56,6 +57,10 @@ public class CommonSounds : MonoBehaviour
     public static void PlayCommonShotSound(AudioSource source)
     {
         source.PlayOneShot(instance.commonShot);
+    }
+    public static void PlayThrowSound(AudioSource source)
+    {
+        source.PlayOneShot(instance.throwSfx);
     }
     public static void PlayGateOpen(AudioSource source)
     {

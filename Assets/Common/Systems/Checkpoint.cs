@@ -1,5 +1,6 @@
 ﻿using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
+using Assets.Helpers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,10 @@ namespace Assets.Common.Systems
         public int index;
         [SerializeField] Transform respawnPoint;
         [SerializeField] GameObject[] objsToDespawn;
+#if UNITY_EDITOR
+        [SerializeField] new BoxCollider2D collider;
+#endif
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if(collision.CompareTag(Tags.Player))
@@ -28,10 +33,31 @@ namespace Assets.Common.Systems
                 objsToDespawn[i].SetActive(false);
             }
             PlayerControl player = GameManager.PlayerControl;
-            player.transform.position = respawnPoint.position;
+            Vector3 spawnPoint = respawnPoint.position;
+            player.transform.position = spawnPoint;
             GameManager.PlayerLife.HealMax();
             PlayerWeaponManager.RechargeAll();
-            CameraRailSystem.QueueCameraPositionSnap();
+            if (SceneManager.GetActiveScene().buildIndex == SceneIndices.SpikeStage)
+            {
+                CameraRailSystem.QueueCameraPositionSnap();
+            }
+            else
+            {
+                Camera cam = Camera.main;
+                Vector3 pos = cam.transform.position;
+                pos.x = spawnPoint.x;
+                pos.y = spawnPoint.y;
+                cam.transform.position = pos;
+            }
         }
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (collider != null)
+            {
+                Gizmos2.DrawLinesInBoxCollider(collider, 2, true);
+            }
+        }
+#endif
     }
 }

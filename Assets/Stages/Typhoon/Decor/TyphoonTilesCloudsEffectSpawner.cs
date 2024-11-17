@@ -3,6 +3,9 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// ALSO HANDLES SPAWNING LIGHTNING NODES
+/// </summary>
 public class TyphoonTilesCloudsEffectSpawner : MonoBehaviour
 {
     [SerializeField] bool debug_disableClouds;
@@ -111,7 +114,7 @@ public class TyphoonTilesCloudsEffectSpawner : MonoBehaviour
             }
         }
         System.Array.Resize(ref randomSpawnPositions, index);
-        secsPerCloudSpawn = 40f / randomSpawnPositions.Length;
+        secsPerCloudSpawn = .5f;
     }
 
     void Update()

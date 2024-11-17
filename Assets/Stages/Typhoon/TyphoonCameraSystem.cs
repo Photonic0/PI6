@@ -37,7 +37,8 @@ public class TyphoonCameraSystem : MonoBehaviour
         }
         else if (playerPos.y < targetY - targetYLeniencyDown)
         {
-            targetY = Helper.Decay(targetY - targetYLeniencyDown, playerPos.y, 20) + targetYLeniencyDown;
+            //use max -5f to not let the camera dip into the death zone
+            targetY = Helper.Decay(targetY - targetYLeniencyDown, Mathf.Max(-5f,playerPos.y), 20) + targetYLeniencyDown;
         }
         float targetX = 0;
         for (int i = 0; i < pastXVelocities.Length; i++)

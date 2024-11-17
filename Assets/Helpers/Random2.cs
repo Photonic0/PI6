@@ -8,6 +8,14 @@ namespace Assets.Helpers
         {
             return chance >= Random.value;
         }
+        /// <summary>
+        /// WARNING: chancePerTimeUnit >= 1 WILL RESULT IN NaN!!!
+        /// </summary>
+        public static bool Percent(float chancePerTimeUnit, float conversionFactorFromSecond)
+        {
+            chancePerTimeUnit = 1f - Mathf.Pow(1f - chancePerTimeUnit, conversionFactorFromSecond * Time.deltaTime); 
+            return chancePerTimeUnit >= Random.value;
+        }
         public static bool Bool => Random.Range(0, 2) == 0;
         public static Vector2 Direction
         {

@@ -297,6 +297,14 @@ namespace Assets.Helpers
         {
             return b + (a - b) * Mathf.Exp(-decay * Time.deltaTime);
         }
+        public static Vector2 Decay(Vector2 a, Vector2 b, float decay)
+        {
+            return b + (a - b) * Mathf.Exp(-decay * Time.deltaTime);
+        }
+        public static Vector3 Decay(Vector3 a, Vector3 b, float decay)
+        {
+            return b + (a - b) * Mathf.Exp(-decay * Time.deltaTime);
+        }
         public static bool TileCollision(Collision2D collision)
         {
             return collision.gameObject.CompareTag(Tags.Tiles);

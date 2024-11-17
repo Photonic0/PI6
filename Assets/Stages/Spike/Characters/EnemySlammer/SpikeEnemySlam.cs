@@ -131,6 +131,7 @@ public class SpikeEnemySlam : Enemy
     }
     public override bool PreKill()
     {
+        EffectsHandler.SpawnBigExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position, .3f);
         enabled = false;
         collider.enabled = false;
         sprite.enabled = false;

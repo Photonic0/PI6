@@ -1,4 +1,5 @@
 using Assets.Helpers;
+using Assets.Systems;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,9 +11,9 @@ public class TyphoonHazardFan : MonoBehaviour
     const int StateIDOff = 1;
     const float OnDuration = 3;
     const float OffDuration = 2;
-    const float WindColumnWidth = 2;//compensates for player width as well. It's going to be checking Rect x point
+    const float WindColumnWidth = 2.25f;//compensates for player width as well. It's going to be checking Rect x point
     const float WindColumnHeight = 15;
-    const float WindPointBlankStrength = 30;
+    const float WindPointBlankStrength = 200;
     [SerializeField] Animator animator;
     [SerializeField] new Transform transform;
     [SerializeField] ParticleSystem windParticleEmitter;
@@ -45,15 +46,20 @@ public class TyphoonHazardFan : MonoBehaviour
         Vector2 playerPos = GameManager.PlayerPosition;
         Vector2 center = transform.position;
         float halfWidth = WindColumnWidth / 2;
+        float rotationAmount = -transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
+        playerPos = (playerPos - center).RotatedBy(rotationAmount) + center;
+        debug_transformedPlayerPosition = playerPos;
         if (playerPos.x < center.x + halfWidth && playerPos.x > center.x - halfWidth && playerPos.y > center.y)
         {
             float deltaY = playerPos.y - center.y;
-            float pushSpeed = Helper.Remap(deltaY, 0, WindColumnHeight, WindPointBlankStrength, 1);
-            Vector2 vel = GameManager.PlayerControl.rb.velocity;
-            vel.y = Mathf.Max(pushSpeed, vel.y);
-            GameManager.PlayerControl.rb.velocity = vel;
-        }
+            float pushSpeed = Helper.Remap(deltaY, 0, WindColumnHeight, WindPointBlankStrength, 1, Easings.SqrOut);
+            Vector2 vel = new Vector2(0, pushSpeed).RotatedBy(-rotationAmount);
+            //don't need to rotate the velocity for some reason idk why
+            //vel = vel.RotatedBy(-rotationAmount);
+            debug_pushSpeedVelVector = vel;
 
+            GameManager.PlayerControl.acceleration += vel * Time.deltaTime;
+        }
         if (timer > OnDuration)
         {
             windParticleEmitter.Stop();
@@ -62,9 +68,21 @@ public class TyphoonHazardFan : MonoBehaviour
             animator.enabled = false;
         }
     }
+    [SerializeField] Vector2 debug_transformedPlayerPosition;
+    [SerializeField] Vector2 debug_pushSpeedVelVector;
     private void OnDrawGizmos()
     {
-        Vector2 center = transform.position + new Vector3(0,WindColumnHeight / 2);
-        Gizmos2.DrawRotatedRectangle(center, new Vector2(WindColumnWidth, WindColumnHeight), 0);
+        if (debug_transformedPlayerPosition != Vector2.zero)
+        {
+            Gizmos.DrawLine(debug_transformedPlayerPosition, transform.position);
+        }
+        float rotationAmount = transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
+        Vector2 center = (Vector2)transform.position + new Vector2(0, WindColumnHeight / 2).RotatedBy(rotationAmount);
+        Gizmos2.DrawRotatedRectangle(center, new Vector2(WindColumnWidth, WindColumnHeight), rotationAmount * Mathf.Rad2Deg);
+        if (debug_transformedPlayerPosition != Vector2.zero)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, transform.position + (Vector3)debug_pushSpeedVelVector);
+        }
     }
 }

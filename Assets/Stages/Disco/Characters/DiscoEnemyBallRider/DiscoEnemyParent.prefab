@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4351842132447816972}
   - component: {fileID: 203913043569798527}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DiscoEnemyParent
-  m_TagString: Untagged
+  m_TagString: ChHs
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 3579337491592245425}
   - component: {fileID: 3579337491592245426}
   - component: {fileID: 3579337491592245427}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DiscoEnemyBallRiderRight_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 3579337492968634299}
   - component: {fileID: 3579337492968634292}
   - component: {fileID: 3579337492968634293}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DiscoEnemyBallRiderLeft_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -275,7 +275,7 @@ GameObject:
   - component: {fileID: 9184848542116974700}
   - component: {fileID: 6265113242741698081}
   - component: {fileID: 5642048508602803540}
-  m_Layer: 11
+  m_Layer: 7
   m_Name: DiscoHazardCannonCannonball
   m_TagString: Untagged
   m_Icon: {fileID: 0}

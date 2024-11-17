@@ -1,3 +1,4 @@
+using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
 using Assets.Helpers;
 using Assets.Systems;
@@ -22,7 +23,6 @@ public class SpikeBossAI : Enemy
     static readonly int AnimIDSlamGrounded = Animator.StringToHash("SlamGrounded");
     static readonly int AnimIDSlamGroundedToIdle = Animator.StringToHash("SlamGroundedToIdle");
     static readonly int AnimIDWalk = Animator.StringToHash("Walk");
-    Vector2 debug_jumpVelocity;
     [SerializeField] new Transform transform;
     [SerializeField] Transform arenaCenterTransform;
     [SerializeField] Rigidbody2D rb;
@@ -30,7 +30,6 @@ public class SpikeBossAI : Enemy
     [SerializeField] float stateTimer;
     [SerializeField] float actionTimer;
     [SerializeField] int actionCounter;
-    [SerializeField] float startupTimer;
     [SerializeField] short state;
     [SerializeField] Animator animator;
     [SerializeField] AudioSource audioSource;
@@ -39,6 +38,10 @@ public class SpikeBossAI : Enemy
     FootstepSimulator footstepSimulator;
     SpikeBossSpikeBall currentSpikeBall;
     Vector2 arenaCenter;
+
+#if UNITY_EDITOR
+    Vector2 debug_jumpVelocity;
+#endif
 
     const float WalkSpeed = 7;
     const float ArenaWidth = 16;
@@ -88,6 +91,10 @@ public class SpikeBossAI : Enemy
     }
     void Update()
     {
+        if(life <= 0)
+        {
+            return;
+        }
         sprite.flipX = FlipX;
 
         switch (state)
@@ -194,7 +201,7 @@ public class SpikeBossAI : Enemy
                 currentSpikeBall.EnablePhysics();
                 currentSpikeBall = null;
                 audioSource.transform.position = throwPos;
-                audioSource.PlayOneShot(SpikeStageSingleton.instance.throwSfx);
+                CommonSounds.PlayThrowSound(audioSource);
             }
         }
         if (Mathf.Abs(transform.position.x - GameManager.PlayerPosition.x) < SpikeBallThrowDistNeededForSideSwitch)
@@ -301,7 +308,10 @@ public class SpikeBossAI : Enemy
         }
         float derivative = ParabolaFrom0To1Derivative(stateProgress);
         Vector2 jumpVel = new Vector2(directionSign, derivative * directionSign) / JumpToOtherSideDuration;
+#if UNITY_EDITOR
         debug_jumpVelocity = jumpVel;
+#endif
+
         //vector and method already factors in left to right vs right to left
         MidairAnim(jumpVel.normalized);
 
@@ -323,7 +333,6 @@ public class SpikeBossAI : Enemy
     }
     void SwitchState(short nextStateID, int nextStateActionCount)
     {
-        //nextStateID = Random2.Bool ? StateIDJumpLeftToRight : StateIDJumpRightToLeft;//DEBUG LINE TODO: DELETE THIS LATER
         state = nextStateID;
         stateTimer = -Time.deltaTime;
         actionTimer = -Time.deltaTime;
@@ -398,7 +407,6 @@ public class SpikeBossAI : Enemy
     /// <param name="velDirection">MUST BE NORMALIZED!!</param>
     private void MidairAnim(Vector2 velDirection)
     {
-
         float threshold = 0.70710678118f;// 1/sqrt(2)
         if (Vector2.Dot(velDirection, Vector2.left) >= threshold)
         {
@@ -428,19 +436,26 @@ public class SpikeBossAI : Enemy
     }
     public override bool PreKill()
     {
+        EffectsHandler.SpawnBigExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
         DeathParticle.Spawn(transform.position, FlipnoteColors.Yellow, audioSource);
-        gameObject.SetActive(false);
+        sprite.enabled = false;
+        rb.isKinematic = true;
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;  
         StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
         return false;
     }
     IEnumerator ReturnToMainMenuAfter3SecAndUnlockUpgrade()
     {
         yield return new WaitForSecondsRealtime(3f);
+        PlayerWeaponManager.UnlockSpike();
+        GameManager.CleanupCheckpoints();
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         //Handles.Label(Helper.MouseWorld, debug_jumpVelocity.ToString());
         //Gizmos.DrawLine(transform.position, transform.position + (Vector3)debug_jumpVelocity * 2);
     }
+#endif
 }

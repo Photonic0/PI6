@@ -1,4 +1,5 @@
 using Assets.Common.Characters.Main.Scripts;
+using Assets.Common.Consts;
 using Assets.Common.Effects.Lightning;
 using Assets.Helpers;
 using UnityEngine;
@@ -15,12 +16,15 @@ public class TyphoonEnemyLightningCloud : Enemy
     public const float MinDistForStartAttack = 2;
     public const float AttackTelegraphDuration = 0.8f;
     public const float AttackDuration = 1;
-    [SerializeField] LayerMask tilesLayer;
-    [SerializeField] LayerMask playerLayer;
     [SerializeField] Transform parent;
     [SerializeField] ParticleSystem deathParticle;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] SimpleLightningRenderer lightningEffect;
+    [SerializeField] new Transform transform;
+    private void Awake()
+    {
+        transform = base.transform;
+    }
     float timer;
     int state;
     Vector2 attackDirection;
@@ -55,7 +59,15 @@ public class TyphoonEnemyLightningCloud : Enemy
     private void State_ChasingPlayer()
     {
         Vector2 playerPos = GameManager.PlayerControl.Position;
-        Vector2 toTargetPos = (playerPos + new Vector2(0, 2.5f) - rb.position).normalized;
+        Vector2 targetPos = playerPos + new Vector2(0, 2.5f);
+        Vector2 center = transform.position;
+        for (int i = 0; i < TyphoonStageSingleton.instance.lightningCloudEnemies.Count; i++)
+        {
+            TyphoonEnemyLightningCloud otherCloud = TyphoonStageSingleton.instance.lightningCloudEnemies[i];
+            Vector2 deltaPos = center - (Vector2)otherCloud.transform.position;
+            targetPos += deltaPos.normalized * (3 - Mathf.Clamp(deltaPos.magnitude, 0, 3));
+        }
+        Vector2 toTargetPos = (targetPos - rb.position).normalized;
         rb.velocity = Vector2.Lerp(rb.velocity, toTargetPos * MaxMoveSpeed, Time.deltaTime * 5);
         if (playerPos.y < transform.position.y && Mathf.Abs(playerPos.x - transform.position.x) < MinDistForStartAttack)
         {
@@ -73,7 +85,7 @@ public class TyphoonEnemyLightningCloud : Enemy
         rb.velocity = vel;
         if (timer < AttackTelegraphDuration)
         {
-            RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, tilesLayer);
+            RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, Layers.Tiles);
             Vector2 start = transform.position + new Vector3(0, -0.3f);
             Vector2 end = hit.point;
             //add telegraph later
@@ -85,7 +97,7 @@ public class TyphoonEnemyLightningCloud : Enemy
             {
                 lightningEffect.ActivateAndSetAttributes(0.1f, start, end, AttackDuration);
             }
-            Collider2D playerCollider = Physics2D.OverlapBox(boxCenter, boxSize, attackDirection.Atan2Deg(), playerLayer);
+            Collider2D playerCollider = Physics2D.OverlapBox(boxCenter, boxSize, attackDirection.Atan2Deg(), Layers.Player);
             if (playerCollider != null)
             {
                 if (playerCollider.TryGetComponent(out PlayerLife player))
@@ -111,13 +123,17 @@ public class TyphoonEnemyLightningCloud : Enemy
 
     private void GetBoxParams(out Vector2 start, out Vector2 end, out Vector2 boxCenter, out Vector2 boxSize)
     {
-        RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, tilesLayer);
+        RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, Layers.Tiles);
         start = transform.position + new Vector3(0, -0.3f);
         end = hit.point;
         boxCenter = (start + end) / 2;
         boxSize = new Vector2((start - end).magnitude, 0.1f);
     }
-
+    public override bool PreKill()
+    {
+        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        return base.PreKill();
+    }
     public override void OnHit(int damageTaken)
     {
         if (life <= 0)

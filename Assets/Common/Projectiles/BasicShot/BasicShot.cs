@@ -23,8 +23,9 @@ public class BasicShot : Projectile
     public override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
-        if (collision.CompareTag(Tags.Tiles) || collision.gameObject.layer == Layers.Enemy_FriendlyProj)
+        if (collision.CompareTag(Tags.Tiles) || collision.CompareTag(Tags.CharacterHostile))
         {
+            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Orange, transform.position);
             gameObject.SetActive(false);
         }
     }

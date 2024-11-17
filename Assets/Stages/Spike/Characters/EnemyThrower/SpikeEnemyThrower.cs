@@ -125,7 +125,7 @@ public class SpikeEnemyThrower : Enemy
                 currentSpikeBall.rb.rotation = 90;
                 currentSpikeBall.EnablePhysics();
                 currentSpikeBall = null;
-                audioSource.PlayOneShot(SpikeStageSingleton.instance.throwSfx);
+                CommonSounds.PlayThrowSound(audioSource);
             }
             animator.CrossFade(animThrowBall, 0);
         }

@@ -1,5 +1,7 @@
+using Assets.Common.Consts;
 using Assets.Helpers;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BossGate : MonoBehaviour
 {
@@ -8,7 +10,7 @@ public class BossGate : MonoBehaviour
     [SerializeField] float xDistThresholdForOpening = 3;
     [SerializeField] float animationDuration = .5f;
     [SerializeField] new BoxCollider2D collider;
-    [SerializeField] Transform cameraPositionLockPoint;
+    [SerializeField] Transform cameraPositionLockPoint;//arena bounds is 16x8
     [SerializeField] Enemy boss;
     [SerializeField] AudioSource source;
     Transform cameraParentTransform;
@@ -74,6 +76,16 @@ public class BossGate : MonoBehaviour
         if(boss is SpikeBossAI spikeBoss)
         {
             spikeBoss.ChangeToIntro();
+        }
+        if(boss is TyphoonBossAI typhoonBoss)
+        {
+            if(SceneManager.GetActiveScene().buildIndex == SceneIndices.TyphoonStage)
+            {
+                //disable cloud particle spawning during bossfight (wont be visible)
+                //also handles spawning lightning nodes
+                FindObjectOfType<TyphoonTilesCloudsEffectSpawner>().enabled = false;
+            }
+            typhoonBoss.ChangeToIntro();
         }
     }
 }

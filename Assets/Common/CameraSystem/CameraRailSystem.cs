@@ -170,12 +170,15 @@ public class CameraRailSystem : MonoBehaviour
     };
     public Vector2 SampleNearestPoint(Vector2 lineStart, Vector2 lineEnd, Vector2 point)
     {
+        
         switch (positionSamplingMode)
         {
             case PositionSamplingMode.Horizontal:
+                point.x = Mathf.Clamp(point.x, Mathf.Min(lineStart.x, lineEnd.x), Mathf.Max(lineStart.x, lineEnd.x));
                 point.y = Helper.Remap(point.x, lineStart.x, lineEnd.x, lineStart.y, lineEnd.y, Easings.InOutSineClamped);
                 return point;
             case PositionSamplingMode.Vertical:
+                point.y = Mathf.Clamp(point.y, Mathf.Min(lineStart.y, lineEnd.y), Mathf.Max(lineStart.y, lineEnd.y));
                 point.x = Helper.Remap(point.y, lineStart.y, lineEnd.y, lineStart.x, lineEnd.x, Easings.InOutSineClamped);
                 return point;
             case PositionSamplingMode.NearestPointOnLine:

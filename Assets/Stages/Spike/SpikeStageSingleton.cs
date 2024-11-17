@@ -6,7 +6,6 @@ public class SpikeStageSingleton : MonoBehaviour
 {
     public static SpikeStageSingleton instance;
     public GameObject spikeWaveSpike;
-    public AudioClip throwSfx;
     public AudioClip[] spikeBreak;
     public AudioClip spikeShockwave;
     private void Awake()
@@ -22,7 +21,6 @@ public class SpikeStageSingleton : MonoBehaviour
             if (instance != null)//for some reason instance is being null here already? strange...
             {
                 instance.spikeWaveSpike = null;//do it just in case
-                instance.throwSfx = null;
             }
             instance = null;
             SceneManager.sceneUnloaded -= UnloadSingleton;

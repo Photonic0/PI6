@@ -158,3 +158,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 4415991462450858105}
+  timer: 0
+  transform: {fileID: 286580217734873539}

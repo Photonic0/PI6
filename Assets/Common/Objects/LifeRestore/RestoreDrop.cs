@@ -12,7 +12,6 @@ public class RestoreDrop : MonoBehaviour
         GameObject obj = Instantiate(CommonPrefabs.RestoreDrop, position, Quaternion.identity);
         obj.GetComponentInChildren<RestoreDrop>().sprite.color =
            PlayerWeapon.GetWeaponColorSafely(GameManager.PlayerControl.weapon);
-        Debug.Log("spawned restore at " + position.ToString());
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

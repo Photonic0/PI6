@@ -210,6 +210,9 @@ MonoBehaviour:
   discoWeaponBarFill: {fileID: 6487585634929630080}
   spikeWeaponBarFill: {fileID: 6487585634761671053}
   weaponSelectArrow: {fileID: 6487585635971694335}
+  typhoonWeaponBarBack: {fileID: 6487585636448602984}
+  discoWeaponBarBack: {fileID: 6487585634742815970}
+  spikeWeaponBarBack: {fileID: 6487585635696279449}
 --- !u!1 &6487585634742815970
 GameObject:
   m_ObjectHideFlags: 0

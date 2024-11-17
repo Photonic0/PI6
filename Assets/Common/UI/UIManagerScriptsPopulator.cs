@@ -1,5 +1,5 @@
 using Assets.Common.Characters.Main.Scripts.Weapons;
-using Assets.Common.Systems;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +21,10 @@ public class UIManagerScriptsPopulator : MonoBehaviour
     [SerializeField] Image discoWeaponBarFill;
     [SerializeField] Image spikeWeaponBarFill;
     [SerializeField] RectTransform weaponSelectArrow;
+    [SerializeField] GameObject typhoonWeaponBarBack;
+    [SerializeField] GameObject discoWeaponBarBack;
+    [SerializeField] GameObject spikeWeaponBarBack;
+
 
     private void Awake()
     {
@@ -33,6 +37,6 @@ public class UIManagerScriptsPopulator : MonoBehaviour
         UIManager.Instance.bossLifeBarBack = bossLifeBarBack;
         UIManager.Instance.lifeBarBack = lifeBarBack;
         UIManager.Instance.weaponBarBack = weaponBarBack;
-        PlayerWeaponManager.Populate(weaponUpgradePanel, basicWeaponBarFill, typhoonWeaponBarFill, discoWeaponBarFill, spikeWeaponBarFill, weaponSelectArrow);
+        PlayerWeaponManager.Initialize(weaponUpgradePanel, basicWeaponBarFill, typhoonWeaponBarFill, discoWeaponBarFill, spikeWeaponBarFill, weaponSelectArrow, typhoonWeaponBarBack, spikeWeaponBarBack, discoWeaponBarBack);
     }
 }

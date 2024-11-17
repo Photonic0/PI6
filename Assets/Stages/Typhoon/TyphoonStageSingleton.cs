@@ -8,6 +8,7 @@ public class TyphoonStageSingleton : MonoBehaviour
 {
     public static TyphoonStageSingleton instance;
     public List<TyphoonEnemyCloud> cloudEnemies;
+    public List<TyphoonEnemyLightningCloud> lightningCloudEnemies;
     private void Awake()
     {
         SceneManager.sceneUnloaded += UnloadSingleton;
@@ -20,10 +21,16 @@ public class TyphoonStageSingleton : MonoBehaviour
             return;
         instance.cloudEnemies.Add(enemyToAdd);
     }
+    public static void AddToCloudEnemyArray(TyphoonEnemyLightningCloud enemyToAdd)
+    {
+        if (instance == null || instance.lightningCloudEnemies == null || enemyToAdd == null)
+            return;
+        instance.lightningCloudEnemies.Add(enemyToAdd);
+    }
     private void UnloadSingleton(Scene arg0)
     {
         if (arg0.buildIndex == SceneIndices.TyphoonStage)
-        {
+        {  
             if (instance != null)//for some reason instance is being null here already? strange...
             {
                 instance.cloudEnemies = null;
@@ -38,6 +45,12 @@ public class TyphoonStageSingleton : MonoBehaviour
         if (instance == null || instance.cloudEnemies == null || enemyToRemove == null)
             return;
         instance.cloudEnemies.Remove(enemyToRemove);
-    } 
+    }
+    public static void RemoveCloudEnemyFromList(TyphoonEnemyLightningCloud enemyToRemove)
+    {
+        if (instance == null || instance.lightningCloudEnemies == null || enemyToRemove == null)
+            return;
+        instance.lightningCloudEnemies.Remove(enemyToRemove);
+    }
     //pergunta pro prof sobres os inimigos tornado
 }

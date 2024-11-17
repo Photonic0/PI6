@@ -1,7 +1,11 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Consts;
+using Assets.Common.Interfaces;
 using Assets.Common.Systems;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,6 +29,7 @@ public class GameManager : MonoBehaviour
     public static int latestCheckpointIndex;
 
     public static Checkpoint LatestCheckpoint => latestCheckpointIndex == -1 ? null : checkpoints[latestCheckpointIndex];
+    [SerializeField] List<IUpdatableWhenPaused> thingsToUpdateWhenPaused;
     private void Awake()//assign player scripts refs in awake of player scripts so it goes fine when changing scenes
     {
         if (instance != null && instance != this)
@@ -36,9 +41,12 @@ public class GameManager : MonoBehaviour
             latestCheckpointIndex = -1;
             PlayerLife.chances = PlayerLife.StartingChances;
             instance = this;
+            thingsToUpdateWhenPaused = new();
+            Paused = false;
             DontDestroyOnLoad(gameObject);
         }
     }
+
     private void Update()
     {
         Application.targetFrameRate = debug_FPS;
@@ -64,8 +72,19 @@ public class GameManager : MonoBehaviour
         {
             DiscoMusicEventManager.PauseMusic();
         }
+        instance.StartCoroutine(instance.UpdatePausedObjects());
     }
-
+    IEnumerator UpdatePausedObjects()
+    {
+        while (Paused)
+        {
+            for (int i = 0; i < thingsToUpdateWhenPaused.Count; i++)
+            {
+                thingsToUpdateWhenPaused[i].PausedUpdate();
+            }
+            yield return new WaitForSecondsRealtime(1f / 30f);//30 fps updating
+        }
+    }
     internal static void UnpauseGame()
     {
         Paused = false;
@@ -74,5 +93,10 @@ public class GameManager : MonoBehaviour
         {
             DiscoMusicEventManager.UnPauseMusic();
         }
+    }
+
+    public static void AddToPausedUpatedObjs(IUpdatableWhenPaused obj)
+    {
+        instance.thingsToUpdateWhenPaused.Add(obj);
     }
 }

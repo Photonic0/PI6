@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] LayerMask tileLayer;
+    public Vector2 acceleration;
     public new Transform transform;
     public static KeyCode jumpKey = KeyCode.W;
     public static KeyCode shootKey = KeyCode.Mouse0;
@@ -42,8 +42,11 @@ public class PlayerControl : MonoBehaviour
             //don't do early return because there's more after the else
             if (!GameManager.PlayerLife.Dead)
             {
-                Movement();
-                CheckWeaponUse();
+                if (!GameManager.Paused)
+                {
+                    Movement();
+                    CheckWeaponUse();
+                }
             }
             else
             {
@@ -90,6 +93,7 @@ public class PlayerControl : MonoBehaviour
     {
         shootCooldown -= Time.deltaTime;
         if (shootCooldown <= 0 && Input.GetKey(shootKey))
+        if (shootCooldown <= 0 && Input.GetKey(shootKey))
         {
             weapon.TryUse(ref shootCooldown);
         } 
@@ -97,6 +101,17 @@ public class PlayerControl : MonoBehaviour
    
     private void FixedUpdate()
     {
+        if (GameManager.PlayerLife.Dead)
+        {
+            rb.velocity = Vector2.zero;
+            Position = rb.position;
+            return;
+        }
+
+        acceleration += 10 * Time.fixedDeltaTime * Physics2D.gravity;
+        rb.velocity += acceleration;
+        acceleration.x = 0;
+        acceleration.y = 0;
         StartCoroutine(WaitAndUpdateCachedPosition());
     }
     IEnumerator WaitAndUpdateCachedPosition()
@@ -121,7 +136,7 @@ public class PlayerControl : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         GetOverlapBoxParams(out Vector2 point, out Vector2 size);
-        if (Physics2D.OverlapBox(point, size, 0, tileLayer))
+        if (Physics2D.OverlapBox(point, size, 0, Layers.Tiles))
         {
             jumpTimeLeft = MaxJumpTime;
         }
@@ -130,7 +145,7 @@ public class PlayerControl : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         GetOverlapBoxParams(out Vector2 point, out Vector2 size);
-        if (Physics2D.OverlapBox(point, size, 0, tileLayer))
+        if (Physics2D.OverlapBox(point, size, 0, Layers.Tiles))
         {
             jumpTimeLeft = MaxJumpTime;
         }
@@ -138,11 +153,12 @@ public class PlayerControl : MonoBehaviour
     void GetOverlapBoxParams(out Vector2 point, out Vector2 size)
     {
         point = (Vector2)transform.position - new Vector2(0, 1.05f);
-        size = new Vector2(0.69f, 0.1f);
+        size = new Vector2(1.39f, 0.1f);
     }
     private void OnDrawGizmos()
     {
         GetOverlapBoxParams(out Vector2 point, out Vector2 size);
+        Gizmos.DrawLine(transform.position, transform.position + (Vector3)acceleration);
         Gizmos.DrawCube(point, size);
     }
 }

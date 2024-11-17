@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3990657800336948909}
   - component: {fileID: 3990657800336948907}
   - component: {fileID: 3990657800336948906}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DeathParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5012,9 +5012,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3990657800957256544}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TyphoonEnemyCloud
-  m_TagString: Untagged
+  m_TagString: ChHs
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

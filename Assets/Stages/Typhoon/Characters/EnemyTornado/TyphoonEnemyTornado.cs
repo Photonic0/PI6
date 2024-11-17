@@ -85,6 +85,11 @@ public class TyphoonEnemyTornado : Enemy
         rb.rotation = velocity.x * -6;
         rb.velocity = velocity;
     }
+    public override bool PreKill()
+    {
+        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        return base.PreKill();
+    }
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()

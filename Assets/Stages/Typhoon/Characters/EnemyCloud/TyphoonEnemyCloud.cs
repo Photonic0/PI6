@@ -9,7 +9,7 @@ public class TyphoonEnemyCloud : Enemy
     public const int StateIDChasingPlayer = 1;
     public const float AggroRange = 6;
     public const float MaxMoveSpeed = 5;
-    public const float MinDistForRain = 2;
+    public const float MinDistForRain = 1;
     public const float RainDelay = 0.25f;
     public const float RainFallSpeed = 7;
     [SerializeField] new Transform transform;
@@ -98,6 +98,11 @@ public class TyphoonEnemyCloud : Enemy
     private void OnDestroy()
     {
         TyphoonStageSingleton.RemoveCloudEnemyFromList(this);
+    }
+    public override bool PreKill()
+    {
+        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        return base.PreKill();
     }
     private void OnDrawGizmos()
     {

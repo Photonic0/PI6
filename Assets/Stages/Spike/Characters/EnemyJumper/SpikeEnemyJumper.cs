@@ -152,6 +152,11 @@ public class SpikeEnemyJumper : Enemy
     {
         sprite.flipX = direction > 0;
     }
+    public override bool PreKill()
+    {
+        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position, .25f);
+        return base.PreKill();
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (state == StateIDJumping && timer > .1f)
