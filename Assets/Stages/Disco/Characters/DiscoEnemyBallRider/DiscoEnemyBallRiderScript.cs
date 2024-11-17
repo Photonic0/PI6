@@ -10,22 +10,23 @@ public class DiscoEnemyBallRiderScript : MonoBehaviour, IMusicSyncable
     public float Speed = 2.0f; // Velocidade de movimento padrão
     public float ChasingSpeed = 4.0f; // Velocidade ao perseguir o jogador
     public float RaycastSize = 10000.0f; // Distância do Raycast para detectar o jogador ou obstáculos
+    public float GroundCheckDistance = 1.0f; // Distância do Raycast para verificar o chão
 
     private Transform player; // Referência ao jogador
     private float currentSpeed; // Velocidade atual do inimigo
-    // Start is called before the first frame update
+
     private void Start()
     {
         DiscoMusicEventManager.AddSyncableObject(this);
         // Definindo a velocidade inicial do inimigo
         currentSpeed = Speed;
     }
+
     public int BeatsPerAction => 4;
 
-    // Update is called once per frame
     void Update()
     {
-         // Detectando o jogador e obstáculos
+        // Detectando o jogador e obstáculos
         DetectPlayerAndObstacles();
 
         // Movendo o inimigo com base na direção e na velocidade atual
@@ -34,8 +35,7 @@ public class DiscoEnemyBallRiderScript : MonoBehaviour, IMusicSyncable
 
     public void DoMusicSyncedAction()
     {
-        
-        if(BallriderLeft.activeSelf)
+        if (BallriderLeft.activeSelf)
         {
             BallriderLeft.SetActive(false);
             BallriderRight.SetActive(true);
@@ -48,7 +48,7 @@ public class DiscoEnemyBallRiderScript : MonoBehaviour, IMusicSyncable
         MovingSide = !MovingSide;
     }
 
-     void DetectPlayerAndObstacles()
+    void DetectPlayerAndObstacles()
     {
         // Define a direção do Raycast com base no movimento
         Vector2 direction = MovingSide ? Vector2.right : Vector2.left;
@@ -68,12 +68,23 @@ public class DiscoEnemyBallRiderScript : MonoBehaviour, IMusicSyncable
             else
             {
                 currentSpeed = 0;
-                print("Atingiu obstaculo");
+                print("Atingiu obstáculo");
+                return; // Evita verificar o chão se já parou
             }
+        }
+
+        // Verifica a presença de chão à frente
+        Vector2 groundCheckDirection = new Vector2(direction.x, -1).normalized;
+        RaycastHit2D groundHit = Physics2D.Raycast(transform.position, groundCheckDirection, GroundCheckDistance);
+
+        if (groundHit.collider == null)
+        {
+            currentSpeed = 0; // Para o movimento se não houver chão
+            print("Sem chão à frente!");
         }
         else
         {
-            // Se não houver detecção, restaura a velocidade padrão
+            // Se não houver detecção de obstáculos ou falta de chão, restaura a velocidade padrão
             currentSpeed = Speed;
         }
     }
@@ -85,14 +96,16 @@ public class DiscoEnemyBallRiderScript : MonoBehaviour, IMusicSyncable
         transform.Translate(Vector2.right * moveDirection * currentSpeed * Time.deltaTime);
     }
 
-    // Método para visualizar o Raycast no Editor da Unity
     private void OnDrawGizmosSelected()
     {
-        // Define a cor e direção do Raycast
+        // Define a cor e direção do Raycast para obstáculos
         Gizmos.color = Color.red;
         Vector2 direction = MovingSide ? Vector2.right : Vector2.left;
-
-        // Desenha o Raycast no Editor para fins de depuração
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)(direction * RaycastSize));
+
+        // Define a cor e direção do Raycast para verificar o chão
+        Gizmos.color = Color.blue;
+        Vector2 groundCheckDirection = new Vector2(direction.x, -1).normalized;
+        Gizmos.DrawLine(transform.position, transform.position + (Vector3)(groundCheckDirection * GroundCheckDistance));
     }
 }
