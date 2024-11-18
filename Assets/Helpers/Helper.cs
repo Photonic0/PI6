@@ -9,13 +9,16 @@ namespace Assets.Helpers
         public const float Tau = Mathf.PI * 2;
         public const float Phi = 1.61803398875f;
         public const float CamerasZPos = -8.660254f;
-        public static Vector2 MouseWorld { get 
+        public static Vector2 MouseWorld
+        {
+            get
             {
                 Camera cam = Camera.main;
                 Vector3 posToCheck = Input.mousePosition;
                 posToCheck.z = -CamerasZPos;
-                return (Vector2)cam.ScreenToWorldPoint(posToCheck); 
-            } }
+                return (Vector2)cam.ScreenToWorldPoint(posToCheck);
+            }
+        }
         public static bool EnemyAggroCheck(Vector3 enemyPos, Vector3 playerPos, float aggroRange, float verticalRange = 8)
         {
             return Mathf.Abs(enemyPos.x - playerPos.x) < aggroRange && Mathf.Abs(enemyPos.y - playerPos.y) < verticalRange;
@@ -158,23 +161,23 @@ namespace Assets.Helpers
             {
                 value.x = min.x;
             }
-            if (value.y < min.y) 
+            if (value.y < min.y)
             {
                 value.y = min.y;
             }
-            if(value.z < min.z)
+            if (value.z < min.z)
             {
                 value.z = min.z;
             }
-            if(value.x > max.x)
+            if (value.x > max.x)
             {
                 value.x = max.x;
             }
-            if(value.y > max.y)
+            if (value.y > max.y)
             {
                 value.y = max.y;
             }
-            if(value.z > max.z)
+            if (value.z > max.z)
             {
                 value.z = max.z;
             }
@@ -208,7 +211,7 @@ namespace Assets.Helpers
             for (int i = 0; i < inputsChances.Length; i++)
             {
                 currentChance += inputsChances[i].chance;
-                if(roll < currentChance)
+                if (roll < currentChance)
                 {
                     return inputsChances[i].input;
                 }
@@ -282,28 +285,29 @@ namespace Assets.Helpers
             Color.RGBToHSV(c, out float h, out float s, out float v);
             h += normalizedAmount;
             h = Mathf.Repeat(h, 1);
-            Color result =  Color.HSVToRGB(h, s, v);
+            Color result = Color.HSVToRGB(h, s, v);
             result.a = c.a;
             return result;
         }
         /// <summary>
         /// lower decay value = slower movement
         /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
+        /// <param name="currentValue"></param>
+        /// <param name="targetValue"></param>
         /// <param name="decay"></param>
         /// <returns></returns>
-        public static float Decay(float a, float b, float decay)
+        public static float Decay(float currentValue, float targetValue, float decay)
         {
-            return b + (a - b) * Mathf.Exp(-decay * Time.deltaTime);
+            return targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * Time.deltaTime);
         }
-        public static Vector2 Decay(Vector2 a, Vector2 b, float decay)
+        public static Vector2 Decay(Vector2 currentValue, Vector2 targetValue, float decay)
         {
-            return b + (a - b) * Mathf.Exp(-decay * Time.deltaTime);
+            return targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * Time.deltaTime);
         }
-        public static Vector3 Decay(Vector3 a, Vector3 b, float decay)
+        //unity has implicit conversion between vec3 and vec2 so I have to do this to prevent ambiguity in some calls -.-
+        public static Vector3 DecayVec3(Vector3 currentValue, Vector3 targetValue, float decay)
         {
-            return b + (a - b) * Mathf.Exp(-decay * Time.deltaTime);
+            return targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * Time.deltaTime);
         }
         public static bool TileCollision(Collision2D collision)
         {
@@ -313,5 +317,42 @@ namespace Assets.Helpers
         /// miliseconds to fps
         /// </summary>
         public static float MsToFps(float milliseconds) => 1000.0f / milliseconds;
+        public static void TelegraphLightning(float timer, Vector2 pointA, Vector2 pointB, float telegraphDuration, ParticleSystem lightningTelegraphParticles, float timerOffset = -0.2f)
+        {
+            timer += timerOffset;
+            if (lightningTelegraphParticles != null)
+            {
+                float chancePer45thSec = .5f;
+                Vector2 node1 = pointA;
+                Vector2 node2 = pointB;
+                float timeLeftUntilActivation = telegraphDuration - timer;
+                float sizeIncrease = Remap(timer, 0, telegraphDuration, 0, 0.25f);
+                if (Random2.Percent(chancePer45thSec, 45))
+                {
+                    ParticleSystem.EmitParams emitParams = new();
+                    Vector2 deltaPos = node2 - node1;
+                    float lifetime = Random2.Float(.2f, .45f);
+                    emitParams.position = node1 + Random2.Circular(0.1f);
+                    emitParams.velocity = deltaPos / (1.7f * lifetime) + Random2.Circular(1);
+                    emitParams.startLifetime = Mathf.Min(lifetime, timeLeftUntilActivation);
+                    emitParams.startColor = FlipnoteColors.Yellow;
+                    emitParams.startSize = Random2.Float(.01f, .11f) + sizeIncrease;
+                    lightningTelegraphParticles.Emit(emitParams, 1);
+                }
+                if (Random2.Percent(chancePer45thSec, 45))
+                {
+                    ParticleSystem.EmitParams emitParams = new();
+                    Vector2 deltaPos = node1 - node2;
+                    float lifetime = Random2.Float(.2f, .45f);
+                    emitParams.position = node2 + Random2.Circular(0.1f);
+                    emitParams.velocity = deltaPos / (1.7f * lifetime) + Random2.Circular(1);
+                    emitParams.startLifetime = Mathf.Min(lifetime, timeLeftUntilActivation);
+                    emitParams.startColor = FlipnoteColors.Yellow;
+                    emitParams.startSize = Random2.Float(.01f, .11f) + sizeIncrease;
+                    lightningTelegraphParticles.Emit(emitParams, 1);
+                }
+
+            }
+        }
     }
 }

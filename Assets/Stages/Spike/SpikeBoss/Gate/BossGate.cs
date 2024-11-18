@@ -13,12 +13,15 @@ public class BossGate : MonoBehaviour
     [SerializeField] Transform cameraPositionLockPoint;//arena bounds is 16x8
     [SerializeField] Enemy boss;
     [SerializeField] AudioSource source;
+    Transform mainCamTransform;
     Transform cameraParentTransform;
     bool locked;
     Vector2 top;
     private void Start()
     {
-        cameraParentTransform = Camera.main.GetComponentInParent<Transform>();
+        Camera mainCam = Camera.main;
+        mainCamTransform = mainCam.transform;
+        cameraParentTransform = mainCam.GetComponentInParent<Transform>();
         timer = 0;
         top = transform.position;
         //add 1 so the the top is inside the block above the gate
@@ -33,12 +36,23 @@ public class BossGate : MonoBehaviour
         }
         if (locked && cameraPositionLockPoint != null)
         {
-            CameraRailSystem.instance.enabled = false;
-            Vector3 newCameraPos = cameraParentTransform.position;
-            float cameraZ = newCameraPos.z;
-            newCameraPos = Vector2.MoveTowards(newCameraPos, cameraPositionLockPoint.position, Time.deltaTime * 8);
-            newCameraPos.z = cameraZ;
-            cameraParentTransform.position = newCameraPos;
+            if (CameraRailSystem.instance != null)
+            {
+                CameraRailSystem.instance.enabled = false;
+                Vector3 newCameraPos = cameraParentTransform.position;
+                float cameraZ = newCameraPos.z;
+                newCameraPos = Vector2.MoveTowards(newCameraPos, cameraPositionLockPoint.position, Time.deltaTime * 8);
+                newCameraPos.z = cameraZ;
+                cameraParentTransform.position = newCameraPos;
+            }
+            else
+            {
+                Vector3 newCameraPos = mainCamTransform.position;
+                float cameraZ = newCameraPos.z;
+                newCameraPos = Helper.Decay(newCameraPos, cameraPositionLockPoint.position, 15);
+                newCameraPos.z = cameraZ;
+                mainCamTransform.position = newCameraPos;
+            }
         }
         float oldTimer = timer;
         if (!locked && Mathf.Abs(top.x - GameManager.PlayerPosition.x) < xDistThresholdForOpening)
@@ -84,6 +98,7 @@ public class BossGate : MonoBehaviour
                 //disable cloud particle spawning during bossfight (wont be visible)
                 //also handles spawning lightning nodes
                 FindObjectOfType<TyphoonTilesCloudsEffectSpawner>().enabled = false;
+                FindObjectOfType<TyphoonCameraSystem>().enabled = false;
             }
             typhoonBoss.ChangeToIntro();
         }

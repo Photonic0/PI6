@@ -440,7 +440,7 @@ public class SpikeBossAI : Enemy
         DeathParticle.Spawn(transform.position, FlipnoteColors.Yellow, audioSource);
         sprite.enabled = false;
         rb.isKinematic = true;
-        gameObject.GetComponent<BoxCollider2D>().enabled = false;  
+        GetComponent<BoxCollider2D>().enabled = false;  
         StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
         return false;
     }

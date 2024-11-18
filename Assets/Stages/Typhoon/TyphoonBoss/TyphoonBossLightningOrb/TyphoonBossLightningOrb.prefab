@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 58
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &954483726388550963
 SpriteRenderer:
@@ -122,6 +122,10 @@ MonoBehaviour:
   transform: {fileID: 954483726388550962}
   gameObject: {fileID: 954483726388550975}
   sprite: {fileID: 954483726388550963}
+  collider: {fileID: 954483726388550974}
+  timeLeftUntilColliderActivates: 0
+  boss: {fileID: 0}
+  index: 0
 --- !u!58 &954483726388550974
 CircleCollider2D:
   m_ObjectHideFlags: 0

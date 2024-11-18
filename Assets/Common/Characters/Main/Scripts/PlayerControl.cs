@@ -112,12 +112,6 @@ public class PlayerControl : MonoBehaviour
         rb.velocity += acceleration;
         acceleration.x = 0;
         acceleration.y = 0;
-        StartCoroutine(WaitAndUpdateCachedPosition());
-    }
-    IEnumerator WaitAndUpdateCachedPosition()
-    {
-        yield return new WaitForFixedUpdate();
-        Position = rb.position;
     }
     public void UpdateCachedPosition()
     {
@@ -140,7 +134,6 @@ public class PlayerControl : MonoBehaviour
         {
             jumpTimeLeft = MaxJumpTime;
         }
-        UpdateCachedPosition();
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -157,6 +150,7 @@ public class PlayerControl : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
+        Gizmos.DrawWireSphere(Position, 1);
         GetOverlapBoxParams(out Vector2 point, out Vector2 size);
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)acceleration);
         Gizmos.DrawCube(point, size);

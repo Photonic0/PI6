@@ -26,6 +26,7 @@ public class TyphoonEnemyCloudProjectile : Projectile
     }
     public override void OnHit(GameObject objectHit)
     {
+        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position);
         gameObject.SetActive(false);
     }
     

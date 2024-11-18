@@ -15,6 +15,8 @@ namespace Assets.Common.Effects.Lightning
         float maxPointDeviation;
         Vector2 start;
         Vector2 end;
+        public bool LightningActive => lifetimeTimer < duration;
+        public Vector2 CenterPoint => (start + end) * .5f;
         public static (GameObject, SimpleLightningRenderer) Create(float appearanceChangeCooldown, Vector2 start, Vector2 end, float duration, bool destroyWhenExpire = true, float maxPointDeviation = 0.8f)
         {
             GameObject obj = Instantiate(CommonPrefabs.SimpleLightningLineRenderer, Vector3.zero, Quaternion.identity);
@@ -64,8 +66,8 @@ namespace Assets.Common.Effects.Lightning
             int pointsAmount = (int)Mathf.Max(deltaPos.magnitude, 2) + 2;
             Vector2 direction = deltaPos.normalized;
             Vector2 normal = new(-direction.y, direction.x);
-            //confusing name
-            float[] pointsTs = new float[pointsAmount];
+            float[] pointsTs = new float[pointsAmount];            //confusing name
+
             pointsTs[0] = 0;
             pointsTs[^1] = 1;
             for (int i = 1; i < pointsAmount - 1; i++)
