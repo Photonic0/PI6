@@ -15,39 +15,51 @@ using UnityEngine.SceneManagement;
 public class TyphoonBossAI : Enemy
 {
     static readonly int AnimIDIdle = Animator.StringToHash("Idle");
+    static readonly int AnimIDHide = Animator.StringToHash("Hide");
+    static readonly int AnimIDLightning = Animator.StringToHash("Lightning");
+    static readonly int AnimIDLightningPre = Animator.StringToHash("LightningPre");
 
-    public override int LifeMax => 25;
+    public override int LifeMax => 50;
 
     const float ArenaWidth = 16;
     const float ArenaHeight = 8;
 
-    const short StateIDStart = 0;
-    const short StateIDIntro = 1;
-    const short StateIDLightningOrbs = 2;
-    const short StateIDLightning = 3;
-    const short StateIDRainLeftToRight = 4;
-    const short StateIDRainRightToLeft = 5;
+    const byte StateIDStart = 0;
+    const byte StateIDIntro = 1;
+    const byte StateIDLightningOrbs = 2;
+    const byte StateIDLightning = 3;
+    const byte StateIDRainLeftToRight = 4;
+    const byte StateIDRainRightToLeft = 5;
 
     const float IntroDuration = 1;
 
     const float LightningOrbsStartup = 1;
-    const short LightningOrbsActionCount = 1;
+    const sbyte LightningOrbsActionCount = 1;
     const float LightningOrbsActionRate = 4;
     const float LightningOrbsDelay = 1;
     const float LightningOrbAccelerationDuration = .6f;
-    const float LightningOrbSpinSpeedRadiansPerSec = 1.5f;
+    const float LightningOrbSpinSpeedRadiansPerSec = 1.85f;
     const float LightningOrbAccelerationCurveExponent = 2;
 
-    const float LightningStartup = 1;
-    const short LightningActionCount = 3;
-    const float LightningActionRate = 2;
+    const float LightningTelegraphDuration = 1;
+    const float LightningDuration = .4f;
+
+    const float LightningStartup = .5f;
+    const sbyte LightningActionCount = 3;
+    const float LightningActionRate = LightningTelegraphDuration + LightningDuration;
     const float LightningDelay = 1;
-    const float LightningYOffset = -0.5f;
+    const float LightningSpawnYOffset = -1f;
+    const float LightningBossYDistFromGround = 4;
+
 
     const float RainStartup = 0.7f;
-    const short RainActionCount = 20;
-    const float RainActionRate = .1f;
+    const sbyte RainActionCount = 20;
+    const float RainActionRate = 0.1f;
     const float RainDelay = 0.5f;
+    const float RainProjSpawnPositionYoffset = -0.8f;
+    const float RainProjSpawnHalfXSpread = .7f;
+    const float RainProjYVelocity = -6f;
+    const float RainBossYOffsetFromArenaCenterInitially = 3;
 
     public new Transform transform;
     [SerializeField] Transform arenaCenterTransform;
@@ -55,8 +67,8 @@ public class TyphoonBossAI : Enemy
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] float stateTimer;
     [SerializeField] float actionTimer;
-    [SerializeField] int actionCounter;
-    [SerializeField] short state;
+    [SerializeField] sbyte actionCounter;
+    [SerializeField] byte state;
     [SerializeField] Animator animator;
     [SerializeField] AudioSource audioSource;
     [SerializeField] TyphoonBossLightningOrb[] lightningOrbs;
@@ -108,9 +120,9 @@ public class TyphoonBossAI : Enemy
     {
         if (arenaCenter == default)
         {
+            animator.CrossFade(AnimIDHide, 0);
             arenaCenter = arenaCenterTransform.position;
         }
-        // animator.CrossFade(AnimIDIdle, 0);
     }
     private void State_Intro()
     {
@@ -118,7 +130,20 @@ public class TyphoonBossAI : Enemy
         {
             UIManager.ActivateBossLifeBar(FlipnoteColors.Yellow);
         }
-        UIManager.UpdateBossLifeBar(Mathf.Clamp01(stateTimer / IntroDuration));
+        float progress = stateTimer / IntroDuration;
+        if (progress <= .5f)
+        {
+            animator.CrossFade(AnimIDHide, 0);
+        }
+        else if (progress <= 0.75f)
+        {
+            animator.CrossFade(AnimIDLightning, 0);
+        }
+        else
+        {
+            animator.CrossFade(AnimIDIdle, 0);
+        }
+        UIManager.UpdateBossLifeBar(Mathf.Clamp01(progress));
         if (stateTimer > IntroDuration)
         {
             SwitchState(StateIDLightningOrbs, LightningOrbsActionCount);
@@ -138,6 +163,7 @@ public class TyphoonBossAI : Enemy
                 orb.sprite.color = new Color(1, 1, 1, 0);
                 orb.gameObject.SetActive(true);
             }
+            animator.CrossFade(AnimIDHide, 0);
         }
         if (stateTimer < LightningOrbsStartup)
         {
@@ -167,17 +193,17 @@ public class TyphoonBossAI : Enemy
             int orbCount = lightningOrbs.Length;
             float relativeTimer = stateTimer - LightningOrbsStartup - LightningOrbsActionCount * LightningOrbsActionRate;
 #if UNITY_EDITOR
-            this.relativeTimer = relativeTimer;
+            this.debug_numberDisplay = relativeTimer;
 #endif
             float a = Mathf.InverseLerp(.5f, 0, relativeTimer);
             Color orbColor = new(1, 1, 1, a);
             for (int i = 0; i < orbCount; i++)
             {
-                //don't cover entire arena, just enough to force player to the corner
                 TyphoonBossLightningOrb orb = lightningOrbs[i];
                 orb.sprite.color = orbColor;
                 orb.collider.enabled = false;
             }
+            animator.CrossFade(AnimIDIdle, 0);
             PositionOrbs(SampleCompositeFunction(stateTimer - LightningOrbsStartup, LightningOrbAccelerationDuration, LightningOrbSpinSpeedRadiansPerSec, LightningOrbAccelerationCurveExponent));
         }
         else
@@ -199,8 +225,8 @@ public class TyphoonBossAI : Enemy
             TyphoonBossLightningOrb orb = lightningOrbs[i];
             int perArmOrbIndex = i / 2;
             int orbSide = i % 2 * 2 - 1;
-            float orbDist = perArmOrbIndex;//3 is dist
-            float offset = orbSide * Mathf.PI * .5f - perArmOrbIndex * 2f / orbCount;
+            float orbDist = perArmOrbIndex;
+            float offset = orbSide * Mathf.PI * 0.5f - perArmOrbIndex * 3f / orbCount;
             orb.transform.SetPositionAndRotation(center + (spinAmount + offset).PolarVector(orbDist), Quaternion.Euler(0, 0, stateTimer * 200));
         }
     }
@@ -211,39 +237,40 @@ public class TyphoonBossAI : Enemy
         if (stateTimer < LightningOrbsStartup)
         {
             Vector2 playerPos = GameManager.PlayerPosition;
-            movementTargetPoint.Set(playerPos.x, arenaCenter.y + 2);
             RaycastHit2D hit = Physics2D.Raycast(playerPos, Vector2.down, 20f, Layers.Tiles);
+            movementTargetPoint.Set(playerPos.x, hit.point.y + LightningBossYDistFromGround);
             lightningTargetPoint.Set(playerPos.x, hit.point.y);
             transform.position = Helper.Decay(transform.position, movementTargetPoint, 5);
         }
         else if (stateTimer < LightningOrbsStartup + LightningActionRate * LightningActionCount)
         {
-            float relativeTimer = stateTimer - LightningOrbsStartup;
-            float actionProgress = Mathf.InverseLerp(0, LightningActionRate, relativeTimer % LightningActionRate);
+            float relativeTimer = (stateTimer - LightningStartup) % LightningActionRate;
             if (ShouldDoAction(LightningStartup, LightningActionRate))
             {
                 Vector2 playerPos = GameManager.PlayerPosition;
-                movementTargetPoint.Set(playerPos.x, arenaCenter.y + 2);
                 RaycastHit2D hit = Physics2D.Raycast(playerPos, Vector2.down, 20f, Layers.Tiles);
+                movementTargetPoint.Set(playerPos.x, hit.point.y + LightningBossYDistFromGround);
                 lightningTargetPoint.Set(playerPos.x, hit.point.y);
             }
-            if (actionProgress < .5f)
+            if (relativeTimer < LightningTelegraphDuration)
             {
-                Helper.TelegraphLightning(actionProgress, transform.position + new Vector3(0, LightningYOffset), lightningTargetPoint, 0.5f, lightningTelegraphParticles);
+                animator.CrossFade(AnimIDLightningPre, 0);
+                Helper.TelegraphLightning(relativeTimer, transform.position + new Vector3(0, LightningSpawnYOffset), lightningTargetPoint, LightningTelegraphDuration, lightningTelegraphParticles);
             }
-            else//if action progress >= 0.5
+            else//if relativeTimer > LightningTelegraphDuration
             {
                 if (!lightningRenderer.LightningActive)
                 {
-                    EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, lightningTargetPoint, LightningActionRate / 2f);
-                    lightningRenderer.ActivateAndSetAttributes(.1f, transform.position + new Vector3(0, LightningYOffset), lightningTargetPoint, LightningActionRate / 2f);
+                    animator.CrossFade(AnimIDLightning, 0);
+                    EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, lightningTargetPoint, LightningDuration);
+                    lightningRenderer.ActivateAndSetAttributes(.1f, transform.position + new Vector3(0, LightningSpawnYOffset), lightningTargetPoint, LightningDuration);
                 }
                 Vector2 lightningCenter = lightningRenderer.CenterPoint;
                 Vector2 deltaPos = lightningTargetPoint - (Vector2)transform.position;
                 float angle = Mathf.Atan2(deltaPos.y, deltaPos.x);
-                Vector2 size = new Vector2(.5f, deltaPos.magnitude);
+                Vector2 size = new(.5f, deltaPos.magnitude);
                 Collider2D playerCollider = Physics2D.OverlapBox(lightningCenter, size, angle, Layers.Player);
-                if(playerCollider != null)
+                if (playerCollider != null)
                 {
                     playerCollider.GetComponent<PlayerLife>().Damage(4);
                 }
@@ -252,24 +279,40 @@ public class TyphoonBossAI : Enemy
         }
         else if (stateTimer < LightningOrbsStartup + LightningActionRate * LightningActionCount + LightningDelay)
         {
-            transform.position = Helper.Decay(transform.position, arenaCenter + stateTimer.PolarVector(2), 10);
+            animator.CrossFade(AnimIDIdle, 0);
+            float progress = (stateTimer - LightningOrbsStartup - (LightningActionRate * LightningActionCount)) / LightningDelay;
+            float dist = progress * RainBossYOffsetFromArenaCenterInitially;
+            float offsetRotation = Mathf.LerpUnclamped(Mathf.PI * 3, 0, progress);
+            transform.position = Helper.Decay(transform.position, arenaCenter + offsetRotation.PolarVector(dist), 10);
+#if UNITY_EDITOR
+            debug_numberDisplay = progress;
+            handlesColor = Color.red;
+#endif
+
         }
         else
         {
-            SwitchState((short)Random.Range(StateIDRainLeftToRight, StateIDRainRightToLeft + 1), RainActionCount);
+#if UNITY_EDITOR
+            handlesColor = Color.green;
+#endif
+            SwitchState((byte)Random.Range(StateIDRainLeftToRight, StateIDRainRightToLeft + 1), RainActionCount);
         }
     }
 
     //sprite de ataque de chuva com as duas mãos apoiadas na nuvem
     private void State_Rain()
     {
-        //go above center of arena, then curve down to one of the edges, and then slide left while raining
-        if(stateTimer < RainStartup)
+        if (StateJustStarted)
         {
-            Vector2 origin = arenaCenter + new Vector2(0, 2);
+            animator.CrossFade(AnimIDIdle, 0);
+        }
+        //go above center of arena, then curve down to one of the edges, and then slide left while raining
+        if (stateTimer < RainStartup)
+        {
+            Vector2 origin = arenaCenter - new Vector2(0, 2);
             float xOffset = state == StateIDRainLeftToRight ? -ArenaWidth / 2 + 1 : ArenaWidth / 2 - 1;
-            Vector2 targetPoint = new Vector2(arenaCenter.x + xOffset, arenaCenter.y + 3);
-            float progress = Mathf.InverseLerp(0, RainStartup - .2f, stateTimer);
+            Vector2 targetPoint = new(arenaCenter.x + xOffset, arenaCenter.y + RainBossYOffsetFromArenaCenterInitially);
+            float progress = Mathf.InverseLerp(0, RainStartup / 2f, stateTimer);
             progress = Easings.SqrInOut(progress);
             targetPoint.x = Mathf.Lerp(origin.x, targetPoint.x, Easings.SqrOut(progress));
             targetPoint.y = Mathf.Lerp(origin.y, targetPoint.y, Easings.SqrIn(progress));
@@ -282,35 +325,38 @@ public class TyphoonBossAI : Enemy
 
             float progress = Mathf.InverseLerp(0, RainActionRate * RainActionCount, stateTimer - RainStartup);
             progress = Easings.SqrInOut(progress);
-            Vector2 targetPoint = new Vector2(arenaCenter.x + Mathf.Lerp(startX, endX, progress), arenaCenter.y + 3);
+            Vector2 targetPoint = new(arenaCenter.x + Mathf.Lerp(startX, endX, progress), arenaCenter.y + RainBossYOffsetFromArenaCenterInitially);
             transform.position = Helper.Decay(transform.position, targetPoint, 20);
             if (ShouldDoAction(RainStartup, RainActionRate))
             {
-                if(Helper.TryFindFreeIndex(rainProjPool, out int index))
+                animator.CrossFade(AnimIDLightning, 0);
+                if (Helper.TryFindFreeIndex(rainProjPool, out int index))
                 {
                     TyphoonEnemyCloudProjectile rainProj = rainProjPool[index];
                     rainProj.gameObject.SetActive(true);
-                    rainProj.transform.position = transform.position + new Vector3(Random2.Float(-0.5f, 0.5f), 0);
-                    rainProj.rb.velocity = new Vector2(0, -5);
+                    rainProj.transform.position = transform.position + new Vector3(Random2.Float(-RainProjSpawnHalfXSpread, RainProjSpawnHalfXSpread), RainProjSpawnPositionYoffset);
+                    rainProj.rb.velocity = new Vector2(0, RainProjYVelocity);
                     rainProj.timer = 0;
                 }
             }
         }
         else if (stateTimer < RainStartup + RainActionCount * RainActionRate + RainDelay)
         {
-            Vector2 origin = arenaCenter + new Vector2(0, 2);
+            Vector2 origin = arenaCenter - new Vector2(0, 2);
             float xOffset = state == StateIDRainLeftToRight ? ArenaWidth / 2 - 2 : -ArenaWidth / 2 + 2;
-            Vector2 targetPoint = new Vector2(arenaCenter.x + xOffset, arenaCenter.y + 3);
+            Vector2 targetPoint = new(arenaCenter.x + xOffset, arenaCenter.y + RainBossYOffsetFromArenaCenterInitially);
             //progress is inverted, instead of 0 to 1 so it goes from 1 to 0
-            float progress = 1 - Mathf.InverseLerp(0, RainStartup - .2f, stateTimer - RainDelay - RainActionCount * RainActionRate);
+            float progress = 1 - Mathf.InverseLerp(0, RainStartup / 2f, stateTimer - RainDelay - RainActionCount * RainActionRate);
             progress = Easings.SqrInOut(progress);
             targetPoint.x = Mathf.Lerp(origin.x, targetPoint.x, Easings.SqrOut(progress));
             targetPoint.y = Mathf.Lerp(origin.y, targetPoint.y, Easings.SqrIn(progress));
             transform.position = Helper.Decay(transform.position, targetPoint, 20);
+            animator.CrossFade(AnimIDIdle, 0);
         }
         else
         {
-            SwitchState(StateIDLightningOrbs, LightningOrbsActionCount);
+            //SwitchState(StateIDLightningOrbs, LightningOrbsActionCount);
+            SwitchState(StateIDLightning, LightningActionCount);
         }
     }
     public void ChangeToIntro()
@@ -319,14 +365,14 @@ public class TyphoonBossAI : Enemy
         state = StateIDIntro;
         actionTimer = stateTimer = 0;
     }
-    void SwitchState(short nextStateID, int nextStateActionCount)
+    void SwitchState(byte nextStateID, sbyte nextStateActionCount)
     {
         state = nextStateID;
         stateTimer = -Time.deltaTime;
         actionTimer = -Time.deltaTime;
         actionCounter = nextStateActionCount;
     }
-    void TrySwitchState(short nextStateID, int currentActionCount, float currentStartup, float currentActionRate, float currentExtraDelay, int nextStateActionCount)
+    void TrySwitchState(byte nextStateID, int currentActionCount, float currentStartup, float currentActionRate, float currentExtraDelay, sbyte nextStateActionCount)
     {
         if (stateTimer > currentActionCount * currentActionRate + currentStartup + currentExtraDelay)
         {
@@ -400,10 +446,12 @@ public class TyphoonBossAI : Enemy
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }
 #if UNITY_EDITOR
-    float relativeTimer;
+    Color handlesColor;
+    float debug_numberDisplay;
     private void OnDrawGizmos()
     {
-        Handles.Label(transform.position + Vector3.up, relativeTimer.ToString());
+        Handles.color = handlesColor;
+        Handles.Label(arenaCenter + Vector2.up, debug_numberDisplay.ToString());
     }
 #endif
 }

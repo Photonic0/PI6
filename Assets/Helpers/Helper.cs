@@ -319,14 +319,14 @@ namespace Assets.Helpers
         public static float MsToFps(float milliseconds) => 1000.0f / milliseconds;
         public static void TelegraphLightning(float timer, Vector2 pointA, Vector2 pointB, float telegraphDuration, ParticleSystem lightningTelegraphParticles, float timerOffset = -0.2f)
         {
-            timer += timerOffset;
             if (lightningTelegraphParticles != null)
             {
                 float chancePer45thSec = .5f;
                 Vector2 node1 = pointA;
                 Vector2 node2 = pointB;
-                float timeLeftUntilActivation = telegraphDuration - timer;
-                float sizeIncrease = Remap(timer, 0, telegraphDuration, 0, 0.25f);
+                float timeLeftUntilActivation = telegraphDuration - timer - timerOffset;
+                float sizeIncrease = Remap(timer, 0, telegraphDuration - timerOffset, 0, 0.25f);
+
                 if (Random2.Percent(chancePer45thSec, 45))
                 {
                     ParticleSystem.EmitParams emitParams = new();

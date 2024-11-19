@@ -203,7 +203,7 @@ MonoBehaviour:
   weaponBarBack: {fileID: 6487585635144504546}
   bossLifeBarOutline: {fileID: 6487585635345973934}
   bossLifeBarFill: {fileID: 6487585635165088489}
-  bossLifeBarBack: {fileID: 6487585635144504546}
+  bossLifeBarBack: {fileID: 6487585636369750036}
   weaponUpgradePanel: {fileID: 6487585635647043807}
   basicWeaponBarFill: {fileID: 6487585635421404731}
   typhoonWeaponBarFill: {fileID: 6487585636211120447}

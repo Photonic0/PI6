@@ -21,6 +21,7 @@ public class TyphoonEnemyLightningCloud : Enemy
     [SerializeField] Rigidbody2D rb;
     [SerializeField] SimpleLightningRenderer lightningEffect;
     [SerializeField] new Transform transform;
+    [SerializeField] ParticleSystem lightningTelegraphParticles;
     private void Awake()
     {
         transform = base.transform;
@@ -88,7 +89,9 @@ public class TyphoonEnemyLightningCloud : Enemy
             RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, Layers.Tiles);
             Vector2 start = transform.position + new Vector3(0, -0.3f);
             Vector2 end = hit.point;
-            //add telegraph later
+            
+            Vector2 parentPos = lightningTelegraphParticles.transform.position;
+            Helper.TelegraphLightning(timer, start - parentPos, end - parentPos, AttackTelegraphDuration, lightningTelegraphParticles);
         }
         else if (timer < AttackDuration + AttackTelegraphDuration)
         {
@@ -96,6 +99,7 @@ public class TyphoonEnemyLightningCloud : Enemy
             if (!lightningEffect.gameObject.activeInHierarchy)
             {
                 lightningEffect.ActivateAndSetAttributes(0.1f, start, end, AttackDuration);
+                EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, end, AttackDuration);
             }
             Collider2D playerCollider = Physics2D.OverlapBox(boxCenter, boxSize, attackDirection.Atan2Deg(), Layers.Player);
             if (playerCollider != null)
