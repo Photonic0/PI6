@@ -48,7 +48,11 @@ public class TyphoonHazardFan : MonoBehaviour
         float halfWidth = WindColumnWidth / 2;
         float rotationAmount = -transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         playerPos = (playerPos - center).RotatedBy(rotationAmount) + center;
+#if UNITY_EDITOR
+
         debug_transformedPlayerPosition = playerPos;
+#endif
+
         if (playerPos.x < center.x + halfWidth && playerPos.x > center.x - halfWidth && playerPos.y > center.y)
         {
             float deltaY = playerPos.y - center.y;
@@ -56,8 +60,10 @@ public class TyphoonHazardFan : MonoBehaviour
             Vector2 vel = new Vector2(0, pushSpeed).RotatedBy(-rotationAmount);
             //don't need to rotate the velocity for some reason idk why
             //vel = vel.RotatedBy(-rotationAmount);
-            debug_pushSpeedVelVector = vel;
+#if UNITY_EDITOR
 
+            debug_pushSpeedVelVector = vel;
+#endif
             GameManager.PlayerControl.acceleration += vel * Time.deltaTime;
         }
         if (timer > OnDuration)
@@ -68,6 +74,8 @@ public class TyphoonHazardFan : MonoBehaviour
             animator.enabled = false;
         }
     }
+#if UNITY_EDITOR
+
     [SerializeField] Vector2 debug_transformedPlayerPosition;
     [SerializeField] Vector2 debug_pushSpeedVelVector;
     private void OnDrawGizmos()
@@ -85,4 +93,6 @@ public class TyphoonHazardFan : MonoBehaviour
             Gizmos.DrawLine(transform.position, transform.position + (Vector3)debug_pushSpeedVelVector);
         }
     }
+#endif
+
 }

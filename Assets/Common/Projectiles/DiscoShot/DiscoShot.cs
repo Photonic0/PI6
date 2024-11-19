@@ -103,11 +103,15 @@ public class DiscoShot : Projectile
             }
         }
     }
+#if UNITY_EDITOR
+
     private void OnDrawGizmos()
     {
         Gizmos2.DrawHDWireCircle(transform.position, .35f, 30);
         Gizmos.DrawWireCube(transform.position, new Vector3(1, 3));
     }
+#endif
+
     public void ResetValues()
     {
         sparkleTimers = new float[sparkles.Length];

@@ -1,6 +1,7 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
+using Assets.Common.Systems;
 using System.Collections;
 using UnityEngine;
 
@@ -81,7 +82,7 @@ public class PlayerControl : MonoBehaviour
             }
             jumpTimeLeft -= Time.deltaTime;
         }
-        if (jumpTimeLeft < MaxJumpTime && jumpTimeLeft > 0 && Input.GetKeyUp(KeyCode.W))
+        if (jumpTimeLeft < MaxJumpTime && jumpTimeLeft > 0 && Input.GetKeyUp(KeyCode.W) &&rb.velocity.y > 0)
         {
             move.y *= .5f;
             jumpTimeLeft = 0;
@@ -130,23 +131,20 @@ public class PlayerControl : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         GetOverlapBoxParams(out Vector2 point, out Vector2 size);
-        if (Physics2D.OverlapBox(point, size, 0, Layers.Tiles))
+        Collider2D collisionDetect = Physics2D.OverlapBox(point, size, 0, Layers.Tiles);
+        if (collisionDetect != null && collision.gameObject.CompareTag(Tags.Tiles))
         {
             jumpTimeLeft = MaxJumpTime;
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
-        GetOverlapBoxParams(out Vector2 point, out Vector2 size);
-        if (Physics2D.OverlapBox(point, size, 0, Layers.Tiles))
-        {
-            jumpTimeLeft = MaxJumpTime;
-        }
+        OnCollisionEnter2D(collision);
     }
     void GetOverlapBoxParams(out Vector2 point, out Vector2 size)
     {
         point = (Vector2)transform.position - new Vector2(0, 1.05f);
-        size = new Vector2(1.39f, 0.1f);
+        size = new Vector2(1.35f, 0.1f);
     }
     private void OnDrawGizmos()
     {

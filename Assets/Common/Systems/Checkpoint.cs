@@ -55,8 +55,11 @@ namespace Assets.Common.Systems
         {
             if (collider != null)
             {
+                Gizmos.color = Color.green;
                 Gizmos2.DrawLinesInBoxCollider(collider, 2, true);
             }
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawCube(transform.position, new Vector3(1.4f, 2, .05f));
         }
 #endif
     }

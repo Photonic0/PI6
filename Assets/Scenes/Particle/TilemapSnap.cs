@@ -1,5 +1,6 @@
 using Assets.Helpers;
 using UnityEngine;
+#if UNITY_EDITOR
 
 public class TilemapSnap : MonoBehaviour
 {
@@ -66,3 +67,4 @@ public class TilemapSnap : MonoBehaviour
         Gizmos.color = Color.cyan;
           }
 }
+#endif
