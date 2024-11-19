@@ -12,6 +12,8 @@ public class DiscoMusicEventManager : MonoBehaviour
     public const double SecondsPerBeat = 60.0 / BPM;
     public const int BeatsPerMusicSplit = 16;
     public bool Paused { get; private set; }
+    public DiscoBossMusicHandler discoBossMusicHandler;
+    bool DiscoBossMusicStarted => discoBossMusicHandler != null && discoBossMusicHandler.StartedMusic;
     public static DiscoMusicEventManager instance;
     private double beatTimer;
     public int beatCounter;
@@ -39,7 +41,7 @@ public class DiscoMusicEventManager : MonoBehaviour
             beatTimer = 0;
             instance = this;
         }
-        
+
         SceneManager.sceneUnloaded += UnloadSingleton;
     }
     private void Start()
@@ -59,7 +61,7 @@ public class DiscoMusicEventManager : MonoBehaviour
 
     void Update()
     {
-        if (Paused)
+        if (Paused || DiscoBossMusicStarted)
             return;
 
         beatTimer += Time.deltaTime;
@@ -118,15 +120,16 @@ public class DiscoMusicEventManager : MonoBehaviour
     }
     public static void PauseMusic()
     {
-        if (instance == null)
-            return;
+        if (instance == null) return;
         instance.Paused = true;
         instance.musicAudioSource.Pause();
     }
     public static void UnPauseMusic()
     {
-        if(instance == null) return;
+        if (instance == null) return;
+        if (instance.DiscoBossMusicStarted) return;
         instance.Paused = false;
         instance.musicAudioSource.UnPause();
     }
+
 }

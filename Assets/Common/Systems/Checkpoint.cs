@@ -8,13 +8,11 @@ namespace Assets.Common.Systems
 {
     public class Checkpoint : MonoBehaviour
     {
-        //index is assigned by populator
+        //index is assigned by multi scene singleton populator
         public int index;
         [SerializeField] Transform respawnPoint;
         [SerializeField] GameObject[] objsToDespawn;
-#if UNITY_EDITOR
-        [SerializeField] new BoxCollider2D collider;
-#endif
+
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
@@ -51,6 +49,7 @@ namespace Assets.Common.Systems
             }
         }
 #if UNITY_EDITOR
+        [SerializeField] new BoxCollider2D collider;
         private void OnDrawGizmos()
         {
             if (collider != null)

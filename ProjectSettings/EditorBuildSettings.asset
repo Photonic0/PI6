@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Stages/Typhoon/TyphoonStageScene.unity
     guid: 9ec1490b351f86b40b17f5c13402fda2
+  - enabled: 1
+    path: Assets/Stages/Disco/DiscoStageScene_TesteProDaniel.unity
+    guid: acef4e1ac73bdf144907d7c578913bf1
   m_configObjects: {}

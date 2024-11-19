@@ -128,7 +128,7 @@ public class TyphoonBossAI : Enemy
     {
         if (StateJustStarted)
         {
-            UIManager.ActivateBossLifeBar(FlipnoteColors.Yellow);
+            UIManager.ActivateBossLifeBar(FlipnoteColors.Blue);
         }
         float progress = stateTimer / IntroDuration;
         if (progress <= .5f)

@@ -49,7 +49,6 @@ public class TyphoonHazardFan : MonoBehaviour
         float rotationAmount = -transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         playerPos = (playerPos - center).RotatedBy(rotationAmount) + center;
 #if UNITY_EDITOR
-
         debug_transformedPlayerPosition = playerPos;
 #endif
 

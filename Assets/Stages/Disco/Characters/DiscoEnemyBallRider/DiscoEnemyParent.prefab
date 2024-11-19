@@ -33,7 +33,7 @@ Transform:
   - {fileID: 3579337492968634299}
   - {fileID: 3579337491592245425}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &203913043569798527
 MonoBehaviour:
@@ -53,6 +53,7 @@ MonoBehaviour:
   Speed: 4
   ChasingSpeed: 6
   RaycastSize: 3
+  GroundCheckDistance: 1
 --- !u!1 &3579337491592245452
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,8 +277,8 @@ GameObject:
   - component: {fileID: 6265113242741698081}
   - component: {fileID: 5642048508602803540}
   m_Layer: 7
-  m_Name: DiscoHazardCannonCannonball
-  m_TagString: Untagged
+  m_Name: Ball
+  m_TagString: ChHs
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
