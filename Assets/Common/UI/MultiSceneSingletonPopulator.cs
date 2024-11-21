@@ -1,5 +1,7 @@
+using Assets.Common.Consts;
 using Assets.Common.Systems;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 //doing this because gamemanager, uimanager etc are DontDestroyOnLoad
 //and these objects are scene-specific.
 //don't use this for UI elements. use script on canvas prefab instead.
@@ -10,6 +12,14 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
 
     private void Awake()
     {
+#if UNITY_EDITOR
+        if (GameManager.instance == null)
+        {
+            SceneManager.LoadScene(SceneIndices.MainMenu);
+            return;
+        }
+#endif
+
         for (int i = 0; i < checkpoints.Length; i++)
         {
             checkpoints[i].index = i;

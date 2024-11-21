@@ -91,7 +91,7 @@ public class BossGate : MonoBehaviour
         {
             spikeBoss.ChangeToIntro();
         }
-        if(boss is TyphoonBossAI typhoonBoss)
+        else if(boss is TyphoonBossAI typhoonBoss)
         {
             if(SceneManager.GetActiveScene().buildIndex == SceneIndices.TyphoonStage)
             {
@@ -101,6 +101,10 @@ public class BossGate : MonoBehaviour
                 FindObjectOfType<TyphoonCameraSystem>().enabled = false;
             }
             typhoonBoss.ChangeToIntro();
+        }
+        else if(boss is DiscoBossAI discoBoss)
+        {
+            discoBoss.ChangeToIntro();
         }
     }
 }

@@ -8,6 +8,12 @@ using UnityEngine.Tilemaps;
 
 public class DiscoMusicEventManager : MonoBehaviour
 {
+    public enum SyncableObjAddFlags
+    {
+        BossOnly = 0b01,
+        LevelOnly = 0b10,
+        Both = BossOnly | LevelOnly
+    }
     public const float BPM = 144f;
     public const double SecondsPerBeat = 60.0 / BPM;
     public const int BeatsPerMusicSplit = 16;
@@ -16,6 +22,8 @@ public class DiscoMusicEventManager : MonoBehaviour
     bool DiscoBossMusicStarted => discoBossMusicHandler != null && discoBossMusicHandler.StartedMusic;
     public static DiscoMusicEventManager instance;
     private double beatTimer;
+    
+    private float delayTimer;//need to delay the execution of the music synced action a bit
     public int beatCounter;
     private List<IMusicSyncable> syncableObjects;
     [SerializeField] AudioSource musicAudioSource;
@@ -63,12 +71,12 @@ public class DiscoMusicEventManager : MonoBehaviour
     {
         if (Paused || DiscoBossMusicStarted)
             return;
-
+        delayTimer += Time.deltaTime;
         beatTimer += Time.deltaTime;
         if (beatTimer > SecondsPerBeat)
         {
             beatTimer -= SecondsPerBeat;
-
+            delayTimer = -0.1f;
             if (beatCounter % BeatsPerMusicSplit == 0)
             {
                 musicAudioSource.PlayOneShot(musicSplits[(beatCounter / BeatsPerMusicSplit) % musicSplits.Length]);
@@ -77,28 +85,27 @@ public class DiscoMusicEventManager : MonoBehaviour
 #endif
             }
             beatCounter++;
-            StartCoroutine(WaitABitToActuallyDoActionAfterPlayingSplit());
+           
         }
-    }
-    IEnumerator WaitABitToActuallyDoActionAfterPlayingSplit()
-    {
-        yield return new WaitForSecondsRealtime(.05f);
-        int beatCounter = this.beatCounter - 1;//because the beat counter increased before this code executed
-        if (syncableObjects != null && syncableObjects.Count > 0)
+        if (delayTimer > 0 && delayTimer < 9999999)
         {
-            for (int i = 0; i < syncableObjects.Count; i++)
+            delayTimer = float.MaxValue;
+            if (syncableObjects != null && syncableObjects.Count > 0)
             {
-                IMusicSyncable syncableObj = syncableObjects[i];
-                if (beatCounter % syncableObj.BeatsPerAction == 0)
+                for (int i = 0; i < syncableObjects.Count; i++)
                 {
-                    syncableObj.DoMusicSyncedAction();
+                    IMusicSyncable syncableObj = syncableObjects[i];
+                    if (beatCounter % syncableObj.BeatsPerAction == 0)
+                    {
+                        syncableObj.DoMusicSyncedAction();
+                    }
                 }
             }
-        }
-        discoTileMaterialAsset.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
-        for (int i = 0; i < tileRenderers.Length; i++)
-        {
-            tileRenderers[i].material.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
+            discoTileMaterialAsset.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
+            for (int i = 0; i < tileRenderers.Length; i++)
+            {
+                tileRenderers[i].material.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
+            }
         }
     }
 #if UNITY_EDITOR
@@ -111,17 +118,26 @@ public class DiscoMusicEventManager : MonoBehaviour
     }
 #endif
 
-    public static void AddSyncableObject(IMusicSyncable syncableObj)
+    public static void AddSyncableObject(IMusicSyncable syncableObj, SyncableObjAddFlags flags = SyncableObjAddFlags.LevelOnly)
     {
         if (instance != null && syncableObj != null)
         {
-            instance.syncableObjects.Add(syncableObj);
+            if ((flags & SyncableObjAddFlags.LevelOnly) == SyncableObjAddFlags.LevelOnly)
+            {
+                instance.syncableObjects.Add(syncableObj);
+            }
+            if((flags & SyncableObjAddFlags.BossOnly) == SyncableObjAddFlags.BossOnly)
+            {
+                instance.discoBossMusicHandler.AddToSyncables(syncableObj);
+            }
         }
     }
+
     public static void PauseMusic()
     {
         if (instance == null) return;
         instance.Paused = true;
+        instance.discoBossMusicHandler.Pause();
         instance.musicAudioSource.Pause();
     }
     public static void UnPauseMusic()
@@ -129,6 +145,7 @@ public class DiscoMusicEventManager : MonoBehaviour
         if (instance == null) return;
         if (instance.DiscoBossMusicStarted) return;
         instance.Paused = false;
+        instance.discoBossMusicHandler.UnPause();
         instance.musicAudioSource.UnPause();
     }
 
