@@ -1,7 +1,5 @@
 using Assets.Helpers;
 using UnityEngine;
-
-//[ExecuteAlways]
 public class DiscoBossSpotlight : MonoBehaviour
 {
 #if UNITY_EDITOR
@@ -53,16 +51,16 @@ public class DiscoBossSpotlight : MonoBehaviour
     {
 
         this.timer += Time.deltaTime * timerIncreaseMultiplier;
-        if(this.timer > positionPathing.SplineCount)
+        float timer = Timer;
+        if (timer > positionPathing.SplineCount)
         {
             gameObject.SetActive(false);
             return;
         }
-        float timer = Timer;
         Vector2 from = transform.position;
         Vector2 toPos = positionPathing.SampleClamped(timer);
-        float armLength1 = this.armLength1 * armClose.transform.lossyScale.y;
-        float armLength2 = this.armLength2 * armFar.transform.lossyScale.y;
+        float armLength1 = this.armLength1 * armClose.lossyScale.y;
+        float armLength2 = this.armLength2 * armFar.lossyScale.y;
         //float lightDistanceFromPivotNeeded = spotlightBody.lossyScale.x * .5f;
 
         Vector2 jointPoint = flip ? GetJointPointInverted(from, toPos, armLength1, armLength2) : GetJointPoint(from, toPos, armLength1, armLength2);
@@ -216,6 +214,7 @@ public class DiscoBossSpotlight : MonoBehaviour
     public void StartAnimation(float duration)
     {
         gameObject.SetActive(true);
+        positionPathing.Start();
         float timeToReachEnd = positionPathing.SplineCount;
         //if duration is 2s, and time to reach end is 1s, timeIncreaseMultiplier will be 0.5
         timerIncreaseMultiplier = timeToReachEnd / duration;

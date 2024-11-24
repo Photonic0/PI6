@@ -7,11 +7,11 @@ public class SpriteColorSwitcher : MonoBehaviour, IMusicSyncable
 {
     byte colorID;
     [SerializeField] SpriteRenderer sprite;
-
+    [SerializeField] DiscoMusicEventManager.SyncableObjAddFlags syncableObjAddFlags = DiscoMusicEventManager.SyncableObjAddFlags.LevelOnly;
     public int BeatsPerAction => 1;
     private void Start()
     {
-        DiscoMusicEventManager.AddSyncableObject(this);
+        DiscoMusicEventManager.AddSyncableObject(this, syncableObjAddFlags);
         Vector3 pos = transform.position;
         colorID = (byte)(((int)pos.x + (int)pos.y) % 2);
     }

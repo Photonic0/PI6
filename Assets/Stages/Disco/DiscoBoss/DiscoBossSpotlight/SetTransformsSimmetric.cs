@@ -1,3 +1,4 @@
+using Assets.Helpers;
 using UnityEngine;
 
 public class SetTransformsSimmetric : MonoBehaviour
@@ -9,6 +10,7 @@ public class SetTransformsSimmetric : MonoBehaviour
     [SerializeField] bool symmetryY;
     [SerializeField] bool copyX;
     [SerializeField] bool copyY;
+    [SerializeField] bool setRotations;
     [SerializeField] bool checkToSet;
     private void OnDrawGizmos()
     {
@@ -19,10 +21,12 @@ public class SetTransformsSimmetric : MonoBehaviour
             {
                 Vector3 source = this.source[i].position;
                 Vector3 result = transformsToSet[i].position;
+                Vector2 sourceRotation = (transform.rotation.eulerAngles.z * Mathf.Deg2Rad).PolarVector();
 
                 if (symmetryX)
                 {
                     result.x = center.x + (center.x - source.x);
+                    sourceRotation.x = -sourceRotation.x;
                 }
                 else if (copyX)
                 {
@@ -31,12 +35,17 @@ public class SetTransformsSimmetric : MonoBehaviour
                 if (symmetryY)
                 {
                     result.y = center.y + (center.y - source.y);
+                    sourceRotation.y = -sourceRotation.y;
                 }
                 else if (copyY)
                 {
                     result.y = source.y;
                 }
                 transformsToSet[i].position = result;
+                if (setRotations)
+                {
+                    transformsToSet[i].rotation = sourceRotation.ToRotation();
+                }
             }
             checkToSet = false;
         }

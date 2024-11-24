@@ -52,6 +52,7 @@ public class BossGate : MonoBehaviour
                 newCameraPos = Helper.Decay(newCameraPos, cameraPositionLockPoint.position, 15);
                 newCameraPos.z = cameraZ;
                 mainCamTransform.position = newCameraPos;
+                mainCamTransform.GetComponent<TyphoonCameraSystem>().enabled = false;
             }
         }
         float oldTimer = timer;

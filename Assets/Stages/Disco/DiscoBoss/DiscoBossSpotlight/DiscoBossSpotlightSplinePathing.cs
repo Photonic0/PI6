@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
-//[ExecuteAlways]
 public class DiscoBossSpotlightSplinePathing : MonoBehaviour
 {
     public Transform[] pathTransforms;
     public bool c2Continuous;
     public Vector2[][] path;
     public int SplineCount => path == null ? 0 : path.Length;
-    void Start()
+    public void Start()
     {
 #if UNITY_EDITOR
         SplinePreviewGUI.AddToDisplay(this);
@@ -111,17 +109,16 @@ public class DiscoBossSpotlightSplinePathing : MonoBehaviour
         Vector2 end = path[index][3];
         return CubicBezier(inf2, start, end, inf1, t);
     }
+#if UNITY_EDITOR
+
     private void Update()
     {
-#if UNITY_EDITOR
         if (populateBezierPointList || constantLinePointUpdate)
         {
             Start();
             populateBezierPointList = false;
         }
-#endif
     }
-#if UNITY_EDITOR
     [Header("debug fields")]
     [SerializeField] bool populateBezierPointList;
     [SerializeField] int bezierGizmoLineSegmentsForApproximation;
@@ -224,6 +221,6 @@ class SplinePreviewGUI : Editor
             }
         }
     }
-}
 #endif
+}
 

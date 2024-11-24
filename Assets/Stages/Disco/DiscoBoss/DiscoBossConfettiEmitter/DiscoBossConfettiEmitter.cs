@@ -16,7 +16,7 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
     [SerializeField] float maxWaitForExplosionTime;
     [SerializeField] float maxExplodeTime;
     [SerializeField] float maxGoDownTime;
-
+    [SerializeField] Vector2 positionOffset;
     byte state;
     const byte StateIDRest = 0;
     const byte StateIDRise = 1;
@@ -33,10 +33,14 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
         pos.x = Mathf.Floor(pos.x);
         pos.y = Mathf.Floor(pos.y);
         pos.x += .5f;
-        pos.y += .5f;
-        transform.position.Set(pos.x, pos.y - .5f, 0f);
-        startingPosition.Set(pos.x, pos.y - .5f, 0);
-        //snaps to tile
+        pos.x += positionOffset.x;
+        pos.y += positionOffset.y;
+
+        //pos.y += .5f;
+        //snaps to bottom middle of tile
+        startingPosition.Set(pos.x, pos.y, 0);
+        transform.position = pos;
+        state = StateIDRest;
     }
     void Update()
     {
@@ -72,7 +76,9 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
                     ConfettiExplosion();
                     checkedExplosionCollision = false;
                 }
-                transform.position = startingPosition + new Vector3(0, (float)Mathf.Sin(Mathf.Clamp(timer * 9, 0, Mathf.PI)));
+                float yOffset = Helper.Remap(timer,0, Mathf.Min(maxExplodeTime, 0.09f), Mathf.PI, Mathf.PI * 2);
+                //add 0.5 from the rise
+                transform.position = startingPosition + new Vector3(0, (float)Mathf.Sin(yOffset) * .3f +.5f);
                 if (timer > 0.1f && !checkedExplosionCollision)
                 {
                     CheckExplosionCollision();
@@ -97,7 +103,6 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
                 }
                 break;
             default://case StateIDRest
-                    //case StateIDWaitingForExplosionCall:
                 break;
         }
     }

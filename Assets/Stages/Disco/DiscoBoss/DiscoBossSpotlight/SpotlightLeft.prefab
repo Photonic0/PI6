@@ -127,7 +127,7 @@ MonoBehaviour:
   - 1
   - 1.05
   - 1.1
-  - 1.3
+  - 1.35
   - 4.86
   lightChangeTsIndicesToChangeCollision: 0a0000000b000000
   spotlightLight: {fileID: 955892632708006331}

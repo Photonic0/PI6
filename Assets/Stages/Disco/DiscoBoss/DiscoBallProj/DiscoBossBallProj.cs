@@ -3,11 +3,15 @@ using Assets.Helpers;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DiscoBossBallProj : MonoBehaviour
+public class DiscoBossBallProj : Projectile
 {
     VerletSimulator rope;
     [SerializeField] LineRenderer line;
+    [SerializeField] new CircleCollider2D collider;
     public Rigidbody2D rb;
+
+    public override int Damage => 5;
+
     public void Start()
     {
         transform.rotation = rb.velocity.ToRotation(90);
@@ -27,33 +31,41 @@ public class DiscoBossBallProj : MonoBehaviour
             dots.Add(dot);
         }
         line.positionCount = dotCount;
+        for (int i = 0; i < rope.dots.Count; i++)
+        {
+            line.SetPosition(i, rope.dots[i].position);
+        }
     }
     public void FixedUpdate()
     {
         Vector2 ballCenter = transform.position;
         transform.rotation = rb.velocity.ToRotation(90);
         rope.dots[0].position = GetBallTop() + rb.velocity * Time.fixedDeltaTime;
-        for (int i = 1; i < rope.dots.Count; i++)
-        {
-            Dot dot = rope.dots[i];
-            if (dot.isLocked)
-                continue;
-            Vector2 deltaPos = dot.position - ballCenter;
-            if(deltaPos.magnitude < .4f)
-            {
-                dot.position = ballCenter + deltaPos.normalized * .4f;
-            }
-        }
         rope.AddForce(Physics2D.gravity);
         rope.Simulate(Time.fixedDeltaTime);
         for (int i = 0; i < rope.dots.Count; i++)
         {
+            Dot dot = rope.dots[i];
+            if (dot.isLocked)
+            {
+                line.SetPosition(i, rope.dots[i].position);
+                continue;
+            }
+            Vector2 deltaPos = dot.position - ballCenter;
+            float minDist = 0.4f;
+            if (deltaPos.magnitude < minDist)
+            {
+                Vector2 targetPos = ballCenter + deltaPos.normalized * minDist;
+                deltaPos = targetPos - dot.position;
+                dot.position += deltaPos;
+                //dot.lastPosition += deltaPos;//do I change lastPosition too?
+            }
             line.SetPosition(i, rope.dots[i].position);
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    public override void OnTriggerEnter2D(Collider2D collision)
     {
-
+        base.OnTriggerEnter2D(collision);
         if (collision.CompareTag(Tags.Tiles))
         {
             gameObject.SetActive(false);
@@ -74,6 +86,9 @@ public class DiscoBossBallProj : MonoBehaviour
         float c = fromY - toY;
         SolveQuadratic(a, b, c, out onWayDown, out onWayUp);
     }
+    /// <summary>
+    /// time taken and peak height aren't calculated properly?
+    /// </summary>
     public static void GetLaunchVelocity(Vector2 from, Vector2 to, float timeTaken, float yAccel, float peakHeight, out Vector2 onWayUp, out Vector2 onWayDown)
     {
         float deltaX = to.x - from.x;
@@ -91,7 +106,7 @@ public class DiscoBossBallProj : MonoBehaviour
     }
     static float YVelocityNeededToReachTarget(float timeTaken, float peakHeight, float fromY, float toY)
     {
-        fromY = toY - fromY;
+        fromY = toY - fromY;//possibly comment out this line?
         float timeToPeak = timeTaken / 2;
         float g = (2 * (peakHeight - fromY)) / (timeToPeak * timeToPeak);
         float initialYVel = g * timeToPeak;
@@ -112,6 +127,16 @@ public class DiscoBossBallProj : MonoBehaviour
         minX = Mathf.Min(x1, x2);
         maxX = Mathf.Max(x1, x2);
     }
+    public void DisablePhysics()
+    {
+        rb.isKinematic = true;
+        collider.enabled = false;
+    }
+    public void EnablePhysics()
+    {
+        rb.isKinematic = false;
+        collider.enabled = true;
+    }
 #if UNITY_EDITOR
 
     private void OnDrawGizmos()
@@ -122,4 +147,26 @@ public class DiscoBossBallProj : MonoBehaviour
 
     static float YVelocityNeededToReachYPointIn(float timeTaken, float fromY, float toY, float yAccel) => (toY - fromY - 0.5f * yAccel * timeTaken * timeTaken) / timeTaken;
 
+    public void MoveTo(Vector2 targetPos)
+    {
+        if (rope == null)
+        {
+            Start();
+        }
+        Vector2 center = transform.position;
+        Vector2 deltaPos = targetPos - center;
+        center += deltaPos;
+        if (deltaPos.sqrMagnitude < .001f)
+        {
+            return;
+        }
+
+        for (int i = 1; i < rope.dots.Count; i++)
+        {
+            Dot dot = rope.dots[i];
+            dot.position += deltaPos;
+            dot.lastPosition += deltaPos;
+        }
+        transform.position = center;
+    }
 }

@@ -4827,7 +4827,6 @@ GameObject:
   - component: {fileID: 6237856564866389930}
   - component: {fileID: 6237856564866389929}
   - component: {fileID: 6237856564866389932}
-  - component: {fileID: 6237856564866389933}
   m_Layer: 0
   m_Name: DiscoBossConfettiEmitter
   m_TagString: Untagged
@@ -4870,7 +4869,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: -876546973899608171, guid: cf701c7eae448ad428873c3bb9d75ba9, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4890,7 +4889,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -5
   m_Sprite: {fileID: 466891898, guid: b25b000b7f586914f9ab019747aaa862, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -4946,18 +4945,6 @@ MonoBehaviour:
   maxWaitForExplosionTime: 0
   maxExplodeTime: 0
   maxGoDownTime: 0
+  positionOffset: {x: 0, y: 0}
   debug_TriggerExplosion: 0
   debug_particleCount: 0
---- !u!114 &6237856564866389933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6237856564866389926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 430327ebb8fe9b14bb7473cdfe917678, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprite: {fileID: 6237856564866389930}

@@ -1,6 +1,8 @@
 using Assets.Common.Characters.Main.Scripts.Weapons;
+using Assets.Common.Consts;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManagerScriptsPopulator : MonoBehaviour
@@ -25,9 +27,16 @@ public class UIManagerScriptsPopulator : MonoBehaviour
     [SerializeField] GameObject discoWeaponBarBack;
     [SerializeField] GameObject spikeWeaponBarBack;
 
-
+    static int debug_sceneToLoadInCoroutine;
     private void Awake()
     {
+        if(UIManager.Instance == null)
+        {
+            debug_sceneToLoadInCoroutine = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(SceneIndices.MainMenu);
+            //StartCoroutine(ReloadSceneDelayed());//wont work.... scene change stops coroutines
+            return;
+        }
         UIManager.Instance.lifeBarOutline = lifeBarOutline;
         UIManager.Instance.lifeBarFill = lifeBarFill;
         UIManager.Instance.weaponBarOutline = weaponBarOutline;
@@ -39,4 +48,9 @@ public class UIManagerScriptsPopulator : MonoBehaviour
         UIManager.Instance.weaponBarBack = weaponBarBack;
         PlayerWeaponManager.Initialize(weaponUpgradePanel, basicWeaponBarFill, typhoonWeaponBarFill, discoWeaponBarFill, spikeWeaponBarFill, weaponSelectArrow, typhoonWeaponBarBack, spikeWeaponBarBack, discoWeaponBarBack);
     }
+    //IEnumerator ReloadSceneDelayed()
+    //{
+    //    yield return 1f;
+    //    SceneManager.LoadScene(debug_sceneToLoadInCoroutine);
+    //}
 }
