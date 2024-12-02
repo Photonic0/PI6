@@ -52,13 +52,12 @@ public class DiscoBossBallProj : Projectile
                 continue;
             }
             Vector2 deltaPos = dot.position - ballCenter;
-            float minDist = 0.4f;
+            float minDist = 0.25f;
             if (deltaPos.magnitude < minDist)
             {
                 Vector2 targetPos = ballCenter + deltaPos.normalized * minDist;
                 deltaPos = targetPos - dot.position;
                 dot.position += deltaPos;
-                //dot.lastPosition += deltaPos;//do I change lastPosition too?
             }
             line.SetPosition(i, rope.dots[i].position);
         }

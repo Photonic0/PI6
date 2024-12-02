@@ -15,7 +15,7 @@
         public const int FriendlyProj = 1024;
         public const int HostileProj = 2048;
         public const int TilesOnly = 4096;
-
+        public const int PlayerHurtbox = 8192;
         public const int Nothing = 0;
         public const int Everything = int.MaxValue;
     }

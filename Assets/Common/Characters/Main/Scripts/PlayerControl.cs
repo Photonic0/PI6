@@ -1,8 +1,6 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
-using Assets.Common.Systems;
-using System.Collections;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -16,7 +14,8 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] float jumpSpeed;
     public AudioSource shootAudioSource;
     public Rigidbody2D rb;
-    public new Collider2D collider;
+    public Collider2D tileCollider;
+    public CapsuleCollider2D hurtboxCollider;
     public float shootCooldown;
     public float jumpTimeLeft = 0.15f;
     const float MaxJumpTime = 0.15f;
@@ -69,7 +68,7 @@ public class PlayerControl : MonoBehaviour
         }
         Position = transform.position;//so other objects can access the position without having to access transform.position
     }
-  
+
     private void Movement()
     {
         Vector2 velocity = rb.velocity;
@@ -82,7 +81,7 @@ public class PlayerControl : MonoBehaviour
             }
             jumpTimeLeft -= Time.deltaTime;
         }
-        if (jumpTimeLeft < MaxJumpTime && jumpTimeLeft > 0 && Input.GetKeyUp(KeyCode.W) &&rb.velocity.y > 0)
+        if (jumpTimeLeft < MaxJumpTime && jumpTimeLeft > 0 && Input.GetKeyUp(KeyCode.W) && rb.velocity.y > 0)
         {
             move.y *= .5f;
             jumpTimeLeft = 0;
@@ -94,12 +93,12 @@ public class PlayerControl : MonoBehaviour
     {
         shootCooldown -= Time.deltaTime;
         if (shootCooldown <= 0 && Input.GetKey(shootKey))
-        if (shootCooldown <= 0 && Input.GetKey(shootKey))
-        {
-            weapon.TryUse(ref shootCooldown);
-        } 
+            if (shootCooldown <= 0 && Input.GetKey(shootKey))
+            {
+                weapon.TryUse(ref shootCooldown);
+            }
     }
-   
+
     private void FixedUpdate()
     {
         if (GameManager.PlayerLife.Dead)
@@ -121,12 +120,14 @@ public class PlayerControl : MonoBehaviour
     public void DisableCollision()
     {
         rb.isKinematic = true;
-        collider.enabled = false;
+        tileCollider.enabled = false;
+        hurtboxCollider.enabled = false;
     }
     public void EnableCollision()
     {
         rb.isKinematic = false;
-        collider.enabled = true;
+        tileCollider.enabled = true;
+        hurtboxCollider.enabled = true;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

@@ -175,8 +175,7 @@ public class SpikeEnemyJumper : Enemy
             {
                 //rb.velocity = Vector2.Reflect(rb.velocity, collision.GetContact(0).normal);
                 //rb.velocity *= 4;
-                PlayerLife player = collision.gameObject.GetComponent<PlayerLife>();
-                player.Damage(5);
+                GameManager.PlayerLife.Damage(5);
                 rb.velocity = collision.GetContact(0).normal * 15;
             }
         }

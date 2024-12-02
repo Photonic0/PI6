@@ -1,6 +1,5 @@
 ﻿using Assets.Common.Consts;
 using Assets.Common.Interfaces;
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

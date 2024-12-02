@@ -18,5 +18,6 @@ public abstract class Projectile : MonoBehaviour
             OnHit(collision.gameObject);
             damageable.Damage(Damage);
         }
+        
     }
 }

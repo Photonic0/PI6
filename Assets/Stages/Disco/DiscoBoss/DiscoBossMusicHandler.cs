@@ -1,5 +1,6 @@
 using Assets.Common.Consts;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -38,6 +39,13 @@ public class DiscoBossMusicHandler : MonoBehaviour
     }
     public void StartMusic()
     {
+#if UNITY_EDITOR
+        if(debug_startMusicAtBeat > -1)
+        {
+            StartMusicNoIntro();
+            return;
+        }
+#endif
         DiscoMusicEventManager.PauseMusic();
         musicAudioSource.PlayOneShot(intro);
         playMusicFileNextBeat = false;
@@ -45,6 +53,8 @@ public class DiscoBossMusicHandler : MonoBehaviour
         beatTimer = -7f * SecondsPerBeat;//intro duration
         delayTimer = float.MaxValue;
         beatCounter = -1;
+        StartCoroutine(BossIntroBeatFrames());
+
     }
     void StartMusicNoIntro()
     {
@@ -94,21 +104,9 @@ public class DiscoBossMusicHandler : MonoBehaviour
         }
         if (delayTimer > 0 && delayTimer < 9999999f)
         {
-            for (int i = 0; i < syncableObjs.Length; i++)
-            {
-                syncableObjs[i].DoMusicSyncedAction();
-            }
-#if UNITY_EDITOR
-            debugtext.color = beatCounter % 2 == 0 ? Color.magenta : FlipnoteColors.Yellow;
-            debugtext.text = "current beat: " + beatCounter;
-#endif
+            DoBeatActions();
             delayTimer = float.MaxValue;
-            boss.beatFrame = true;
-            discoTileMaterialAsset.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
-            for (int i = 0; i < tileRenderers.Length; i++)
-            {
-                tileRenderers[i].material.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
-            }
+
         }
     }
     public void Pause()
@@ -139,6 +137,34 @@ public class DiscoBossMusicHandler : MonoBehaviour
         {
             Array.Resize(ref syncableObjs, syncableObjs.Length + 1);
             syncableObjs[^1] = obj;
+        }
+    }
+    IEnumerator BossIntroBeatFrames()
+    {
+        yield return new WaitForSeconds(.5f);
+        DoBeatActions();
+        for (int i = 0; i < 6; i++)
+        {
+            yield return new WaitForSeconds((float)SecondsPerBeat);
+            DoBeatActions();
+        }
+    }
+
+    private void DoBeatActions()
+    {
+        for (int i = 0; i < syncableObjs.Length; i++)
+        {
+            syncableObjs[i].DoMusicSyncedAction();
+        }
+#if UNITY_EDITOR
+        debugtext.color = beatCounter % 2 == 0 ? Color.magenta : FlipnoteColors.Yellow;
+        debugtext.text = "current beat: " + beatCounter;
+#endif
+        boss.beatFrame = true;
+        discoTileMaterialAsset.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
+        for (int i = 0; i < tileRenderers.Length; i++)
+        {
+            tileRenderers[i].material.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
         }
     }
 }

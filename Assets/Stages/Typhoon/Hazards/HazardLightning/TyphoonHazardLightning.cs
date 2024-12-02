@@ -126,7 +126,7 @@ public class TyphoonHazardLightning : MonoBehaviour
     {
         if (collision.gameObject.CompareTag(Tags.Player))
         {
-            collision.GetComponent<PlayerLife>().Damage(4);
+            GameManager.PlayerLife.Damage(4);
         }
     }
 #if UNITY_EDITOR

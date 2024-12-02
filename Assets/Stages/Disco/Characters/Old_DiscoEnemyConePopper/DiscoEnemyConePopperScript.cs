@@ -61,7 +61,7 @@ public class DiscoEnemyConePopperScript : MonoBehaviour, IMusicSyncable
         Vector2 direction = MovingSide ? Vector2.right : Vector2.left;
 
         // Lança o Raycast na direção do movimento
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, RaycastSize, Layers.Player);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, RaycastSize, Layers.PlayerHurtbox);
 
         // Verifica se o Raycast atingiu algum objeto
         if (hit.collider != null && hit.collider.gameObject == targetObject && isGrounded && !Attacking)

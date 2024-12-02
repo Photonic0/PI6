@@ -1,5 +1,6 @@
 using Assets.Common.Consts;
 using Assets.Common.Systems;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 //doing this because gamemanager, uimanager etc are DontDestroyOnLoad
@@ -7,7 +8,7 @@ using UnityEngine.SceneManagement;
 //don't use this for UI elements. use script on canvas prefab instead.
 public class MultiSceneSingletonPopulator : MonoBehaviour
 {
-   
+
     [SerializeField] Checkpoint[] checkpoints;
 
     private void Awake()
@@ -25,7 +26,12 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
             checkpoints[i].index = i;
         }
         GameManager.checkpoints = checkpoints;
+        StartCoroutine(RespawnOnEndOfFrame());
+    }
 
+    IEnumerator RespawnOnEndOfFrame()
+    {
+        yield return new WaitForEndOfFrame();
         //needed to do this here because wasn't working in player life script for some reason????
         if (GameManager.latestCheckpointIndex != -1)
         {

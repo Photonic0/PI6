@@ -5,7 +5,7 @@ using UnityEngine;
 //Rigidbody velocity not working properly somehow?? wtf?
 public class TyphoonEnemyTornado : Enemy
 {
-    public override int LifeMax => 20;
+    public override int LifeMax => 10;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform parent;
     [SerializeField] TyphoonEnemyTornadoLightning[] lightningProjPool;

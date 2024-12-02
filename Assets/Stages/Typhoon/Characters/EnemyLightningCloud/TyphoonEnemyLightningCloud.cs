@@ -101,7 +101,7 @@ public class TyphoonEnemyLightningCloud : Enemy
                 lightningEffect.ActivateAndSetAttributes(0.1f, start, end, AttackDuration);
                 EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, end, AttackDuration);
             }
-            Collider2D playerCollider = Physics2D.OverlapBox(boxCenter, boxSize, attackDirection.Atan2Deg(), Layers.Player);
+            Collider2D playerCollider = Physics2D.OverlapBox(boxCenter, boxSize, attackDirection.Atan2Deg(), Layers.PlayerHurtbox);
             if (playerCollider != null)
             {
                 if (playerCollider.TryGetComponent(out PlayerLife player))

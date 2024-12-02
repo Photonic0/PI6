@@ -2,10 +2,8 @@ using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Consts;
 using Assets.Common.Interfaces;
 using Assets.Common.Systems;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -68,7 +66,8 @@ public class GameManager : MonoBehaviour
     {
         Paused = true;
         Time.timeScale = 0;
-        if (SceneManager.GetActiveScene().buildIndex == SceneIndices.DiscoStage)
+        int buildIndex = SceneManager.GetActiveScene().buildIndex;
+        if (buildIndex == SceneIndices.DiscoStage || buildIndex == SceneIndices.DiscoStage_TestDaniel)
         {
             DiscoMusicEventManager.PauseMusic();
         }
@@ -89,7 +88,8 @@ public class GameManager : MonoBehaviour
     {
         Paused = false;
         Time.timeScale = 1;
-        if (SceneManager.GetActiveScene().buildIndex == SceneIndices.DiscoStage)
+        int buildIndex = SceneManager.GetActiveScene().buildIndex;
+        if (buildIndex == SceneIndices.DiscoStage || buildIndex == SceneIndices.DiscoStage_TestDaniel)
         {
             DiscoMusicEventManager.UnPauseMusic();
         }

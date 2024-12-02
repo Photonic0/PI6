@@ -136,16 +136,23 @@ public class DiscoMusicEventManager : MonoBehaviour
     public static void PauseMusic()
     {
         if (instance == null) return;
+        if (instance.DiscoBossMusicStarted)
+        {
+            instance.discoBossMusicHandler.Pause();
+            return;
+        }
         instance.Paused = true;
-        instance.discoBossMusicHandler.Pause();
         instance.musicAudioSource.Pause();
     }
     public static void UnPauseMusic()
     {
         if (instance == null) return;
-        if (instance.DiscoBossMusicStarted) return;
+        if (instance.DiscoBossMusicStarted)
+        {
+            instance.discoBossMusicHandler.UnPause();
+            return;
+        }
         instance.Paused = false;
-        instance.discoBossMusicHandler.UnPause();
         instance.musicAudioSource.UnPause();
     }
 

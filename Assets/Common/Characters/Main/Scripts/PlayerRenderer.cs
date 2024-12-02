@@ -59,8 +59,8 @@ public class PlayerRenderer : MonoBehaviour
         }
         Vector2 velocity = rb.velocity;
         //get rid of very small decimal values, else animations become weird
-        velocity.x = (int)(1000 * velocity.x) / 1000;
-        velocity.y = (int)(1000 * velocity.y) / 1000;
+        velocity.x = (int)(10000 * velocity.x) / 10000;
+        velocity.y = (int)(10000 * velocity.y) / 10000;
 
         float absVelX = Mathf.Abs(velocity.x);
         bool armCannon = playerControl.shootCooldown + .1f > 0;
