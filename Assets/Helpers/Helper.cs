@@ -19,7 +19,7 @@ namespace Assets.Helpers
                 return (Vector2)cam.ScreenToWorldPoint(posToCheck);
             }
         }
-        public static bool EnemyAggroCheck(Vector3 enemyPos, Vector3 playerPos, float aggroRange, float verticalRange = 8)
+        public static bool EnemyAggroCheck(Vector3 enemyPos, Vector3 playerPos, float aggroRange, float verticalRange = 7)
         {
             return Mathf.Abs(enemyPos.x - playerPos.x) < aggroRange && Mathf.Abs(enemyPos.y - playerPos.y) < verticalRange;
         }

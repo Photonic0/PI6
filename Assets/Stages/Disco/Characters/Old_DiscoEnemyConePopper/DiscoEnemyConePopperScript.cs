@@ -30,6 +30,7 @@ public class DiscoEnemyConePopperScript : MonoBehaviour, IMusicSyncable
         DiscoMusicEventManager.AddSyncableObject(this);
     }
     public int BeatsPerAction => 2;
+    public int BeatOffset => 0;
 
     public void DoMusicSyncedAction()
     {

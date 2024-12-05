@@ -195,6 +195,7 @@ MonoBehaviour:
   - {fileID: 4427823692336369153}
   - {fileID: 6003162587967364564}
   - {fileID: 7184359133062878927}
+  barrelRotation: {fileID: 4515371973327346221}
 --- !u!1 &8123050751882122653
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,6 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a4898edf52d42540b88268882e9efb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  recoilTimer: 0
 --- !u!1001 &1111633271380168314
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -10,6 +10,8 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
     static readonly int AnimIDPreAttack = Animator.StringToHash("PreAttack");
     static readonly int AnimIDDefenseless = Animator.StringToHash("Defenseless");
     public int BeatsPerAction => 1;
+    public int BeatOffset => 0;
+
     public override int LifeMax => 14;
     [SerializeField] int state = 0;
     [SerializeField] float timer;

@@ -11,6 +11,7 @@ public class DiscoHazardSpotlightLightCone : MonoBehaviour, IMusicSyncable
         DiscoMusicEventManager.AddSyncableObject(this);
     }
     public int BeatsPerAction => 4;
+    public int BeatOffset => 3;
 
     void OnTriggerEnter2D(Collider2D collision)
     {

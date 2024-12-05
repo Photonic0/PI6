@@ -63,7 +63,7 @@ public class DiscoBossAI : Enemy
     static readonly int AnimIDPostSlide = Animator.StringToHash("PostSlide");
     static readonly int AnimIDPose = Animator.StringToHash("Pose");
 
-    public override int LifeMax => 200;
+    public override int LifeMax => 150;
     const float ArenaWidth = 16;
     const float ArenaHeight = 8;
     const float IntroDuration = 6;

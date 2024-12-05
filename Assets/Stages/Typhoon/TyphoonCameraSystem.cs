@@ -46,15 +46,19 @@ public class TyphoonCameraSystem : MonoBehaviour
             targetX += pastXVelocities[i];
         }
         targetX *= .001f;
-        //debug_DisplayTargetX = targetX;
         targetX = Mathf.Clamp(targetX, -1, 1);
         targetX = Helper.Decay(targetX, relativePlayerPos.x, 10);
         transform.position = new(targetX + cameraPos.x, targetY, ZPos);
     }
-     
-    //float debug_DisplayTargetX;
-    //private void OnDrawGizmos()
-    //{
-    //    Handles.Label(transform.position + new Vector3(0, 1.5f), debug_DisplayTargetX.ToString());
-    //}
+#if UNITY_EDITOR
+
+    private void OnDrawGizmos()
+    {
+        Vector3 drawPos = transform.position;
+        drawPos.z = 0;
+        Vector3 viewSize = new Vector3(18, 10);
+        Gizmos.DrawWireCube(drawPos, viewSize);
+    }
+#endif
+
 }

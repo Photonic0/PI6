@@ -233,6 +233,7 @@ MonoBehaviour:
   armLength1: 1.5
   armLength2: 1.5
   lightDistanceFromPivotNeeded: 0
+  armRangeDisplayMesh: {fileID: 0}
 --- !u!212 &1595503739533870808
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -566,7 +567,7 @@ Transform:
   m_GameObject: {fileID: 1595503740265209998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -10.3, z: 0}
-  m_LocalScale: {x: 2.2093837, y: 2.2093837, z: 2.2093837}
+  m_LocalScale: {x: 1.5, y: 2.2093837, z: 2.2093837}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1595503740919315988}

@@ -23,6 +23,8 @@ public class DiscoEnemyBallRiderScript : MonoBehaviour, IMusicSyncable
     }
 
     public int BeatsPerAction => 4;
+    public int BeatOffset => 0;
+
 
     void Update()
     {

@@ -1,3 +1,4 @@
+using Assets.Common.Consts;
 using Assets.Helpers;
 using System;
 using UnityEngine;
@@ -10,51 +11,87 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
     // Ponto de onde o projétil será disparado
     public GameObject firePoint;
 
-    // Velocidade do projétil
     public float ProjectileSpeed = 6f;
 
-    // Distância máxima permitida para disparar
     public float maxDistanceToFire = 10f;
 
     [SerializeField] DiscoHazardCannonCannonball[] ammoPool;
+    [SerializeField] CannonBarrelRotationScript barrelRotation;
     public int BeatsPerAction => 2;
+    public int BeatOffset => 0;
     private void Start()
     {
         DiscoMusicEventManager.AddSyncableObject(this);
     }
 
-    void FireProjectile()
+    void FireProjectile(Vector2 projDirection)
     {
         DiscoHazardCannonCannonball projectile;
+        Vector2 firepoint = firePoint.transform.position;
         if (Helper.TryFindFreeIndex(ammoPool, out int index))
         {
             projectile = ammoPool[index];
-            projectile.transform.position = firePoint.transform.position;
-            projectile.transform.rotation = Quaternion.identity;
+            projectile.transform.SetPositionAndRotation(firepoint, Quaternion.identity);
             projectile.gameObject.SetActive(true);
         }
         else
         {
-            projectile = Instantiate(projectilePrefab, firePoint.transform.position, Quaternion.identity)
+            projectile = Instantiate(projectilePrefab, firepoint, Quaternion.identity)
                 .GetComponent<DiscoHazardCannonCannonball>();
             Array.Resize(ref ammoPool, ammoPool.Length + 1);
             ammoPool[^1] = projectile;
         }
-        // Calcula a direção em que o projétil deve ser disparado
-        Vector2 direction = (GameManager.PlayerControl.transform.position - firePoint.transform.position).normalized;
-        projectile.rb.velocity = direction * ProjectileSpeed;
+        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Magenta, firepoint);
+        projectile.rb.velocity = projDirection * ProjectileSpeed;
+        barrelRotation.recoilTimer = 0f;
     }
 
     public void DoMusicSyncedAction()
     {
-        
-            float distanceToTarget = Vector2.Distance(firePoint.transform.position, GameManager.PlayerControl.transform.position);
+        Vector2 firePoint = this.firePoint.transform.position;
+        Vector2 target = GameManager.PlayerPosition;
+        Vector2 direction = (target - firePoint).normalized;
+        float zRot = transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
+        direction = direction.RotatedBy(-zRot);
+        direction = LimitDirection(direction);
+        direction = direction.RotatedBy(zRot);
+        RaycastHit2D hit = Physics2D.CircleCast(firePoint, ammoPool[0].collider.radius, direction, maxDistanceToFire, Layers.Tiles | Layers.PlayerHurtbox);
+        if (hit.collider != null && hit.collider.CompareTag(Tags.Player))
+        {
+            FireProjectile(direction);
+        }
 
-            // Verifica se a distância até o alvo é menor ou igual à distância máxima permitida
-            if (distanceToTarget <= maxDistanceToFire)
-            {
-                FireProjectile();
-            }
-        
     }
+    /// <summary>
+    /// expects direction to be normalized
+    /// </summary>
+    static Vector2 LimitDirection(Vector2 direction)
+    {
+        if (direction.y < 0)
+        {
+            return new Vector2(Mathf.Sign(direction.x), 0);
+        }
+        return direction;
+    }
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        float radius = maxDistanceToFire;
+        int dots = (int)(3 * radius);
+        float increment = 1f / dots;
+        Vector2 center = transform.position;
+        float zRot = Mathf.Deg2Rad * -transform.rotation.eulerAngles.z;
+        for (float i = 0; i <= 0.99999f; i += increment)
+        {
+            Vector2 offset = (i * Mathf.PI - Mathf.PI / 2f + zRot).PolarVector(radius);
+            Vector2 nextOffset = ((i + increment) * Mathf.PI - Mathf.PI / 2f + zRot).PolarVector(radius);
+
+            offset += center;
+            nextOffset += center;
+            Gizmos.DrawLine(nextOffset, offset);
+        }
+        Vector2 aaa = (Mathf.PI / 2 + zRot).PolarVector(radius);
+        Gizmos.DrawLine(center - aaa, center + aaa);
+    }
+#endif
 }

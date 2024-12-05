@@ -5,6 +5,8 @@ using UnityEngine;
 public class DiscoEnemyBallRider : Enemy, IMusicSyncable
 {
     public int BeatsPerAction => 1;
+    public int BeatOffset => 0;
+
     public override int LifeMax => 12;
     [SerializeField] GameObject leftSprite;
     [SerializeField] GameObject rightSprite;
@@ -46,6 +48,9 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
             GameManager.PlayerLife.Damage(4);
         }
     }
+    //todo: disco hazard confetti emitter
+    //sound effects for  everything
+    //music for most things
     private void Update()
     {
         bounceTimer += Time.deltaTime;
@@ -56,7 +61,7 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
         Vector3 playerPos = GameManager.PlayerPosition;
         Vector3 pos = transform.position;
         Vector2 vel = rb.velocity;
-        if (Helper.EnemyAggroCheck(pos, playerPos, 6))
+        if (Helper.EnemyAggroCheck(pos, playerPos, 6, 3))
         {
             vel.x = Helper.Decay(vel.x, Mathf.Sign(playerPos.x - pos.x) * 4f, 50);
             rb.velocity = vel;

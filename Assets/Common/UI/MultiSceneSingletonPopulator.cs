@@ -35,6 +35,7 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
         //needed to do this here because wasn't working in player life script for some reason????
         if (GameManager.latestCheckpointIndex != -1)
         {
+           
             GameManager.LatestCheckpoint.RespawnAt();
         }
     }

@@ -7,5 +7,6 @@
 public interface IMusicSyncable
 {
     public int BeatsPerAction { get; }
+    public int BeatOffset { get; }
     public void DoMusicSyncedAction();
 }

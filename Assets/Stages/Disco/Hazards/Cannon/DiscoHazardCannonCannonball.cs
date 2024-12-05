@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class DiscoHazardCannonCannonball : Projectile
 {
-    public ParticleSystem destructionParticles;
     public Rigidbody2D rb;
+    public new CircleCollider2D collider;
     public override int Damage => 4;
     float lifetime;
     private void OnEnable()
@@ -17,10 +17,7 @@ public class DiscoHazardCannonCannonball : Projectile
     }
     private void OnDisable()
     {
-        if (destructionParticles != null)
-        {
-            Instantiate(destructionParticles, transform.position, Quaternion.identity);
-        }
+        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Magenta, transform.position);
     }
     private void Update()
     {

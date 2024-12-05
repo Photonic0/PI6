@@ -16,7 +16,6 @@ public class DiscoHazardSpotlight : MonoBehaviour
     [SerializeField] float armLength1;
     [SerializeField] float armLength2;
     [SerializeField] float lightDistanceFromPivotNeeded;
-
     void Update()
     {
 
@@ -121,5 +120,25 @@ public class DiscoHazardSpotlight : MonoBehaviour
         return from + offset;
     }
 
-    
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Vector2 from = lerpPointA.position;
+        Gizmos.DrawWireSphere(from, armLength2 + armLength2);
+        float blindspotRadius = Mathf.Abs(armLength2 - armLength1);
+        
+        Vector2 target = lerpPointB.position;
+        Vector2 aimedPoint = spotlightTargetPoint.position;
+        Gizmos.color = Gizmos.color = Color.red;
+        if (blindspotRadius > 0.00001f)
+        {
+            Gizmos.DrawWireSphere(from, blindspotRadius);
+        }
+        Vector2 closestPoint = Vector2.Lerp(from, target, blindspotRadius);
+        Gizmos.DrawLine(target, closestPoint);
+        Gizmos.color = Gizmos.color = Color.green;
+        Gizmos.DrawLine(closestPoint, aimedPoint);
+        Gizmos.DrawLine(target, aimedPoint);
+    }
+#endif
 }

@@ -139,6 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destructionParticles: {fileID: 4132543883481292269, guid: 84115d95c35fd5946a0c2d0a3f66327b, type: 3}
   rb: {fileID: 6922320705271989290}
+  collider: {fileID: -527004219108126881}
 --- !u!1 &8928185160142510603
 GameObject:
   m_ObjectHideFlags: 0

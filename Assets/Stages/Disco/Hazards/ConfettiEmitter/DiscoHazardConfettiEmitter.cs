@@ -2,8 +2,9 @@ using Assets.Common.Consts;
 using Assets.Helpers;
 using UnityEngine;
 
-public class DiscoBossConfettiEmitter : MonoBehaviour
+public class DiscoHazardConfettiEmitter : MonoBehaviour, IMusicSyncable
 {
+    [SerializeField] int beatOffset;
     [SerializeField] new Transform transform;
     [SerializeField] ParticleSystem particles;
     [SerializeField] float height;
@@ -29,8 +30,13 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
     [Header("debug fields")]
     [SerializeField] bool debug_TriggerExplosion;
     [SerializeField] int debug_particleCount;
+
+    public int BeatsPerAction => 4;
+    public int BeatOffset => beatOffset;
+
     private void Start()
     {
+        DiscoMusicEventManager.AddSyncableObject(this);
         Vector2 pos = transform.position;
         pos.x = Mathf.Floor(pos.x);
         pos.y = Mathf.Floor(pos.y);
@@ -73,7 +79,7 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
                 break;
             case StateIDWaitingForExplosion:
                 timer += Time.deltaTime;
-                if(timer > maxWaitForExplosionTime)
+                if (timer > maxWaitForExplosionTime)
                 {
                     timer -= maxWaitForExplosionTime;
                     checkedExplosionCollision = false;
@@ -83,9 +89,9 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
                 break;
             case StateIDExplode:
                 timer += Time.deltaTime;
-                float yOffset = Helper.Remap(timer,0, Mathf.Min(maxExplodeTime, 0.09f), Mathf.PI, Mathf.PI * 2);
+                float yOffset = Helper.Remap(timer, 0, Mathf.Min(maxExplodeTime, 0.09f), Mathf.PI, Mathf.PI * 2);
                 //add 0.5 from the rise
-                transform.position = startingPosition + new Vector3(0, (float)Mathf.Sin(yOffset) * .3f +.5f);
+                transform.position = startingPosition + new Vector3(0, (float)Mathf.Sin(yOffset) * .3f + .5f);
                 if (timer > 0.1f && !checkedExplosionCollision)
                 {
                     CheckExplosionCollision();
@@ -123,7 +129,7 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
     }
 
     private void CheckExplosionCollision()
-    { 
+    {
         Vector2 center = transform.position;
         center.y += height / 2;
         Collider2D player = Physics2D.OverlapBox(center, new Vector2(width, height), 0, Layers.PlayerHurtbox);
@@ -140,7 +146,7 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
         if (state == StateIDWaitingForExplosion/* && timer + Time.deltaTime >= maxWaitForExplosionTime*/)
         {
             CheckExplosionCollision();
-             ConfettiExplosion();
+            ConfettiExplosion();
         }
         maxRiseTime = timeSpentRising;
         maxWaitForExplosionTime = timeSpentWaitingForExplosion;
@@ -148,25 +154,7 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
         maxGoDownTime = timeSpentGoingDown;
         maxWaitForRiseTime = timeSpentBeforeRising;
         timer = 0;
-        //if (state == StateIDRest)
-        //{
         state = timeSpentBeforeRising <= 0 ? StateIDRise : StateIDWaitingForRise;
-        //}
-        //else
-        //{
-        //    switch (state)
-        //    {
-        //        case StateIDExplode:
-        //            timer -= maxExplodeTime;
-        //            timer -= maxWaitForExplosionTime;
-        //            timer -= maxWaitForRiseTime;
-        //            timer -= maxRiseTime;
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
-       
     }
     void ConfettiExplosion(int particleCount = 50)
     {
@@ -194,4 +182,10 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
         Gizmos.DrawWireCube(center, new Vector3(width, height, .1f));
     }
 #endif
+
+    public void DoMusicSyncedAction()
+    {
+        float time = (float)(DiscoMusicEventManager.SecondsPerBeat * .5f);
+        StartAnimation(time, time * 3f, time, time);
+    }
 }

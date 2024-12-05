@@ -9,6 +9,8 @@ public class SpriteColorSwitcher : MonoBehaviour, IMusicSyncable
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] DiscoMusicEventManager.SyncableObjAddFlags syncableObjAddFlags = DiscoMusicEventManager.SyncableObjAddFlags.LevelOnly;
     public int BeatsPerAction => 1;
+    public int BeatOffset => 0;
+
     private void Start()
     {
         DiscoMusicEventManager.AddSyncableObject(this, syncableObjAddFlags);

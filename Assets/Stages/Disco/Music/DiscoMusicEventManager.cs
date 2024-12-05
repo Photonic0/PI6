@@ -54,8 +54,16 @@ public class DiscoMusicEventManager : MonoBehaviour
     }
     private void Start()
     {
-        musicAudioSource.PlayOneShot(intro);
-        beatTimer = -SecondsPerBeat * 10;//time for the beat timer to wait out the intro
+        if (GameManager.latestCheckpointIndex < 0)
+        {
+            musicAudioSource.PlayOneShot(intro);
+            beatTimer = -SecondsPerBeat * 10;//time for the beat timer to wait out the intro
+            beatTimer = -intro.length;
+        }
+        else
+        {
+            beatTimer = 0;
+        }
     }
 
     private void UnloadSingleton(Scene arg0)
@@ -73,6 +81,7 @@ public class DiscoMusicEventManager : MonoBehaviour
             return;
         delayTimer += Time.deltaTime;
         beatTimer += Time.deltaTime;
+        debugtext.text = beatTimer.ToString();
         if (beatTimer > SecondsPerBeat)
         {
             beatTimer -= SecondsPerBeat;
@@ -95,7 +104,8 @@ public class DiscoMusicEventManager : MonoBehaviour
                 for (int i = 0; i < syncableObjects.Count; i++)
                 {
                     IMusicSyncable syncableObj = syncableObjects[i];
-                    if (beatCounter % syncableObj.BeatsPerAction == 0)
+                    int offsetBeat = beatCounter + syncableObj.BeatOffset;
+                    if (Mathf.Repeat(offsetBeat, syncableObj.BeatsPerAction) == 0)
                     {
                         syncableObj.DoMusicSyncedAction();
                     }

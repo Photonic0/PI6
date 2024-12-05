@@ -4,6 +4,7 @@ using UnityEngine;
 public class DiscoDecorBeatPulse : MonoBehaviour, IMusicSyncable
 {
     public int BeatsPerAction => 1;
+    public int BeatOffset => 0;
     float pulseTimer;
     new Transform transform;
     [SerializeField] float scaleMultiplier = 1;

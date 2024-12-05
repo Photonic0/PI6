@@ -1,10 +1,14 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
+using Assets.Helpers;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    public float coyoteTimeLeft;
+    bool coyoteTimeActive;
+    public const float MaxCoyoteTime = 4f / 60f;
     public Vector2 acceleration;
     public new Transform transform;
     public static KeyCode jumpKey = KeyCode.W;
@@ -71,6 +75,7 @@ public class PlayerControl : MonoBehaviour
 
     private void Movement()
     {
+
         Vector2 velocity = rb.velocity;
         Vector2 move = new(Input.GetAxisRaw("Horizontal") * moveSpeed, velocity.y);
         if (jumpTimeLeft > 0 && Input.GetKey(KeyCode.W))
@@ -86,6 +91,13 @@ public class PlayerControl : MonoBehaviour
             move.y *= .5f;
             jumpTimeLeft = 0;
         }
+        //check jumptimeleft >= maxjumptime so that the jump time left
+        //doesn't get cut off early if we already started using it
+        if (coyoteTimeLeft <= 0 && jumpTimeLeft >= MaxJumpTime)
+        {
+            jumpTimeLeft = 0;
+        }
+        coyoteTimeLeft -= Time.deltaTime;
         rb.velocity = move;
     }
 
@@ -135,12 +147,21 @@ public class PlayerControl : MonoBehaviour
         Collider2D collisionDetect = Physics2D.OverlapBox(point, size, 0, Layers.Tiles);
         if (collisionDetect != null && collision.gameObject.CompareTag(Tags.Tiles))
         {
+            coyoteTimeLeft = MaxCoyoteTime;
             jumpTimeLeft = MaxJumpTime;
+            coyoteTimeLeft = Mathf.Infinity;
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
         OnCollisionEnter2D(collision);
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(Tags.Tiles) && rb.velocity.y <= 0)
+        {
+            coyoteTimeLeft = MaxCoyoteTime;
+        }
     }
     void GetOverlapBoxParams(out Vector2 point, out Vector2 size)
     {
@@ -152,6 +173,14 @@ public class PlayerControl : MonoBehaviour
         Gizmos.DrawWireSphere(Position, 1);
         GetOverlapBoxParams(out Vector2 point, out Vector2 size);
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)acceleration);
+        if(jumpTimeLeft <= 0)
+        {
+            Gizmos.color = Color.red;
+        }
+        else if(coyoteTimeLeft < MaxCoyoteTime)
+        {
+            Gizmos.color = Color.green;
+        }
         Gizmos.DrawCube(point, size);
     }
 }

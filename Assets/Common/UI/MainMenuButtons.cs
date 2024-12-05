@@ -15,14 +15,7 @@ public class MainMenuButtons : MonoBehaviour
     {
         GameManager.CleanupCheckpoints();
         CommonSounds.PlayButtonSound(cameraAudioSource);
-        if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.T))
-        {
-            SceneManager.LoadScene("DiscoStageScene_TesteProDaniel");
-        }
-        else
-        {
-            SceneManager.LoadScene(SceneIndices.DiscoStage);
-        }
+        SceneManager.LoadScene(SceneIndices.DiscoStage);
     }
     public void LoadTyphoonStage()
     {
