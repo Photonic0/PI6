@@ -8,8 +8,10 @@ public class PlayerRenderer : MonoBehaviour
     [SerializeField] SpriteRenderer bodySprite;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Animator bodyAnimator;
-    [SerializeField] Animator armAnimator;
-    [SerializeField] SpriteRenderer armSprite;
+    [SerializeField] Animator armNormalAnimator;
+    [SerializeField] Animator armCannonAnimator;
+    [SerializeField] SpriteRenderer armNormalSprite;
+    [SerializeField] SpriteRenderer armCannonSprite;
     [SerializeField] PlayerControl playerControl;
     [SerializeField] AudioSource footstepAudioSource;
     float footstepTimer;
@@ -30,30 +32,36 @@ public class PlayerRenderer : MonoBehaviour
     static readonly int riseArmNormal = Animator.StringToHash("RiseArmNormal");
     static readonly int walkArmCannon = Animator.StringToHash("WalkArmCannon");
     static readonly int walkArmNormal = Animator.StringToHash("WalkArmNormal");
+    bool oldCannonState;
     private void Awake()//can do in awake because gamemanager instance will already be loaded from previous scene
     {
         GameManager.instance.playerRenderer = this;
     }
     void Update()
-    {   
+    {
+        bool armCannon = playerControl.shootCooldown + .1f > 0;
         //still render the player while the spin effect of the particles is happening
         if (GameManager.PlayerLife.Dead)
         {
             if (GameManager.PlayerLife.deathRestartTimer > PlayerLife.DeathRestartDuration - DeathParticle.SpinEffectDuration)
             {
-                armSprite.enabled = true;
+                armCannonSprite.enabled = armCannon;
+                armNormalSprite.enabled = !armCannon;
                 bodySprite.enabled = true;
                 return;
             }
-            armSprite.enabled = false;
+            armCannonSprite.enabled = false;
             bodySprite.enabled = false;
+            armNormalSprite.enabled = false;
             return;
         }
-        armSprite.enabled = true;
+        armCannonSprite.enabled = armCannon;
+        armNormalSprite.enabled = !armCannon;
         bodySprite.enabled = true;
         if (GameManager.PlayerLife.immuneTime > PlayerLife.ImmuneTimeMax - PlayerControl.KBTime)
         {
-            armSprite.enabled = false;
+            armCannonSprite.enabled = false;
+            armNormalSprite.enabled = false;
             bodyAnimator.CrossFade(hurt, 0);
             return;
         }
@@ -63,7 +71,6 @@ public class PlayerRenderer : MonoBehaviour
         velocity.y = (int)(10000 * velocity.y) / 10000;
 
         float absVelX = Mathf.Abs(velocity.x);
-        bool armCannon = playerControl.shootCooldown + .1f > 0;
 
         bool? flip = null;
 
@@ -78,20 +85,23 @@ public class PlayerRenderer : MonoBehaviour
         if (flip != null)
         {
             bodySprite.flipX = flip.Value;
-            armSprite.flipX = flip.Value;
+            armCannonSprite.flipX = flip.Value;
+            armNormalSprite.flipX = flip.Value;
         }
         if (velocity.y > 0f)
         {
             bodyAnimator.CrossFade(rise, 0);
             SetFootstepTimerForPlayingSound();
-            armAnimator.CrossFade(armCannon ? riseArmCannon : riseArmNormal, 0);
+            armNormalAnimator.CrossFade(riseArmNormal, 0);
+            armCannonAnimator.CrossFade(riseArmCannon, 0);
             return;
         }
         if (velocity.y < 0f || GameManager.PlayerControl.jumpTimeLeft <= 0)
         {
             SetFootstepTimerForPlayingSound();
             bodyAnimator.CrossFade(fall, 0);
-            armAnimator.CrossFade(armCannon ? fallArmCannon : fallArmNormal, 0);
+            armNormalAnimator.CrossFade(fallArmNormal, 0);
+            armCannonAnimator.CrossFade(fallArmCannon, 0);
             return;
         }
 
@@ -104,14 +114,16 @@ public class PlayerRenderer : MonoBehaviour
                 footstepTimer %= FootstepSoundTimerThreshold;
                 CommonSounds.PlayFootstep(footstepAudioSource);
             }
-            armAnimator.CrossFade(armCannon ? walkArmCannon : walkArmNormal, 0);
+            armNormalAnimator.CrossFade(walkArmNormal, 0);
+            armCannonAnimator.CrossFade(walkArmCannon, 0);
             return;
         }
         SetFootstepTimerForPlayingSound();
         bodyAnimator.CrossFade(idle, 0);
-        armAnimator.CrossFade(armCannon ? idleArmCannon : idleArmNormal, 0);
-
+        armNormalAnimator.CrossFade(idleArmNormal, 0);
+        armCannonAnimator.CrossFade(idleArmCannon, 0);
     }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (Helper.TileCollision(collision) && GameManager.PlayerControl.jumpTimeLeft <= 0)

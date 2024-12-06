@@ -7,6 +7,7 @@ public class SpikeStageSingleton : MonoBehaviour
     public static SpikeStageSingleton instance;
     public GameObject spikeWaveSpike;
     public AudioClip[] spikeBreak;
+    public AudioClip spikeBreakNew;
     public AudioClip spikeShockwave;
     private void Awake()
     {

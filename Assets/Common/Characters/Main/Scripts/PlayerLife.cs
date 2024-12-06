@@ -12,7 +12,7 @@ namespace Assets.Common.Characters.Main.Scripts
             GameManager.instance.playerLife = this;
         }
         [SerializeField] AudioSource audioSource;
-        public const int StartingChances = 300;
+        public const int StartingChances = 6;
         public static int chances;
         public const int LifeMax = 27;
         public int life = LifeMax;

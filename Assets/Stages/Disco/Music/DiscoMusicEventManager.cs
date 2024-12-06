@@ -58,7 +58,6 @@ public class DiscoMusicEventManager : MonoBehaviour
         {
             musicAudioSource.PlayOneShot(intro);
             beatTimer = -SecondsPerBeat * 10;//time for the beat timer to wait out the intro
-            beatTimer = -intro.length;
         }
         else
         {

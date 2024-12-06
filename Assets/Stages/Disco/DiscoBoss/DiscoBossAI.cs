@@ -352,7 +352,9 @@ public class DiscoBossAI : Enemy
             if (state == StateID.ThrowBallThenDoubleConfetti)
             {
                 int remainingActions = actionCount - (stateBeatCounter - startup) - 1;
+#if UNITY_EDITOR
                 debugText.text = $"remaining actions: {remainingActions}";
+#endif
                 if (remainingActions == 1 && beatFrame)
                 {
                     bool flipOrder = Random2.Bool;

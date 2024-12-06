@@ -1,3 +1,4 @@
+using Assets.Common.Consts;
 using Assets.Helpers;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public class FallingSpike : Projectile
         transform = base.transform;
         //snap to tile grid(y is raised a bit to make it look like it's connected to the ceiling
         Vector3 pos = transform.position;
-        pos.x = Mathf.Round(pos.x - .5f) + 0.5f; 
+        pos.x = Mathf.Round(pos.x - .5f) + 0.5f;
         pos.y = Mathf.Round(pos.y - .5f) + 0.54f;
         transform.position = pos;
         timer = 0;
@@ -43,11 +44,11 @@ public class FallingSpike : Projectile
                     timer = 0;
                 }
                 break;
-            case StateIDFall:   
+            case StateIDFall:
                 if (timer > TelegraphDuration)
                 {
                     rb.gravityScale = GravScale;
-                    if(originalPos.y == spikePos.y)
+                    if (originalPos.y == spikePos.y)
                     {
                         transform.position = originalPos;
                     }
@@ -66,14 +67,17 @@ public class FallingSpike : Projectile
     public override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
-        if(state == StateIDFall && timer > (TelegraphDuration + .1f) && collision is CompositeCollider2D)
+        if (state == StateIDFall && timer > (TelegraphDuration + .1f) && collision.gameObject.CompareTag(Tags.Tiles))
         {
             sprite.enabled = false;
             rb.isKinematic = true;
             collider.enabled = false;
             rb.velocity = Vector2.zero;
-            CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce, .5f);
+            CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce);
+            //CommonSounds.Play(SpikeStageSingleton.instance.spikeBreakNew, audioSOurce, .5f, Random2.Float(.9f, 1.1f));
+            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
             Destroy(gameObject, 1);//let the sound effect play out
+            enabled = false;
         }
     }
 }
