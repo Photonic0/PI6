@@ -40,6 +40,8 @@ public class PlayerRenderer : MonoBehaviour
     void Update()
     {
         bool armCannon = playerControl.shootCooldown + .1f > 0;
+        armNormalSprite.gameObject.SetActive(true);
+        armCannonSprite.gameObject.SetActive(true);
         //still render the player while the spin effect of the particles is happening
         if (GameManager.PlayerLife.Dead)
         {
@@ -55,16 +57,25 @@ public class PlayerRenderer : MonoBehaviour
             armNormalSprite.enabled = false;
             return;
         }
-        armCannonSprite.enabled = armCannon;
-        armNormalSprite.enabled = !armCannon;
-        bodySprite.enabled = true;
+        bool blinkDisappear = false;
+        if(GameManager.PlayerLife.immuneTime > 0)
+        {
+            blinkDisappear = Mathf.Repeat(GameManager.PlayerLife.immuneTime, .15f) < .05f;
+           
+        }
         if (GameManager.PlayerLife.immuneTime > PlayerLife.ImmuneTimeMax - PlayerControl.KBTime)
         {
-            armCannonSprite.enabled = false;
-            armNormalSprite.enabled = false;
+            bodySprite.enabled = blinkDisappear;
+            armCannonSprite.enabled = blinkDisappear;
+            armNormalSprite.enabled = blinkDisappear;
             bodyAnimator.CrossFade(hurt, 0);
+            armNormalSprite.gameObject.SetActive(false);
+            armCannonSprite.gameObject.SetActive(false);
             return;
         }
+        armCannonSprite.enabled = armCannon && !blinkDisappear;
+        armNormalSprite.enabled = !armCannon && !blinkDisappear;
+        bodySprite.enabled = !blinkDisappear;
         Vector2 velocity = rb.velocity;
         //get rid of very small decimal values, else animations become weird
         velocity.x = (int)(10000 * velocity.x) / 10000;

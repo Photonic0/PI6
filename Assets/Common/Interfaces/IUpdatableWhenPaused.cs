@@ -2,7 +2,6 @@ namespace Assets.Common.Interfaces
 {
     public interface IUpdatableWhenPaused
     {
-
-        void PausedUpdate();
+        void PausedUpdate(float unscaledDeltaTime);
     }
 }

@@ -30,7 +30,6 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         GameObject spikeWeaponBarBack;
         GameObject discoWeaponBarBack;
 
-
         int selectedWeaponIndex;
         const int BasicWeaponIndex = 0;
         const int TyphoonWeaponIndex = 1;
@@ -74,6 +73,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             //operação XOR
             if(GameManager.Paused ^ weaponUpgradePanel.activeInHierarchy)
                 return;
+    
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (GameManager.Paused)
@@ -87,6 +87,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             }
             if (GameManager.Paused)
             {
+                //has lockout windows because for some reason sometimesthe key presses were registering twice
                 int arrowKeyChangeDirection = 0;
                 if (Input.GetKeyDown(KeyCode.A) && aKeyPressLockout < 0)
                 {
@@ -194,7 +195,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         {
             instance.weaponUnlockFlags[TyphoonWeaponIndex] = true;
         }
-        public void PausedUpdate()
+        public void PausedUpdate(float unscaledDeltaTime)
         {
             Update();
         }

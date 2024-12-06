@@ -70,7 +70,7 @@ public class SpikeEnemyJumper : Enemy
             sprite.flipX = Random2.Bool;
             timer = 0;
         }
-        if (timer >= 0 && Helper.EnemyAggroCheck(transform.position, GameManager.PlayerPosition, AggroRange))
+        if (timer >= 0 && Helper.EnemyAggroCheck(transform.position, GameManager.PlayerPosition, AggroRange, 9))
         {
             timer = -Time.deltaTime;
             state = StateIDWalkToPlayer;

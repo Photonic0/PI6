@@ -213,6 +213,9 @@ MonoBehaviour:
   typhoonWeaponBarBack: {fileID: 6487585636448602984}
   discoWeaponBarBack: {fileID: 6487585634742815970}
   spikeWeaponBarBack: {fileID: 6487585635696279449}
+  uiThingsToAnimate:
+  - {fileID: 6487585635971694328}
+  - {fileID: 6487585635647043801}
 --- !u!1 &6487585634742815970
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,7 +1353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.0627451, b: 0.0627451, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

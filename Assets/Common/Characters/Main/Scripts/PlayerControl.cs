@@ -7,7 +7,6 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     public float coyoteTimeLeft;
-    bool coyoteTimeActive;
     public const float MaxCoyoteTime = 4f / 60f;
     public Vector2 acceleration;
     public new Transform transform;
@@ -24,7 +23,7 @@ public class PlayerControl : MonoBehaviour
     public float jumpTimeLeft = 0.15f;
     const float MaxJumpTime = 0.15f;
     public const float KBTime = .3f;
-    const float KBPushbackVelocity = 2;
+    public const float KBPushbackVelocity = 2;
     //do control shoot mouse direction
     //should face in mouse direction
     public Vector3 Position { get; private set; }

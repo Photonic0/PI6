@@ -72,6 +72,14 @@ namespace Assets.Common.Characters.Main.Scripts
             CheckDead();
             UIManager.UpdatePlayerLifeBar(life);
             immuneTime = ImmuneTimeMax;
+            PlayerControl control = GameManager.PlayerControl;
+            Vector2 vel = control.rb.velocity;
+            if (Mathf.Abs(vel.x) > 0.001f)
+            {
+                vel.x = PlayerControl.KBPushbackVelocity * GameManager.PlayerRenderer.SpriteDirection;
+            }
+            vel.x = -vel.x;
+            GameManager.PlayerControl.rb.velocity = vel;
         }
         public void CheckDead()
         {

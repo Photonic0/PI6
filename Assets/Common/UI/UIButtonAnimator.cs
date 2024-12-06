@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using Assets.Common.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIButtonAnimator : MonoBehaviour
+public class UIButtonAnimator : MonoBehaviour, IUpdatableWhenPaused
 {
     float timer;
     [SerializeField] Image buttonImage;
@@ -18,6 +17,18 @@ public class UIButtonAnimator : MonoBehaviour
     {
         timer += Time.deltaTime;
         if(timer > 0.1f)
+        {
+            timer %= 0.1f;
+            currentFrameIndex++;
+            currentFrameIndex %= frames.Length;
+            buttonImage.sprite = frames[currentFrameIndex];
+        }
+    }
+
+    public void PausedUpdate(float unscaledDeltaTime)
+    {
+        timer += unscaledDeltaTime;
+        if (timer > 0.1f)
         {
             timer %= 0.1f;
             currentFrameIndex++;

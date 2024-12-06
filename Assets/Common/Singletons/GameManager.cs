@@ -75,13 +75,15 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator UpdatePausedObjects()
     {
+        float unscaledDT = 1f/30f;//30 fps
+
         while (Paused)
         {
             for (int i = 0; i < thingsToUpdateWhenPaused.Count; i++)
             {
-                thingsToUpdateWhenPaused[i].PausedUpdate();
+                thingsToUpdateWhenPaused[i].PausedUpdate(unscaledDT);
             }
-            yield return new WaitForSecondsRealtime(1f / 30f);//30 fps updating
+            yield return new WaitForSecondsRealtime(unscaledDT);//30 fps updating
         }
     }
     internal static void UnpauseGame()

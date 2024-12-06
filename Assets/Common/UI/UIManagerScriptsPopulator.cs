@@ -26,6 +26,7 @@ public class UIManagerScriptsPopulator : MonoBehaviour
     [SerializeField] GameObject typhoonWeaponBarBack;
     [SerializeField] GameObject discoWeaponBarBack;
     [SerializeField] GameObject spikeWeaponBarBack;
+    [SerializeField] UIButtonAnimator[] uiThingsToAnimate;
 
     static int debug_sceneToLoadInCoroutine;
     private void Awake()
@@ -47,6 +48,10 @@ public class UIManagerScriptsPopulator : MonoBehaviour
         UIManager.Instance.lifeBarBack = lifeBarBack;
         UIManager.Instance.weaponBarBack = weaponBarBack;
         PlayerWeaponManager.Initialize(weaponUpgradePanel, basicWeaponBarFill, typhoonWeaponBarFill, discoWeaponBarFill, spikeWeaponBarFill, weaponSelectArrow, typhoonWeaponBarBack, spikeWeaponBarBack, discoWeaponBarBack);
+        for (int i = 0; i < uiThingsToAnimate.Length; i++)
+        {
+            GameManager.AddToPausedUpatedObjs(uiThingsToAnimate[i]);
+        }
     }
     //IEnumerator ReloadSceneDelayed()
     //{
