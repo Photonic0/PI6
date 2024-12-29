@@ -1,6 +1,5 @@
 using Assets.Helpers;
 using Assets.Systems;
-using UnityEditor;
 using UnityEngine;
 
 public class TyphoonHazardFan : MonoBehaviour
@@ -17,7 +16,27 @@ public class TyphoonHazardFan : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] new Transform transform;
     [SerializeField] ParticleSystem windParticleEmitter;
+    [SerializeField] AudioSource audioSource;
     //state begins at 0, being on, so don't need to call particleSystem.Stop() inside Start() method.
+    private void Start()
+    {
+        GameManager.OnPause += PauseFanNoise;
+        GameManager.OnUnPause += ResumeFanNoise;
+    }
+
+    private void ResumeFanNoise()
+    {
+        audioSource.UnPause();
+    }
+    private void PauseFanNoise()
+    {
+        audioSource.Pause();
+    }
+    private void OnDestroy()
+    {
+        GameManager.OnPause -= PauseFanNoise;
+        GameManager.OnUnPause -= ResumeFanNoise;
+    }
     void Update()
     {
         timer += Time.deltaTime;
@@ -35,6 +54,8 @@ public class TyphoonHazardFan : MonoBehaviour
     {
         if (timer > OffDuration)
         {
+            audioSource.clip = TyphoonStageSingleton.instance.fanNoises[Random.Range(0, TyphoonStageSingleton.instance.fanNoises.Length)];
+            audioSource.Play();
             windParticleEmitter.Play();
             state = StateIDOn;
             timer = 0;
@@ -48,6 +69,7 @@ public class TyphoonHazardFan : MonoBehaviour
         float halfWidth = WindColumnWidth / 2;
         float rotationAmount = -transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         playerPos = (playerPos - center).RotatedBy(rotationAmount) + center;
+        audioSource.volume = Mathf.InverseLerp(2f, 8f, (playerPos - center).magnitude);
 #if UNITY_EDITOR
         debug_transformedPlayerPosition = playerPos;
 #endif
@@ -72,6 +94,16 @@ public class TyphoonHazardFan : MonoBehaviour
             timer = 0;
             animator.enabled = false;
         }
+    }
+    public (float minX, float maxX, float minY, float maxY) GetWindBounds(float padding)
+    {
+        float fanSpriteHalfHeight = 0.74f;
+        float fanSpriteHalfWidth = 1.04f;
+        Vector2 pos = transform.position;
+        return (pos.x - fanSpriteHalfWidth - padding,
+        pos.x + fanSpriteHalfWidth + padding,
+        pos.y - fanSpriteHalfHeight - padding,
+        pos.y + fanSpriteHalfWidth + padding);
     }
 #if UNITY_EDITOR
 

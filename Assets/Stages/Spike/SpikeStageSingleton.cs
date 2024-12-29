@@ -1,6 +1,7 @@
 using Assets.Common.Consts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class SpikeStageSingleton : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class SpikeStageSingleton : MonoBehaviour
     public AudioClip[] spikeBreak;
     public AudioClip spikeBreakNew;
     public AudioClip spikeShockwave;
+    public Tilemap solidTiles;
     private void Awake()
     {
         SceneManager.sceneUnloaded += UnloadSingleton;
@@ -27,4 +29,5 @@ public class SpikeStageSingleton : MonoBehaviour
             SceneManager.sceneUnloaded -= UnloadSingleton;
         }
     }
+    
 }

@@ -93,6 +93,7 @@ public class SpikeEnemySlam : Enemy
         animator.CrossFade(animAttack4, 0);
         if(timer <= float.Epsilon)
         {
+            ScreenShakeManager.AddSmallShake();
             SpikeWaveSpike.StartSpikeWave(transform.position - new Vector3(0, 1.5f), 3f, 8, .25f, .1f, audioSource);
         }
         if(timer > attackFramesDuration)

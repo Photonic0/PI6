@@ -22,7 +22,7 @@ public class DiscoMusicEventManager : MonoBehaviour
     bool DiscoBossMusicStarted => discoBossMusicHandler != null && discoBossMusicHandler.StartedMusic;
     public static DiscoMusicEventManager instance;
     private double beatTimer;
-    
+
     private float delayTimer;//need to delay the execution of the music synced action a bit
     public int beatCounter;
     private List<IMusicSyncable> syncableObjects;
@@ -93,7 +93,7 @@ public class DiscoMusicEventManager : MonoBehaviour
 #endif
             }
             beatCounter++;
-           
+
         }
         if (delayTimer > 0 && delayTimer < 9999999)
         {
@@ -129,13 +129,17 @@ public class DiscoMusicEventManager : MonoBehaviour
 
     public static void AddSyncableObject(IMusicSyncable syncableObj, SyncableObjAddFlags flags = SyncableObjAddFlags.LevelOnly)
     {
-        if (instance != null && syncableObj != null)
+        if (instance != null && syncableObj != null && instance.syncableObjects != null)
         {
+            if (instance.syncableObjects.Contains(syncableObj))
+            {
+                return;
+            }
             if ((flags & SyncableObjAddFlags.LevelOnly) == SyncableObjAddFlags.LevelOnly)
             {
                 instance.syncableObjects.Add(syncableObj);
             }
-            if((flags & SyncableObjAddFlags.BossOnly) == SyncableObjAddFlags.BossOnly)
+            if ((flags & SyncableObjAddFlags.BossOnly) == SyncableObjAddFlags.BossOnly)
             {
                 instance.discoBossMusicHandler.AddToSyncables(syncableObj);
             }
@@ -164,5 +168,10 @@ public class DiscoMusicEventManager : MonoBehaviour
         instance.Paused = false;
         instance.musicAudioSource.UnPause();
     }
-
+    public static void Disable()
+    {
+        instance.enabled = false;
+        instance.syncableObjects.Clear();
+        instance.syncableObjects = null;
+    }
 }

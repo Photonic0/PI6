@@ -4936,7 +4936,7 @@ MonoBehaviour:
   transform: {fileID: 6237856564866389931}
   particles: {fileID: 39889997862228310}
   height: 6
-  width: 0.7
+  width: 0.5
   timer: 0
   checkedExplosionCollision: 0
   timeUntilExplosion: 0

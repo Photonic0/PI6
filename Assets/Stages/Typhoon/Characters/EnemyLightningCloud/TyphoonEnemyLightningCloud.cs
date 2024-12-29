@@ -25,6 +25,7 @@ public class TyphoonEnemyLightningCloud : Enemy
     private void Awake()
     {
         transform = base.transform;
+        TyphoonStageSingleton.AddToLightningCloudEnemyArray(this);
     }
     float timer;
     int state;
@@ -137,6 +138,10 @@ public class TyphoonEnemyLightningCloud : Enemy
     {
         EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
         return base.PreKill();
+    }
+    private void OnDestroy()
+    {
+        TyphoonStageSingleton.RemoveLightningCloudEnemyFromList(this);
     }
     public override void OnHit(int damageTaken)
     {

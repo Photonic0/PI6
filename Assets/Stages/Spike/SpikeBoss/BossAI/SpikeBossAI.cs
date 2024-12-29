@@ -58,10 +58,10 @@ public class SpikeBossAI : Enemy
 
     const float SpikeBallThrowJumpHeight = 5;
     const float SpikeBallThrowStartup = .4f;
-    const float SpikeBallThrowRate = .8f;
+    const float SpikeBallThrowRate = .7f;
     const int SpikeBallThrowActionCount = 4;
     const float SpikeBallThrowDelay = .2f;
-    const float SpikeBallThrowVelocity = 13;
+    const float SpikeBallThrowVelocity = 15;
     const float SpikeBallThrowDistNeededForSideSwitch = 4.5f;
 
     const int SpikeShockwaveActionCount = 1;//The action is the shockwave creation
@@ -255,6 +255,7 @@ public class SpikeBossAI : Enemy
         {
             if (actionCounter > 0)
             {
+                ScreenShakeManager.AddMediumShake();
                 Vector2 arenaFloorCenter = arenaCenter - new Vector2(0, ArenaHeight / 2 + .5f);
                 SpikeWaveSpike.StartSpikeWave(arenaFloorCenter, 2, 8, .3f, .15f, audioSource);
                 arenaFloorCenter.y += 1.5f;
@@ -436,6 +437,10 @@ public class SpikeBossAI : Enemy
     }
     public override bool PreKill()
     {
+        for (int i = 0; i < spikeBalls.Length; i++)
+        {
+            spikeBalls[i].gameObject.SetActive(false);
+        }
         EffectsHandler.SpawnBigExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
         DeathParticle.Spawn(transform.position, FlipnoteColors.Yellow, audioSource);
         sprite.enabled = false;

@@ -16,7 +16,8 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             Disco = 3,
             Explosive = 4
         }
-
+        [SerializeField] new GameObject gameObject;
+        public GameObject GameObject => gameObject;
         [SerializeField] bool debug_clickToRechargeAll;
         static PlayerWeaponManager instance;
         GameObject weaponUpgradePanel;
@@ -195,6 +196,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         {
             instance.weaponUnlockFlags[TyphoonWeaponIndex] = true;
         }
+
         public void PausedUpdate(float unscaledDeltaTime)
         {
             Update();

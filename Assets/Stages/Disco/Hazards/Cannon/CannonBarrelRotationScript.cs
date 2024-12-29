@@ -16,12 +16,9 @@ public class CannonBarrelRotationScript : MonoBehaviour
         recoilTimer += Time.deltaTime;
         Vector2 position = transform.position;
         Vector2 toTarget = (Vector2)GameManager.PlayerPosition - position;
-        float zRot = transform.rotation.eulerAngles.z ;
         Vector2 offset = toTarget.normalized * Helper.Remap(recoilTimer, 0, .3f, -.5f, 0, Easings.SqrInOut);
-        toTarget = toTarget.RotatedBy(-zRot * Mathf.Deg2Rad);
         float rotationDegrees = toTarget.Atan2Deg();
         rotationDegrees = LimitAngle(rotationDegrees);
-        rotationDegrees += zRot;
         rotationDegrees -= 135;
         Quaternion targetRotation = Quaternion.Euler(0, 0, rotationDegrees);
         float t = 1 - Mathf.Pow(0.00000001f, Time.deltaTime);

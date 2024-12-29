@@ -191,6 +191,19 @@ namespace Assets.Helpers
                 Gizmos.DrawSphere(positions[i], radius);
             }
         }
+        public static void DrawRectangle(Bounds bounds)
+        {
+            Vector3 min = bounds.min;
+            Vector3 max = bounds.max;
+            Vector3 bottomLeft = new(min.x, min.y, 0);
+            Vector3 bottomRight = new(max.x, min.y, 0);
+            Vector3 topLeft = new(min.x, max.y, 0);
+            Vector3 topRight = new(max.x, max.y, 0);
+            Gizmos.DrawLine(bottomLeft, bottomRight);
+            Gizmos.DrawLine(bottomRight, topRight);
+            Gizmos.DrawLine(topRight, topLeft);
+            Gizmos.DrawLine(topLeft, bottomLeft);
+        }
         public static void DrawSpheres(Vector3[] positions, float radius)
         {
             for (int i = 0; i < positions.Length; i++)

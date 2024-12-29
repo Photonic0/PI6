@@ -55,7 +55,8 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
         direction = direction.RotatedBy(-zRot);
         direction = LimitDirection(direction);
         direction = direction.RotatedBy(zRot);
-        RaycastHit2D hit = Physics2D.CircleCast(firePoint, ammoPool[0].collider.radius, direction, maxDistanceToFire, Layers.Tiles | Layers.PlayerHurtbox);
+        float colliderRadius = ammoPool[0].collider.radius;
+        RaycastHit2D hit = Physics2D.CircleCast(firePoint, colliderRadius, direction, maxDistanceToFire - colliderRadius, Layers.Tiles | Layers.PlayerHurtbox);
         if (hit.collider != null && hit.collider.CompareTag(Tags.Player))
         {
             FireProjectile(direction);

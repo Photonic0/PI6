@@ -251,6 +251,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &90139392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 90139394}
+  - component: {fileID: 90139393}
+  m_Layer: 0
+  m_Name: ScreenShakeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &90139393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90139392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e0e33e64f682b644b017b46a6a271a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &90139394
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90139392}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.96830153, y: -0.3570373, z: -0.06302257}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &96176186
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,6 +452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug_FPS: -1
+  debug_timeScale: 1
   playerControl: {fileID: 0}
   playerRenderer: {fileID: 0}
   playerLife: {fileID: 0}
@@ -937,6 +982,7 @@ MonoBehaviour:
   - {fileID: -1916958015, guid: b986ea1eaa8e0934e8af762d6888e611, type: 3}
   - {fileID: -1191549128, guid: b986ea1eaa8e0934e8af762d6888e611, type: 3}
   - {fileID: 774246088, guid: b986ea1eaa8e0934e8af762d6888e611, type: 3}
+  gameObject: {fileID: 0}
 --- !u!1 &1211531388
 GameObject:
   m_ObjectHideFlags: 0
@@ -1316,6 +1362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2cda6289e6e554584c6f87335d1755, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameObject: {fileID: 1509272182}
   debug_clickToRechargeAll: 0
   weaponUnlockFlags: 
 --- !u!4 &1509272184
@@ -1485,6 +1532,7 @@ MonoBehaviour:
   - {fileID: -292327719, guid: a94702fae67ff834daeef3891e12c90c, type: 3}
   - {fileID: -926630869, guid: a94702fae67ff834daeef3891e12c90c, type: 3}
   - {fileID: 35430673, guid: a94702fae67ff834daeef3891e12c90c, type: 3}
+  gameObject: {fileID: 0}
 --- !u!1 &1528186876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1691,6 +1739,7 @@ MonoBehaviour:
   - {fileID: 958238274, guid: af6112f327cdec243b95a5507f9a0441, type: 3}
   - {fileID: 546480425, guid: af6112f327cdec243b95a5507f9a0441, type: 3}
   - {fileID: -10401739, guid: af6112f327cdec243b95a5507f9a0441, type: 3}
+  gameObject: {fileID: 0}
 --- !u!1 &1988819383
 GameObject:
   m_ObjectHideFlags: 0

@@ -682,6 +682,11 @@ public class DiscoBossAI : Enemy
     }
     public override bool PreKill()
     {
+        for (int i = 0; i < ballProjPool.Length; i++)
+        {
+            ballProjPool[i].gameObject.SetActive(false);
+        }
+
         rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
         sprite.enabled = false;

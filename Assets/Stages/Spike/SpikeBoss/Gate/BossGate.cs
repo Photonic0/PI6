@@ -13,6 +13,8 @@ public class BossGate : MonoBehaviour
     [SerializeField] Transform cameraPositionLockPoint;//arena bounds is 16x8
     [SerializeField] Enemy boss;
     [SerializeField] AudioSource source;
+    [SerializeField] GameObject[] objsToDestroy;
+    [SerializeField] GameObject[] objsToDisable;
     Transform mainCamTransform;
     Transform cameraParentTransform;
     bool locked;
@@ -21,7 +23,7 @@ public class BossGate : MonoBehaviour
     {
         Camera mainCam = Camera.main;
         mainCamTransform = mainCam.transform;
-        cameraParentTransform = mainCam.GetComponentInParent<Transform>();
+        cameraParentTransform = mainCamTransform.parent;
         timer = 0;
         top = transform.position;
         //add 1 so the the top is inside the block above the gate
@@ -29,8 +31,8 @@ public class BossGate : MonoBehaviour
     }
     void Update()
     {
-        
-        if(collider != null && !locked && GameManager.PlayerPosition.x - top.x > .5f)
+
+        if (collider != null && !locked && GameManager.PlayerPosition.x - top.x > .5f)
         {
             Lock();
         }
@@ -47,13 +49,14 @@ public class BossGate : MonoBehaviour
             }
             else
             {
-                Vector3 newCameraPos = mainCamTransform.position;
+                Vector3 newCameraPos = cameraParentTransform.position;
                 float cameraZ = newCameraPos.z;
                 newCameraPos = Helper.Decay(newCameraPos, cameraPositionLockPoint.position, 15);
                 newCameraPos.z = cameraZ;
-                mainCamTransform.position = newCameraPos;
-                mainCamTransform.GetComponent<TyphoonCameraSystem>().enabled = false;
+                cameraParentTransform.position = newCameraPos;
+                mainCamTransform.GetComponent<TyphoonCameraSystem>().enabled = false;           
             }
+            mainCamTransform.localPosition = ScreenShakeManager.GetCameraOffset();
         }
         float oldTimer = timer;
         if (!locked && Mathf.Abs(top.x - GameManager.PlayerPosition.x) < xDistThresholdForOpening)
@@ -74,7 +77,7 @@ public class BossGate : MonoBehaviour
             Transform gateSegment = gateSegments[i];
             //make all of them have the same offset but clamp the y of the earlier ones
             float yOffset = Helper.Remap(timer, 0, animationDuration, 3, 0);
-            if(yOffset > i + 1)
+            if (yOffset > i + 1)
             {
                 yOffset = i + 1;
             }
@@ -88,13 +91,13 @@ public class BossGate : MonoBehaviour
             collider.enabled = true;
         }
         locked = true;
-        if(boss is SpikeBossAI spikeBoss)
+        if (boss is SpikeBossAI spikeBoss)
         {
             spikeBoss.ChangeToIntro();
         }
-        else if(boss is TyphoonBossAI typhoonBoss)
+        else if (boss is TyphoonBossAI typhoonBoss)
         {
-            if(SceneManager.GetActiveScene().buildIndex == SceneIndices.TyphoonStage)
+            if (SceneManager.GetActiveScene().buildIndex == SceneIndices.TyphoonStage)
             {
                 //disable cloud particle spawning during bossfight (wont be visible)
                 //also handles spawning lightning nodes
@@ -103,9 +106,42 @@ public class BossGate : MonoBehaviour
             }
             typhoonBoss.ChangeToIntro();
         }
-        else if(boss is DiscoBossAI discoBoss)
+        else if (boss is DiscoBossAI discoBoss)
         {
             discoBoss.ChangeToIntro();
+            DiscoMusicEventManager.Disable();
+        }
+        DestroyObjsOnLock();
+        DisableObjsOnLock();
+    }
+
+    private void DisableObjsOnLock()
+    {
+        if (objsToDisable == null || objsToDisable.Length <= 0)
+            return;
+        for (int i = 0; i < objsToDisable.Length; i++)
+        {
+            if (objsToDisable[i] == null)//null comparison to check for destroyed game object
+            {
+                objsToDisable[i] = null;//null assignment to remove reference from the array
+                continue;//continue so we don't try to disable null ref
+            }
+            objsToDisable[i].SetActive(false);
+        }
+    }
+
+    private void DestroyObjsOnLock()
+    {
+        if (objsToDestroy == null || objsToDestroy.Length <= 0)
+            return;
+        for (int i = 0; i < objsToDestroy.Length; i++)
+        {
+            if (objsToDestroy[i] == null)//null comparison to check for destroyed game object
+            {
+                objsToDestroy[i] = null;//null assignment to remove reference from the array
+                continue;//continue so we don't try to destroy null ref
+            }
+            Destroy(objsToDestroy[i]);
         }
     }
 }

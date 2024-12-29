@@ -427,6 +427,11 @@ public class TyphoonBossAI : Enemy
 
     public override bool PreKill()
     {
+        lightningRenderer.Stop();
+        for (int i = 0; i < lightningOrbs.Length; i++)
+        {
+            lightningOrbs[i].gameObject.SetActive(false);
+        }
         rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
         sprite.enabled = false;

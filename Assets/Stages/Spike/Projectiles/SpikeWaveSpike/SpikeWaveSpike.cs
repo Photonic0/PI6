@@ -1,13 +1,14 @@
 using Assets.Helpers;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class SpikeWaveSpike : Projectile
 {
     public override int Damage => 3;
     [SerializeField] new Transform transform;
-    [SerializeField] new SpriteRenderer renderer;
-    [SerializeField] Texture2D spikeTexture;
-    [SerializeField] int cropAmount;
+    //[SerializeField] new SpriteRenderer renderer;
+    //[SerializeField] Texture2D spikeTexture;
+    //[SerializeField] int cropAmount;
     
     Vector3 originalPos;
     float timer;
@@ -100,6 +101,27 @@ public class SpikeWaveSpike : Projectile
         }
         spikesLeftToSpawn--;
         Quaternion rotation = Quaternion.Euler(0, 0, 180);
+        Tilemap tiles = SpikeStageSingleton.instance.solidTiles;
+        bool foundsuitableTile = false;
+        for (int i = -4; i < 5; i++)
+        {
+            Vector3 posToCheck = currentPos;
+            posToCheck.y += i;
+            Vector3Int coordToCheck = tiles.WorldToCell(posToCheck);
+            bool hasnoTileAtCurrent = !tiles.HasTile(coordToCheck);
+            coordToCheck.y -= 1;
+            bool hasTileBelow = tiles.HasTile(coordToCheck);
+            foundsuitableTile = hasTileBelow && hasnoTileAtCurrent;
+            if(foundsuitableTile)
+            {
+                currentPos.y = coordToCheck.y + .5f;
+                break;
+            }    
+        }
+        if(!foundsuitableTile)
+        {
+            return;
+        }
         GameObject obj = Instantiate(SpikeStageSingleton.instance.spikeWaveSpike, currentPos, rotation);
         SpikeWaveSpike spike = obj.GetComponent<SpikeWaveSpike>();
         spike.direction = direction;

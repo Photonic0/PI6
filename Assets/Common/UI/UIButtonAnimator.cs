@@ -8,6 +8,8 @@ public class UIButtonAnimator : MonoBehaviour, IUpdatableWhenPaused
     [SerializeField] Image buttonImage;
     [SerializeField] Sprite[] frames;
     int currentFrameIndex;
+    [SerializeField] new GameObject gameObject;
+    public GameObject GameObject => gameObject;
     void Start()
     {
         currentFrameIndex = 0;
@@ -18,7 +20,7 @@ public class UIButtonAnimator : MonoBehaviour, IUpdatableWhenPaused
         timer += Time.deltaTime;
         if(timer > 0.1f)
         {
-            timer %= 0.1f;
+            timer -= 0.1f;
             currentFrameIndex++;
             currentFrameIndex %= frames.Length;
             buttonImage.sprite = frames[currentFrameIndex];

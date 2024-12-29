@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TyphoonCameraSystem : MonoBehaviour
 {
+
+    [SerializeField] Transform parentTransform;
     [SerializeField] new Transform transform;
     const float ZPos = -8.660254f;
     float targetY = 4;
@@ -48,7 +50,8 @@ public class TyphoonCameraSystem : MonoBehaviour
         targetX *= .001f;
         targetX = Mathf.Clamp(targetX, -1, 1);
         targetX = Helper.Decay(targetX, relativePlayerPos.x, 10);
-        transform.position = new(targetX + cameraPos.x, targetY, ZPos);
+        parentTransform.position = new(targetX + cameraPos.x, targetY, ZPos);
+        transform.localPosition = ScreenShakeManager.GetCameraOffset();
     }
 #if UNITY_EDITOR
 

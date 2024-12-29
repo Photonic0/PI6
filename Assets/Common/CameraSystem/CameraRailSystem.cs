@@ -64,6 +64,8 @@ public class CameraRailSystem : MonoBehaviour
             float moveSpeedMult = Mathf.InverseLerp(0, .2f, Vector2.Distance(currentPos, finalPos));
             parentTransform.position = Vector3.MoveTowards(currentPos, finalPos, Time.fixedDeltaTime * cameraMoveSpeed * moveSpeedMult);
         }
+        Vector2 offset = ScreenShakeManager.GetCameraOffset();
+        cameraTransform.localPosition = offset;
         //float t = 0;
         //if(Mathf.Abs(secondPoint.position.x - closest.position.x) > 0.00001f)
         //{
