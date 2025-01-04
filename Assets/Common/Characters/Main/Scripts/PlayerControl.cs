@@ -2,6 +2,7 @@ using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
 using Assets.Helpers;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -24,13 +25,14 @@ public class PlayerControl : MonoBehaviour
     const float MaxJumpTime = 0.15f;
     public const float KBTime = .3f;
     public const float KBPushbackVelocity = 2;
-    //do control shoot mouse direction
-    //should face in mouse direction
     public Vector3 Position { get; private set; }
+    public bool NotInKBAnim => GameManager.PlayerLife.immuneTime < PlayerLife.ImmuneTimeMax - KBTime;
+    public bool InKBAnim => GameManager.PlayerLife.immuneTime >= PlayerLife.ImmuneTimeMax - KBTime;
     private void Awake()//can do in awake because gamemanager instance will already be loaded from previous scene
     {
         GameManager.instance.playerControl = this;
         weapon = PlayerWeaponManager.GetWeapon(PlayerWeaponManager.PlayerWeaponID.Basic);
+        Position = rb.position;
     }
     private void Start()
     {
@@ -40,7 +42,7 @@ public class PlayerControl : MonoBehaviour
     }
     void Update()
     {
-        if (GameManager.PlayerLife.immuneTime < PlayerLife.ImmuneTimeMax - KBTime)
+        if (NotInKBAnim)
         {
             //don't do early return because there's more after the else
             if (!GameManager.PlayerLife.Dead)

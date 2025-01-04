@@ -9,6 +9,8 @@ public class TyphoonEnemyTornado : Enemy
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform parent;
     [SerializeField] TyphoonEnemyTornadoLightning[] lightningProjPool;
+    [SerializeField] AudioClip[] thunderShoot;
+    [SerializeField] AudioSource audioSource;
     int state;
     float timer;
     Vector2 initialPosition;
@@ -75,6 +77,7 @@ public class TyphoonEnemyTornado : Enemy
             proj.rb.velocity = toPlayer * ProjSpeed;
             proj.transform.position = transform.position;
             proj.rb.rotation = toPlayer.Atan2Deg();
+            CommonSounds.PlayRandom(thunderShoot, audioSource);
         }
     }
     void AccelerateTowards(Vector2 targetPos)

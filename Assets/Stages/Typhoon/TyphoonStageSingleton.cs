@@ -210,10 +210,13 @@ public class TyphoonStageSingleton : MonoBehaviour
             debug_initializeFanBounds = false;
             //InitializeFanBounds();
         }
-        for (int i = 0; i < fanPositionBounds.Length; i++)
+        if (fanPositionBounds != null)
         {
-            (float minX, float maxX, float minY, float maxY) = fanPositionBounds[i];
-            Gizmos2.DrawRectangle(minX, maxX, minY, maxY, Color.green);
+            for (int i = 0; i < fanPositionBounds.Length; i++)
+            {
+                (float minX, float maxX, float minY, float maxY) = fanPositionBounds[i];
+                Gizmos2.DrawRectangle(minX, maxX, minY, maxY, Color.green);
+            }
         }
         //if(fanNoiseAudioSources != null)
         //{

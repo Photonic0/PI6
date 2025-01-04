@@ -85,8 +85,11 @@ public class SpikeWaveSpike : Projectile
     //}
     public static void StartSpikeWave(Vector3 from, float blindSpotWidth, short numberOfSpikesPerSide, float animationDuration, float timeToSpawnNextSpike, AudioSource audioSource)
     {
-        audioSource.volume = .5f;
-        audioSource.PlayOneShot(SpikeStageSingleton.instance.spikeShockwave);
+        if (audioSource != null)
+        {
+            audioSource.volume = .5f;
+            audioSource.PlayOneShot(SpikeStageSingleton.instance.spikeShockwave);
+        }
         blindSpotWidth *= .5f;
         SpawnSpike(from + new Vector3(blindSpotWidth, 0), 1, numberOfSpikesPerSide, animationDuration, timeToSpawnNextSpike);
         SpawnSpike(from - new Vector3(blindSpotWidth, 0), -1, numberOfSpikesPerSide, animationDuration, timeToSpawnNextSpike);

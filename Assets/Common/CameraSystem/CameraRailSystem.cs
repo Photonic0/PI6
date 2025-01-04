@@ -31,6 +31,7 @@ public class CameraRailSystem : MonoBehaviour
         {
             instance = this;
         }
+        GameManager.AssignCameraVars(Camera.main);
     }
     private void Start()
     {

@@ -20,6 +20,8 @@ public class TyphoonHazardFan : MonoBehaviour
     //state begins at 0, being on, so don't need to call particleSystem.Stop() inside Start() method.
     private void Start()
     {
+        audioSource.clip = TyphoonStageSingleton.instance.fanNoises[Random.Range(0, TyphoonStageSingleton.instance.fanNoises.Length)];
+        audioSource.Play();
         GameManager.OnPause += PauseFanNoise;
         GameManager.OnUnPause += ResumeFanNoise;
     }
@@ -69,7 +71,7 @@ public class TyphoonHazardFan : MonoBehaviour
         float halfWidth = WindColumnWidth / 2;
         float rotationAmount = -transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         playerPos = (playerPos - center).RotatedBy(rotationAmount) + center;
-        audioSource.volume = Mathf.InverseLerp(2f, 8f, (playerPos - center).magnitude);
+        audioSource.volume = Mathf.InverseLerp(12f, 2f, (playerPos - center).magnitude) * .5f;
 #if UNITY_EDITOR
         debug_transformedPlayerPosition = playerPos;
 #endif

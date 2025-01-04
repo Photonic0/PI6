@@ -1,3 +1,4 @@
+using Assets.Common.Consts;
 using UnityEngine;
 
 public class SpikeBossSpikeBall : Projectile
@@ -12,6 +13,22 @@ public class SpikeBossSpikeBall : Projectile
         if (!rb.isKinematic)
         {
             timer += Time.fixedDeltaTime;
+            if(timer > .2f)
+            {
+                Vector2 pos = transform.position;
+
+                float radius = collider.radius;
+                Collider2D tilesCollider = Physics2D.OverlapCircle(pos, radius, Layers.Tiles);
+                if(tilesCollider != null)
+                {
+                    EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, pos);
+                    gameObject.SetActive(false);
+                    timer = 0;
+                    DisablePhysics();
+                    SpikeWaveSpike.StartSpikeWave(pos, 1f, 8, .25f, .1f, null);
+                    return;
+                }
+            }
             if (timer > 5)
             {
                 gameObject.SetActive(false);

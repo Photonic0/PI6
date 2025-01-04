@@ -7,6 +7,7 @@ public class TyphoonCameraSystem : MonoBehaviour
 
     [SerializeField] Transform parentTransform;
     [SerializeField] new Transform transform;
+    static TyphoonCameraSystem instance;
     const float ZPos = -8.660254f;
     float targetY = 4;
     const float targetYLeniencyUp = 3;
@@ -14,7 +15,9 @@ public class TyphoonCameraSystem : MonoBehaviour
     float[] pastXVelocities;
     private void Awake()
     {
+        instance = this;
         pastXVelocities = new float[90];
+        GameManager.AssignCameraVars(Camera.main);
     }
 
     void FixedUpdate()
@@ -52,6 +55,14 @@ public class TyphoonCameraSystem : MonoBehaviour
         targetX = Helper.Decay(targetX, relativePlayerPos.x, 10);
         parentTransform.position = new(targetX + cameraPos.x, targetY, ZPos);
         transform.localPosition = ScreenShakeManager.GetCameraOffset();
+    }
+    public static void SetCameraPos(Vector3 pos)
+    {
+        pos.z = ZPos;
+        instance.targetY = pos.y;
+        instance.parentTransform.position = pos;
+        instance.transform.position = pos;
+
     }
 #if UNITY_EDITOR
 

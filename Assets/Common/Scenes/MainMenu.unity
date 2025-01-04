@@ -453,6 +453,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug_FPS: -1
   debug_timeScale: 1
+  debug_addTinyShake: 0
+  debug_addSmallShake: 0
+  debug_addMediumShake: 0
+  debug_addLargeShake: 0
   playerControl: {fileID: 0}
   playerRenderer: {fileID: 0}
   playerLife: {fileID: 0}
@@ -560,6 +564,21 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 088e2c7e2979af048b3cdb71a44aa99f, type: 3}
   - {fileID: 8300000, guid: 358f6dfce15f51f439b9580a22d07b2d, type: 3}
   - {fileID: 8300000, guid: 008ad9e869aefbd49af80ce4a5fcaf4b, type: 3}
+  spikeStageSteps:
+  - {fileID: 8300000, guid: 92a4e010630709746a30cfd913792b04, type: 3}
+  - {fileID: 8300000, guid: 358f6dfce15f51f439b9580a22d07b2d, type: 3}
+  - {fileID: 8300000, guid: 008ad9e869aefbd49af80ce4a5fcaf4b, type: 3}
+  - {fileID: 8300000, guid: 088e2c7e2979af048b3cdb71a44aa99f, type: 3}
+  discoStageSteps:
+  - {fileID: 8300000, guid: d2c5a73a0d376664098d5cddeed57a20, type: 3}
+  - {fileID: 8300000, guid: 7237840684bf0334f8e6dc194d5b0501, type: 3}
+  - {fileID: 8300000, guid: b1b634a639c02df4baa57d35d6e2da9c, type: 3}
+  - {fileID: 8300000, guid: dd16dc0ca0cf78f4d8494e5c73d42c9c, type: 3}
+  - {fileID: 8300000, guid: f7d259d674334b945af6f8cc52918d7a, type: 3}
+  - {fileID: 8300000, guid: ac44410e69573c945931184c4efb8d2d, type: 3}
+  - {fileID: 8300000, guid: b67d0e2b84f036248b9c3d311a0e6ea6, type: 3}
+  - {fileID: 8300000, guid: 9233d0b6c0831d6499cc874c45451b88, type: 3}
+  typhoonStageSteps: []
   commonShot: {fileID: 8300000, guid: e808af88f12692f40abd87af9a1ad4f1, type: 3}
   throwSfx: {fileID: 8300000, guid: bbc8afa189ac49c4b948b35e4313e96d, type: 3}
 --- !u!4 &887785340

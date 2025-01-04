@@ -11,12 +11,15 @@ public class DiscoBossMusicHandler : MonoBehaviour
 {
     public const float BPM = 138;
     public const double SecondsPerBeat = 60.0 / BPM;
+    public const double SecondsPerFootstepCheck = 60.0 / (2.0 * BPM);
     public const int BeatsInMusic = 240;
     //const int
 
     public bool StartedMusic = false;
     public bool Paused { get; private set; }
     public double beatTimer;
+    public double audioTimer;
+    public double footstepCheckTimer;
     private float delayTimer;//need to delay the execution of the music synced action a bit
     public int beatCounter;
     [SerializeField] AudioSource musicAudioSource;
@@ -29,9 +32,10 @@ public class DiscoBossMusicHandler : MonoBehaviour
     [SerializeField] IMusicSyncable[] syncableObjs;
     bool playMusicFileNextBeat;
     static readonly int discoTileMaterialFlipColFloatHash = Shader.PropertyToID("_FlipColFloat");
-
+#if UNITY_EDITOR
     [SerializeField] int debug_startMusicAtBeat = -1;
     [SerializeField] bool debug_restartMusic;
+#endif
     private void Start()
     {
         DiscoMusicEventManager.instance.discoBossMusicHandler = this;
@@ -63,12 +67,27 @@ public class DiscoBossMusicHandler : MonoBehaviour
         StartedMusic = true;
         beatTimer = 0;
         delayTimer = float.MaxValue;
-        beatCounter = debug_startMusicAtBeat <= 0 ? -1 : debug_startMusicAtBeat - 1;
+        beatCounter = -1;
+        //beatCounter = debug_startMusicAtBeat <= 0 ? -1 : debug_startMusicAtBeat - 1;
     }
     void Update()
     {
         if (Paused || !StartedMusic)
             return;
+        float deltaTime = Time.deltaTime;
+        footstepCheckTimer += deltaTime;
+        if (footstepCheckTimer > SecondsPerFootstepCheck)
+        {
+            footstepCheckTimer -= SecondsPerFootstepCheck;
+            Vector2 playerVel = GameManager.PlayerControl.rb.velocity;
+            playerVel.x = (int)(10000 * playerVel.x) / 10000;
+            playerVel.y = (int)(10000 * playerVel.y) / 10000;
+            if (playerVel.x != 0 && playerVel.y == 0 && GameManager.PlayerControl.NotInKBAnim)
+            {
+                CommonSounds.PlayFootstep(GameManager.PlayerRenderer.FootstepAudioSource);
+            }
+        }
+#if UNITY_EDITOR
         if (debug_restartMusic)
         {
             musicAudioSource.Stop();
@@ -77,27 +96,40 @@ public class DiscoBossMusicHandler : MonoBehaviour
             debug_restartMusic = false;
             return;
         }
+#endif
         if (playMusicFileNextBeat)
         {
             float playbackPos = Time.deltaTime;
+#if UNITY_EDITOR
             if(debug_startMusicAtBeat > 0)
             {
                 playbackPos += debug_startMusicAtBeat * (float)SecondsPerBeat;
                 Debug.Log("started early at " + playbackPos + " sec");
             }
+#endif
+
             musicAudioSource.time = playbackPos;
             musicAudioSource.Play();
             playMusicFileNextBeat = false;
         }
-        delayTimer += Time.deltaTime;
-        beatTimer += Time.deltaTime;
+        delayTimer += deltaTime;
+        beatTimer += deltaTime;
+        audioTimer += deltaTime;//congtinue trying to ensure that music will be synced later
         if (beatTimer > SecondsPerBeat)
         {
+            //float timeInAudio = 
             delayTimer = -0.05f;
             beatTimer -= SecondsPerBeat;
             beatCounter++;
             beatCounter %= BeatsInMusic;
+#if UNITY_EDITOR
+
             if ((debug_startMusicAtBeat <= -1 && beatCounter == 0) || beatCounter == debug_startMusicAtBeat)
+            {
+                playMusicFileNextBeat = true;
+            }else
+#endif
+            if(beatCounter == 0)
             {
                 playMusicFileNextBeat = true;
             }
@@ -119,7 +151,7 @@ public class DiscoBossMusicHandler : MonoBehaviour
     }
     public void UnPause()
     {
-        if ((StartedMusic) && Paused)
+        if (StartedMusic && Paused)
         {
             Paused = false;
             musicAudioSource.UnPause();

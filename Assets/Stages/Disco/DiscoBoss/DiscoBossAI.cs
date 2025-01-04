@@ -223,6 +223,7 @@ public class DiscoBossAI : Enemy
         FlipSpriteOnBeat();
         if (StateJustStarted)
         {
+            GetComponent<Collider2D>().enabled = true;
             UIManager.ActivateBossLifeBar(FlipnoteColors.Magenta);
             musicHandler.StartMusic();
         }
@@ -628,6 +629,7 @@ public class DiscoBossAI : Enemy
         state = StateID.Intro;
         floatTimer = -Time.deltaTime;
         stateBeatCounter = 0;
+        GetComponent<Collider2D>().enabled = true;
     }
     void FlipSpriteOnBeat()
     {
@@ -689,15 +691,18 @@ public class DiscoBossAI : Enemy
 
         rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
-        sprite.enabled = false;
         DeathParticle.Spawn(transform.position, FlipnoteColors.Magenta, audioSource);
-        EffectsHandler.SpawnBigExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
         StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
         return false;
     }
     IEnumerator ReturnToMainMenuAfter3SecAndUnlockUpgrade()
     {
-        yield return new WaitForSecondsRealtime(3f);
+        ScreenShakeManager.AddTinyShake();
+        yield return new WaitForSecondsRealtime(DeathParticle.SpinEffectDuration);
+        ScreenShakeManager.AddLargeShake();
+        sprite.enabled = false;
+        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
+        yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration);
         PlayerWeaponManager.UnlockDisco();
         GameManager.CleanupCheckpoints();
         SceneManager.LoadScene(SceneIndices.MainMenu);

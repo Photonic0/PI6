@@ -32,7 +32,11 @@ public class GameManager : MonoBehaviour
 
     //keep between scene reloads, but not between scene loads
     public static int latestCheckpointIndex;
+    public static Camera CurrentCam => instance.currentCam;
+    Camera currentCam;
 
+    public static Transform CurrentCamTransform => instance.currentCamTransform;
+    Transform currentCamTransform;
     public static Checkpoint LatestCheckpoint => latestCheckpointIndex == -1 ? null : checkpoints[latestCheckpointIndex];
     [SerializeField] List<IUpdatableWhenPaused> thingsToUpdateWhenPaused;
     private void Awake()//assign player scripts refs in awake of player scripts so it goes fine when changing scenes
@@ -49,9 +53,17 @@ public class GameManager : MonoBehaviour
             thingsToUpdateWhenPaused = new();
             Paused = false;
             DontDestroyOnLoad(gameObject);
+            currentCam = Camera.main;
         }
     }
-
+    public static void AssignCameraVars(Camera camera)
+    {
+        if (camera != null)
+        {
+            instance.currentCam = camera;
+            instance.currentCamTransform = camera.transform;
+        }
+    }
     private void Update()
     {
 #if UNITY_EDITOR
@@ -104,7 +116,10 @@ public class GameManager : MonoBehaviour
             DiscoMusicEventManager.PauseMusic();
         }
         instance.StartCoroutine(instance.UpdatePausedObjects());
-        OnPause();
+        if (OnPause != null)
+        {
+            OnPause();
+        }
     }
     IEnumerator UpdatePausedObjects()
     {
@@ -137,7 +152,10 @@ public class GameManager : MonoBehaviour
         {
             DiscoMusicEventManager.UnPauseMusic();
         }
-        OnUnPause();
+        if (OnUnPause != null)
+        {
+            OnUnPause();
+        }
     }
     public static void CleanupDestroyedPausedUpdatedObjs()
     {

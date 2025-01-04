@@ -1,3 +1,4 @@
+using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Consts;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,12 +17,14 @@ public class DiscoMusicEventManager : MonoBehaviour
     }
     public const float BPM = 144f;
     public const double SecondsPerBeat = 60.0 / BPM;
+    public const double SecondsPerFootstepCheck = 60.0 / (BPM * 2);
     public const int BeatsPerMusicSplit = 16;
     public bool Paused { get; private set; }
     public DiscoBossMusicHandler discoBossMusicHandler;
     bool DiscoBossMusicStarted => discoBossMusicHandler != null && discoBossMusicHandler.StartedMusic;
     public static DiscoMusicEventManager instance;
     private double beatTimer;
+    private double footstepCheckTimer;
 
     private float delayTimer;//need to delay the execution of the music synced action a bit
     public int beatCounter;
@@ -76,11 +79,32 @@ public class DiscoMusicEventManager : MonoBehaviour
 
     void Update()
     {
-        if (Paused || DiscoBossMusicStarted)
+        //GetPitchMultiplierForFootsteps();
+        if (Paused)
+        {
             return;
-        delayTimer += Time.deltaTime;
-        beatTimer += Time.deltaTime;
+        }
+        float deltaTime = Time.deltaTime;
+        footstepCheckTimer += deltaTime;
+        if (footstepCheckTimer > SecondsPerFootstepCheck)
+        {
+            footstepCheckTimer -= SecondsPerFootstepCheck;
+            Vector2 playerVel = GameManager.PlayerControl.rb.velocity;
+            playerVel.x = (int)(10000 * playerVel.x) / 10000;
+            playerVel.y = (int)(10000 * playerVel.y) / 10000;
+            if (playerVel.x != 0 && playerVel.y == 0 && GameManager.PlayerControl.NotInKBAnim)
+            {
+                CommonSounds.PlayFootstep(GameManager.PlayerRenderer.FootstepAudioSource);
+            }
+        }
+        if (DiscoBossMusicStarted)
+        {
+            return;
+        }
+        delayTimer += deltaTime;
+        beatTimer += deltaTime;
         debugtext.text = beatTimer.ToString();
+       
         if (beatTimer > SecondsPerBeat)
         {
             beatTimer -= SecondsPerBeat;
@@ -173,5 +197,13 @@ public class DiscoMusicEventManager : MonoBehaviour
         instance.enabled = false;
         instance.syncableObjects.Clear();
         instance.syncableObjects = null;
+    }
+    static float GetPitchMultiplierForFootsteps()
+    {
+        int beat = instance.beatCounter;
+        //float time = (float)(instance.beatTimer + (beat - 1) * SecondsPerBeat);
+
+        
+        return 1;
     }
 }

@@ -1,5 +1,7 @@
-﻿using Assets.Common.Consts;
+﻿using Assets.Common.Characters.Main.Scripts.Weapons;
+using Assets.Common.Consts;
 using Assets.Common.Interfaces;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -81,14 +83,25 @@ namespace Assets.Common.Characters.Main.Scripts
             vel.x = -vel.x;
             GameManager.PlayerControl.rb.velocity = vel;
         }
+        IEnumerator ShakeWithDelay()
+        {
+            yield return new WaitForSeconds(DeathParticle.SpinEffectDuration);
+            ScreenShakeManager.AddLargeShake();
+        }
         public void CheckDead()
         {
+            ScreenShakeManager.AddTinyShake();
             if (Dead)
             {
                 deathRestartTimer = DeathRestartDuration;
                 DeathParticle.Spawn(transform.position, GameManager.PlayerRenderer.Color, audioSource);
-                GameManager.PlayerControl.DisableCollision();
+                GameManager.PlayerControl.DisableCollision();                
                 chances--;
+                StartCoroutine(ShakeWithDelay());
+                if(chances < 0)
+                {
+                    PlayerWeaponManager.ResetUnlocks();
+                }
             }
         }
     }

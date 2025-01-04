@@ -27,9 +27,11 @@ public class DiscoHazardConfettiEmitter : MonoBehaviour, IMusicSyncable
     const byte StateIDGoDown = 4;
     const byte StateIDWaitingForRise = 5;
 
+#if UNITY_EDITOR
     [Header("debug fields")]
     [SerializeField] bool debug_TriggerExplosion;
     [SerializeField] int debug_particleCount;
+#endif
 
     public int BeatsPerAction => 4;
     public int BeatOffset => beatOffset;
@@ -52,11 +54,14 @@ public class DiscoHazardConfettiEmitter : MonoBehaviour, IMusicSyncable
     }
     void Update()
     {
+#if UNITY_EDITOR
         if (debug_TriggerExplosion)
         {
             ConfettiExplosion(debug_particleCount);
             debug_TriggerExplosion = false;
         }
+#endif
+
         switch (state)
         {
             case StateIDRise:
@@ -158,6 +163,8 @@ public class DiscoHazardConfettiEmitter : MonoBehaviour, IMusicSyncable
     }
     void ConfettiExplosion(int particleCount = 50)
     {
+        //cull shake based on shake origin
+        ScreenShakeManager.AddTinyShake(transform.position, 1);
         Vector3 origin = transform.position - particles.transform.position;
         float halfWidth = width / 2;
         //float minYVel = grav * grav * .5f;

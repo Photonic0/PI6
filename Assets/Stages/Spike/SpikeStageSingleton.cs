@@ -11,6 +11,7 @@ public class SpikeStageSingleton : MonoBehaviour
     public AudioClip spikeBreakNew;
     public AudioClip spikeShockwave;
     public Tilemap solidTiles;
+    public AudioClip[] hardwoodHit;
     private void Awake()
     {
         SceneManager.sceneUnloaded += UnloadSingleton;

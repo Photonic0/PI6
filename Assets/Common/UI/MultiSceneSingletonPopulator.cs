@@ -17,6 +17,7 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
         if (GameManager.instance == null)
         {
             SceneManager.LoadScene(SceneIndices.MainMenu);
+            Debug.ClearDeveloperConsole();
             return;
         }
 #endif

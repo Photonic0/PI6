@@ -8,7 +8,7 @@ public class WeaponTyphoon : PlayerWeapon
     public override FlipnoteColors.ColorID EquipColor => FlipnoteColors.ColorID.Blue;
     protected override float Use()
     {
-        Object.Instantiate(CommonPrefabs.TyphoonShot, CannonPosition, Quaternion.identity);
+        //Object.Instantiate(CommonPrefabs.TyphoonShot, CannonPosition, Quaternion.identity);
         return 1;
     }
 }

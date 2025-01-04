@@ -3,8 +3,6 @@ using Assets.Common.Consts;
 using Assets.Helpers;
 using Assets.Systems;
 using System.Collections;
-using System.Threading;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -57,17 +55,17 @@ public class SpikeBossAI : Enemy
     const float IntroDuration = 1;
 
     const float SpikeBallThrowJumpHeight = 5;
-    const float SpikeBallThrowStartup = .4f;
-    const float SpikeBallThrowRate = .7f;
-    const int SpikeBallThrowActionCount = 4;
+    const float SpikeBallThrowStartup = 0.3f;
+    const float SpikeBallThrowRate = 0.9f;
+    const int SpikeBallThrowActionCount = 3;
     const float SpikeBallThrowDelay = .2f;
-    const float SpikeBallThrowVelocity = 15;
+    const float SpikeBallThrowVelocity = 17;
     const float SpikeBallThrowDistNeededForSideSwitch = 4.5f;
 
     const int SpikeShockwaveActionCount = 1;//The action is the shockwave creation
-    const float SpikeShockwaveGoToAirStallPointDuration = .5f;
+    const float SpikeShockwaveGoToAirStallPointDuration = .4f;
     const float SpikeShockwaveAirStallHeight = 5.5f;
-    const float SpikeShockwaveAirStallDuration = .45f;
+    const float SpikeShockwaveAirStallDuration = .35f;
     const float SpikeShockwaveDownMovementDuration = .1f;
     const float SpikeShockwaveGroundStayDuration = .25f;
 
@@ -85,13 +83,13 @@ public class SpikeBossAI : Enemy
 
     public override void Start()
     {
-        footstepSimulator = new(CommonSounds.WoodenFootsteps, .1f, footstepAudioSource);
+        footstepSimulator = new(CommonSounds.Footstep, .1f, footstepAudioSource);
         DiscardCurrentSpikeBall();
         base.Start();
     }
     void Update()
     {
-        if(life <= 0)
+        if (life <= 0)
         {
             return;
         }
@@ -149,7 +147,7 @@ public class SpikeBossAI : Enemy
         float jumpPoint = ParabolaFrom0to1(Mathf.InverseLerp(0, SpikeBallThrowRate, (stateTimer - SpikeBallThrowStartup * 2f) % SpikeBallThrowRate));
         if (actionCounter <= 0 && stateTimer > SpikeBallThrowStartup * 2 + SpikeBallThrowRate * SpikeBallThrowActionCount)
         {
-            
+
             jumpPoint = 0;
         }
         Vector2 position = CurrentArenaSidePoint + new Vector2(0, jumpPoint * SpikeBallThrowJumpHeight);
@@ -197,7 +195,8 @@ public class SpikeBossAI : Enemy
             {
                 Vector3 throwPos = transform.position + new Vector3(0, 1);
                 currentSpikeBall.transform.position = throwPos;
-                currentSpikeBall.rb.velocity = (GameManager.PlayerPosition - throwPos).normalized * SpikeBallThrowVelocity;
+ 
+                currentSpikeBall.rb.velocity = LimitDirection(throwPos, GameManager.PlayerPosition) * SpikeBallThrowVelocity;
                 currentSpikeBall.EnablePhysics();
                 currentSpikeBall = null;
                 audioSource.transform.position = throwPos;
@@ -248,7 +247,7 @@ public class SpikeBossAI : Enemy
 
             animator.CrossFade(AnimIDSlamFall, 0);
             transform.position = Vector2.Lerp(airStallPos, arenaCenter - new Vector2(0, ArenaHeight / 2 - 1),// -1 so that the boss doesn't clip into the floor.
-                                                                                                // it's -1 and not +1 because it will be subtracting less from the Y position
+                                                                                                             // it's -1 and not +1 because it will be subtracting less from the Y position
                 Easings.SqrIn((stateTimer - SpikeShockwaveGoToAirStallPointDuration - SpikeShockwaveAirStallDuration) / SpikeShockwaveDownMovementDuration));
         }
         else if (stateTimer < SpikeShockwaveGroundStayDuration + SpikeShockwaveDownMovementDuration + SpikeShockwaveAirStallDuration + SpikeShockwaveGoToAirStallPointDuration)
@@ -294,7 +293,7 @@ public class SpikeBossAI : Enemy
                 sprite.flipX = Mathf.Sign(transform.position.x - walkTarget.x) < 0;
                 transform.position = Vector3.MoveTowards(transform.position, walkTarget, Time.deltaTime * WalkSpeed);
             }
-           
+
         }
     }
     private void State_JumpToOtherSide()
@@ -319,7 +318,7 @@ public class SpikeBossAI : Enemy
         float jumpYOffset = ParabolaFrom0to1(stateProgress) * JumpToOtherSideJumpHeight;
         float jumpX = Mathf.Lerp(leftStandingPoint.x, rightStandingPoint.x, stateProgress);
         transform.position = new Vector2(jumpX, arenaCenter.y + jumpYOffset - ArenaHeight / 2 + 1);
-        if(stateTimer > JumpToOtherSideDuration)
+        if (stateTimer > JumpToOtherSideDuration)
         {
             animator.CrossFade(AnimIDIdle, 0);
             if (Random2.Bool)
@@ -408,7 +407,7 @@ public class SpikeBossAI : Enemy
     /// <param name="velDirection">MUST BE NORMALIZED!!</param>
     private void MidairAnim(Vector2 velDirection)
     {
-        float threshold = 0.70710678118f;// 1/sqrt(2)
+        float threshold = 0.7071067812f;// ~ 1/sqrt(2) with some leniency
         if (Vector2.Dot(velDirection, Vector2.left) >= threshold)
         {
             animator.CrossFade(FlipX ? AnimIDMidairRight : AnimIDMidairLeft, 0);
@@ -428,6 +427,7 @@ public class SpikeBossAI : Enemy
     }
     public void ChangeToIntro()
     {
+        GetComponent<Collider2D>().enabled = true;
         state = StateIDIntro;
         actionTimer = stateTimer = -Time.deltaTime;
     }
@@ -441,26 +441,58 @@ public class SpikeBossAI : Enemy
         {
             spikeBalls[i].gameObject.SetActive(false);
         }
-        EffectsHandler.SpawnBigExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
         DeathParticle.Spawn(transform.position, FlipnoteColors.Yellow, audioSource);
-        sprite.enabled = false;
         rb.isKinematic = true;
-        GetComponent<BoxCollider2D>().enabled = false;  
-        StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
+        GetComponent<BoxCollider2D>().enabled = false;
+        StartCoroutine(DoBigExplosionReturnToMainMenuAfter3SecAndUnlockUpgrade());
         return false;
     }
-    IEnumerator ReturnToMainMenuAfter3SecAndUnlockUpgrade()
+    IEnumerator DoBigExplosionReturnToMainMenuAfter3SecAndUnlockUpgrade()
     {
-        yield return new WaitForSecondsRealtime(3f);
+        ScreenShakeManager.AddTinyShake();
+        yield return new WaitForSecondsRealtime(DeathParticle.SpinEffectDuration);
+        ScreenShakeManager.AddLargeShake();
+        sprite.enabled = false;
+        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
+        yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration);
         PlayerWeaponManager.UnlockSpike();
         GameManager.CleanupCheckpoints();
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }
+    Vector2 LimitDirection(Vector2 throwPos, Vector2 target)
+    {
+        Vector2 arenaBottomLeft = arenaCenter;
+        arenaBottomLeft.x -= ArenaWidth / 2;
+        arenaBottomLeft.y -= ArenaHeight / 2;
+        Vector2 arenaBottomRight = arenaBottomLeft;
+        arenaBottomRight.x += ArenaWidth;
+        Vector2 toBottomRight = (arenaBottomRight - throwPos).normalized;
+        Vector2 toBottomLeft = (arenaBottomLeft - throwPos).normalized;
+        Vector2 throwDir = (target - throwPos).normalized;
+        Vector2 halfwaybackwards = -(toBottomRight + toBottomLeft).normalized;
+
+        float dotBottomRightThrowDir = Vector2.Dot(throwDir, toBottomRight);
+        float dotBottomLeftThrowDir = Vector2.Dot(throwDir, toBottomLeft);
+        float dotBottomRightBottomLeft = Vector2.Dot(toBottomRight, toBottomLeft);
+        float dotThrowDirHalfwayBackwards = Vector2.Dot(throwDir, halfwaybackwards);        
+
+        if (dotBottomLeftThrowDir <= dotBottomRightBottomLeft || dotBottomRightThrowDir <= dotBottomRightBottomLeft || dotThrowDirHalfwayBackwards > 0)
+        {
+            if (dotBottomRightThrowDir > dotBottomLeftThrowDir)
+            {
+                throwDir = toBottomRight;
+            }
+            else
+            {
+                throwDir = toBottomLeft;
+            }
+        }
+
+        return throwDir;
+    }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
-    {
-        //Handles.Label(Helper.MouseWorld, debug_jumpVelocity.ToString());
-        //Gizmos.DrawLine(transform.position, transform.position + (Vector3)debug_jumpVelocity * 2);
+    {       
     }
 #endif
 }

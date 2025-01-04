@@ -35,17 +35,15 @@ namespace Assets.Common.Systems
             player.transform.position = spawnPoint;
             GameManager.PlayerLife.HealMax();
             PlayerWeaponManager.RechargeAll();
-            if (SceneManager.GetActiveScene().buildIndex == SceneIndices.SpikeStage)
+            if (CameraRailSystem.instance != null)
             {
                 CameraRailSystem.QueueCameraPositionSnap();
             }
             else
             {
-                Camera cam = Camera.main;
-                Vector3 pos = cam.transform.position;
-                pos.x = spawnPoint.x;
-                pos.y = spawnPoint.y;
-                cam.transform.position = pos;
+
+                spawnPoint.y += 1f;
+                TyphoonCameraSystem.SetCameraPos(spawnPoint);
             }
         }
 #if UNITY_EDITOR

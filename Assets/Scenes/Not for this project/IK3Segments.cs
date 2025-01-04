@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using Assets.Helpers;
 using UnityEngine;
 
@@ -168,4 +170,5 @@ public class IK3Segments : MonoBehaviour
 
      */
 }
+#endif
 

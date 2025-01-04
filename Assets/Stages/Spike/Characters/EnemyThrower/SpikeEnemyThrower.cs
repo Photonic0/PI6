@@ -167,8 +167,13 @@ public class SpikeEnemyThrower : Enemy
     {
         sprite.flipX = DirectionSign < 0;
     }
+    public override void OnHit(int damageTaken)
+    {
+        CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
+    }
     public override bool PreKill()
     {
+        CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
         DiscardCurrentSpikeBall();
         Destroy(parentObject, 5);
         EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position);

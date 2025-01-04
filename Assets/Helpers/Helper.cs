@@ -19,6 +19,17 @@ namespace Assets.Helpers
                 return (Vector2)cam.ScreenToWorldPoint(posToCheck);
             }
         }
+        public static bool PointInView(Vector2 pos, int padding = 2)
+        {
+            Vector2 topLeft = GameManager.CurrentCamTransform.position;
+            topLeft.y += padding + 5;
+            topLeft.x -= padding + 9;
+            Vector2 bottomRight = topLeft;
+            padding += padding;
+            bottomRight.x += padding + 18;
+            bottomRight.y -= padding + 10;
+            return pos.x >= topLeft.x && pos.x <= bottomRight.x && pos.y <= topLeft.y && pos.y >= bottomRight.y;
+        }
         public static bool EnemyAggroCheck(Vector3 enemyPos, Vector3 playerPos, float aggroRange, float verticalRange = 7)
         {
             return Mathf.Abs(enemyPos.x - playerPos.x) < aggroRange && Mathf.Abs(enemyPos.y - playerPos.y) < verticalRange;
@@ -353,6 +364,24 @@ namespace Assets.Helpers
                 }
 
             }
+        }
+        public static Vector2[] ConvertArray(Vector3[] array)
+        {
+            Vector2[] result = new Vector2[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                result[i] = array[i];
+            }
+            return result;
+        }
+        public static Vector3[] ConvertArray(Vector2[] array)
+        {
+            Vector3[] result = new Vector3[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                result[i] = array[i];
+            }
+            return result;
         }
     }
 }

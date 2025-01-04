@@ -7,8 +7,11 @@ public class CommonSounds : MonoBehaviour
     [SerializeField] AudioClip buttonClick;
     [SerializeField] AudioClip deathBig;
     [SerializeField] AudioClip gateOpen;
-    public static AudioClip[] WoodenFootsteps => instance.footSteps;
+    public static AudioClip[] Footstep => instance.footSteps;
     [SerializeField] AudioClip[] footSteps;
+    [SerializeField] AudioClip[] spikeStageSteps;
+    [SerializeField] AudioClip[] discoStageSteps;
+    [SerializeField] AudioClip[] typhoonStageSteps;
     [SerializeField] AudioClip commonShot;
     [SerializeField] AudioClip throwSfx;
     private void Awake()
@@ -23,13 +26,14 @@ public class CommonSounds : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
     }
-    public static void PlayRandom(AudioClip[] clips, AudioSource dedicatedSource, float pitchMultiplier = 1)
+    public static void PlayRandom(AudioClip[] clips, AudioSource dedicatedSource, float pitchMultiplier = 1, float volumeMultiplier = 0.5f)
     {
-        dedicatedSource.volume = .5f;
+        dedicatedSource.volume = volumeMultiplier;
         AudioClip clipToPlay = clips[Random.Range(0, clips.Length)];
         dedicatedSource.pitch = Random2.Float(.85f, 1.15f) * pitchMultiplier;
         dedicatedSource.PlayOneShot(clipToPlay);
     }
+
     public static void PlayFootstep(AudioSource dedicatedSource)
     {
         dedicatedSource.volume = .5f;
@@ -66,5 +70,24 @@ public class CommonSounds : MonoBehaviour
     {
         source.pitch = 1.4f;
         source.PlayOneShot(instance.gateOpen);
+    }
+    public static void LoadSpikeStageFootsteps()
+    {
+        instance.footSteps = instance.spikeStageSteps;
+    }
+    public static void LoadDiscoStageFootsteps()
+    {
+        instance.footSteps = instance.discoStageSteps;
+    }
+    public static void LoadTyphoonStageFootsteps()
+    {
+        if (instance.typhoonStageSteps != null && instance.typhoonStageSteps.Length > 0)
+        {
+            instance.footSteps = instance.typhoonStageSteps;
+        }
+        else
+        {
+            instance.footSteps = instance.spikeStageSteps;
+        }
     }
 }

@@ -140,7 +140,7 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
 
 
     }
-
+ 
     private void UpdateSpriteFlip()
     {
         sprite.flipX = direction == 1;

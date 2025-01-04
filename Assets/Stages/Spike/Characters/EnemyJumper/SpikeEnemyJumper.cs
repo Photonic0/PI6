@@ -33,7 +33,7 @@ public class SpikeEnemyJumper : Enemy
     public override void Start()
     {
         base.Start();
-        footstepSimulator = new(CommonSounds.WoodenFootsteps, .125f, footstepAudioSource, 2f);
+        footstepSimulator = new(CommonSounds.Footstep, .125f, footstepAudioSource, 2f);
     }
     void Update()
     {
@@ -154,8 +154,13 @@ public class SpikeEnemyJumper : Enemy
     }
     public override bool PreKill()
     {
+        CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
         EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position, .25f);
         return base.PreKill();
+    }
+    public override void OnHit(int damageTaken)
+    {
+        CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

@@ -130,9 +130,18 @@ public class SpikeEnemySlam : Enemy
             timer = -Time.deltaTime;
         }
     }
+    public override void OnHit(int damageTaken)
+    {
+        CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
+    }
     public override bool PreKill()
     {
-        EffectsHandler.SpawnBigExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position, .3f);
+        CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
+        Vector2 explosionPos = transform.position;
+        //explosionPos.x -= 1;
+        EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, explosionPos);
+        //explosionPos.x += 2;
+        //EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position, .3f);
         enabled = false;
         collider.enabled = false;
         sprite.enabled = false;

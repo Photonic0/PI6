@@ -46,11 +46,14 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
     }
     void Update()
     {
+#if UNITY_EDITOR
+
         if (debug_TriggerExplosion)
         {
             ConfettiExplosion(debug_particleCount);
             debug_TriggerExplosion = false;
         }
+#endif 
         switch (state)
         {
             case StateIDRise:
@@ -170,6 +173,7 @@ public class DiscoBossConfettiEmitter : MonoBehaviour
     }
     void ConfettiExplosion(int particleCount = 50)
     {
+        ScreenShakeManager.AddTinyShake(transform.position, 1);
         Vector3 origin = transform.position - particles.transform.position;
         float halfWidth = width / 2;
         //float minYVel = grav * grav * .5f;

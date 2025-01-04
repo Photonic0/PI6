@@ -26,6 +26,7 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
 
     void FireProjectile(Vector2 projDirection)
     {
+        ScreenShakeManager.AddSmallShake(transform.position, 2);
         DiscoHazardCannonCannonball projectile;
         Vector2 firepoint = firePoint.transform.position;
         if (Helper.TryFindFreeIndex(ammoPool, out int index))

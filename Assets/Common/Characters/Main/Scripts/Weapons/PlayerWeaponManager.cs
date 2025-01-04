@@ -196,7 +196,11 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         {
             instance.weaponUnlockFlags[TyphoonWeaponIndex] = true;
         }
-
+        public static void ResetUnlocks()
+        {
+            instance.weaponUnlockFlags = new bool[] { true, false, false, false };
+            instance.selectedWeaponIndex = BasicWeaponIndex;
+        }
         public void PausedUpdate(float unscaledDeltaTime)
         {
             Update();

@@ -14,6 +14,8 @@ public class PlayerRenderer : MonoBehaviour
     [SerializeField] SpriteRenderer armCannonSprite;
     [SerializeField] PlayerControl playerControl;
     [SerializeField] AudioSource footstepAudioSource;
+    [SerializeField] bool playFootSteps;
+    public AudioSource FootstepAudioSource => footstepAudioSource;
     float footstepTimer;
     const float FootstepSoundTimerThreshold = .2f;
     FlipnoteColors.ColorID currentColorID;
@@ -123,13 +125,16 @@ public class PlayerRenderer : MonoBehaviour
             if (footstepTimer > FootstepSoundTimerThreshold)
             {
                 footstepTimer %= FootstepSoundTimerThreshold;
-                CommonSounds.PlayFootstep(footstepAudioSource);
+                if (playFootSteps)
+                {
+                    CommonSounds.PlayFootstep(footstepAudioSource);
+                }
             }
             armNormalAnimator.CrossFade(walkArmNormal, 0);
             armCannonAnimator.CrossFade(walkArmCannon, 0);
             return;
         }
-        SetFootstepTimerForPlayingSound();
+        //SetFootstepTimerForPlayingSound();
         bodyAnimator.CrossFade(idle, 0);
         armNormalAnimator.CrossFade(idleArmNormal, 0);
         armCannonAnimator.CrossFade(idleArmCannon, 0);
@@ -140,7 +145,10 @@ public class PlayerRenderer : MonoBehaviour
         if (Helper.TileCollision(collision) && GameManager.PlayerControl.jumpTimeLeft <= 0)
         {
             footstepTimer = 0;
-            CommonSounds.PlayFootstep(footstepAudioSource);
+            if (playFootSteps)
+            {
+                CommonSounds.PlayFootstep(footstepAudioSource);
+            }
         }
     }
     private void SetFootstepTimerForPlayingSound()

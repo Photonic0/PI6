@@ -15,15 +15,16 @@ public class ScreenShakeManager : MonoBehaviour
     //will use as pool for shake data
     //increase length when needed, don't decrease length.
     //reset to 4 on scene change
-
     //SPIRAL SHAKE DATA
     float[] spiralShakeMagnitudes;
     float[] spiralShakeRotations;
+    int[] spiralShakeGroups; //to prevent stacking shakes
 
     //DIRECTIONAL SHAKE DATA
     float[] directionalShakeMagnitudes;
     Vector2[] directionalShakeDirections;
     float[] directionalShakeTimers;
+    int[] directionalShakeGroups;    //to prevent stacking shakes
 
     private void Awake()
     {
@@ -49,10 +50,13 @@ public class ScreenShakeManager : MonoBehaviour
     {
         instance.spiralShakeMagnitudes = new float[4];
         instance.spiralShakeRotations = new float[4];
+        instance.spiralShakeGroups = new int[4];
 
         instance.directionalShakeMagnitudes = new float[4];
         instance.directionalShakeDirections = new Vector2[4];
         instance.directionalShakeTimers = new float[4];
+        instance.directionalShakeGroups = new int[4];
+
     }
     public static void AddDirectionalShake(Vector2 direction, float shakeMagnitude)
     {
@@ -65,6 +69,7 @@ public class ScreenShakeManager : MonoBehaviour
                 instance.directionalShakeMagnitudes[i] = shakeMagnitude;
                 instance.directionalShakeDirections[i] = direction;
                 instance.directionalShakeTimers[i] = 0;
+                instance.directionalShakeGroups[i] = -1;
                 return;
             }
         }
@@ -72,6 +77,7 @@ public class ScreenShakeManager : MonoBehaviour
         Array.Resize(ref instance.directionalShakeDirections, length);
         Array.Resize(ref instance.directionalShakeMagnitudes, length);
         Array.Resize(ref instance.directionalShakeTimers, length);
+        Array.Resize(ref instance.directionalShakeGroups, length);
         length--;
         instance.directionalShakeMagnitudes[length] = shakeMagnitude;
         instance.directionalShakeDirections[length] = direction;
@@ -86,12 +92,14 @@ public class ScreenShakeManager : MonoBehaviour
             {
                 instance.spiralShakeMagnitudes[i] = shakeMagnitude;
                 instance.spiralShakeRotations[i] = Random2.Float(Helper.Tau);
+                instance.spiralShakeGroups[i] = -1;
                 return;
             }
         }
         length++;
         Array.Resize(ref instance.spiralShakeRotations, length);
         Array.Resize(ref instance.spiralShakeMagnitudes, length);
+        Array.Resize(ref instance.spiralShakeGroups, length);
         length--;
         instance.spiralShakeRotations[length] = Random2.Float(Helper.Tau);
         instance.spiralShakeMagnitudes[length] = shakeMagnitude;
@@ -99,20 +107,112 @@ public class ScreenShakeManager : MonoBehaviour
 
     public static void AddTinyShake()
     {
-        AddDirectionalShake(Vector2.up, .075f);
+        AddDirectionalShake(Vector2.up, 0.06f);
     }
     public static void AddSmallShake()
     {
-        AddDirectionalShake(Vector2.up, .1f);
+        AddDirectionalShake(Vector2.up, 0.1f);
     }
     public static void AddMediumShake()
     {
-        AddSpiralShake(.15f);
+        AddSpiralShake(0.15f);
     }
     public static void AddLargeShake()
     {
         AddSpiralShake(0.25f);
     }
+    public static void AddTinyShake(Vector2 pos, int group)
+    {
+        if (Helper.PointInView(pos))
+        {
+            AddDirectionalShake(Vector2.up, 0.06f, group);
+        }
+    }
+    public static void AddSmallShake(Vector2 pos, int group)
+    {
+        if (Helper.PointInView(pos))
+        {
+            AddDirectionalShake(Vector2.up, 0.1f, group);
+        }
+    }
+    public static void AddMediumShake(Vector2 pos, int group)
+    {
+        if (Helper.PointInView(pos))
+        {
+            AddSpiralShake(0.15f, group);
+        }
+    }
+    public static void AddLargeShake(Vector2 pos, int group)
+    {
+        if (Helper.PointInView(pos))
+        {
+            AddSpiralShake(0.25f, group);
+        }
+    }
+
+    public static void AddDirectionalShake(Vector2 direction, float shakeMagnitude, int group)
+    {
+        direction.Normalize();
+        int length = instance.directionalShakeMagnitudes.Length;
+        for (int i = 0; i < length; i++)
+        {
+            if (instance.directionalShakeGroups[i] == group && instance.directionalShakeMagnitudes[i] > MagnitudeThresholdToConsiderAsFreeSlot)
+            {
+                instance.directionalShakeMagnitudes[i] = Mathf.Max(instance.directionalShakeMagnitudes[i], shakeMagnitude);
+                return;
+            }
+        }
+        for (int i = 0; i < length; i++)
+        {
+            if (instance.directionalShakeMagnitudes[i] < MagnitudeThresholdToConsiderAsFreeSlot)
+            {
+                instance.directionalShakeMagnitudes[i] = shakeMagnitude;
+                instance.directionalShakeDirections[i] = direction;
+                instance.directionalShakeGroups[i] = group;
+                instance.directionalShakeTimers[i] = 0;
+                return;
+            }
+        }
+        length++;
+        Array.Resize(ref instance.directionalShakeDirections, length);
+        Array.Resize(ref instance.directionalShakeMagnitudes, length);
+        Array.Resize(ref instance.directionalShakeTimers, length);
+        Array.Resize(ref instance.directionalShakeGroups, length);
+        length--;
+        instance.directionalShakeMagnitudes[length] = shakeMagnitude;
+        instance.directionalShakeDirections[length] = direction;
+        instance.directionalShakeTimers[length] = 0;
+    }
+    public static void AddSpiralShake(float shakeMagnitude, int group)
+    {
+        int length = instance.spiralShakeMagnitudes.Length;
+        for (int i = 0; i < length; i++)
+        {
+            if (instance.spiralShakeGroups[i] == group && instance.spiralShakeMagnitudes[i] > MagnitudeThresholdToConsiderAsFreeSlot)
+            {
+                instance.spiralShakeMagnitudes[i] = Mathf.Max(instance.spiralShakeMagnitudes[i], shakeMagnitude);
+                return;
+            }
+        }
+        for (int i = 0; i < length; i++)
+        {
+            if (instance.spiralShakeMagnitudes[i] < MagnitudeThresholdToConsiderAsFreeSlot)
+            {
+                instance.spiralShakeMagnitudes[i] = shakeMagnitude;
+                instance.spiralShakeGroups[i] = group;
+                instance.spiralShakeRotations[i] = Random2.Float(Helper.Tau);
+                return;
+            }
+        }
+        length++;
+        Array.Resize(ref instance.spiralShakeRotations, length);
+        Array.Resize(ref instance.spiralShakeMagnitudes, length);
+        Array.Resize(ref instance.spiralShakeGroups, length);
+        length--;
+        instance.spiralShakeRotations[length] = Random2.Float(Helper.Tau);
+        instance.spiralShakeMagnitudes[length] = shakeMagnitude;
+    }
+
     public static Vector2 GetCameraOffset()
     {
         Vector2 finalShakeOffset = Vector2.zero;

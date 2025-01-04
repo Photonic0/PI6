@@ -358,6 +358,7 @@ public class TyphoonBossAI : Enemy
     }
     public void ChangeToIntro()
     {
+        GetComponent<Collider2D>().enabled = true;
         state = StateIDIntro;
         state = StateIDIntro;
         actionTimer = stateTimer = 0;
@@ -434,16 +435,18 @@ public class TyphoonBossAI : Enemy
         }
         rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
-        sprite.enabled = false;
         DeathParticle.Spawn(transform.position, FlipnoteColors.Blue, audioSource);
-        EffectsHandler.SpawnBigExplosion(FlipnoteColors.ColorID.Blue, transform.position);
         StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
         return false;
     }
     IEnumerator ReturnToMainMenuAfter3SecAndUnlockUpgrade()
     {
-        yield return new WaitForSecondsRealtime(3f);
-        PlayerWeaponManager.UnlockTyphoon();
+        ScreenShakeManager.AddTinyShake();
+        yield return new WaitForSecondsRealtime(DeathParticle.SpinEffectDuration);
+        ScreenShakeManager.AddLargeShake();
+        sprite.enabled = false;
+        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Blue, transform.position);
+        yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration); PlayerWeaponManager.UnlockTyphoon();
         GameManager.CleanupCheckpoints();
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }
