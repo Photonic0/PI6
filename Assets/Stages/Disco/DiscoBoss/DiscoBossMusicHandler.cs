@@ -82,7 +82,7 @@ public class DiscoBossMusicHandler : MonoBehaviour
             Vector2 playerVel = GameManager.PlayerControl.rb.velocity;
             playerVel.x = (int)(10000 * playerVel.x) / 10000;
             playerVel.y = (int)(10000 * playerVel.y) / 10000;
-            if (playerVel.x != 0 && playerVel.y == 0 && GameManager.PlayerControl.NotInKBAnim)
+            if (playerVel.x != 0 && playerVel.y == 0 && GameManager.PlayerControl.NotInKBAnim && (Mathf.Repeat((float)beatTimer, (float)SecondsPerBeat) > SecondsPerBeat * .75f || !GameManager.PlayerControl.SlowWalkKeyInput))
             {
                 CommonSounds.PlayFootstep(GameManager.PlayerRenderer.FootstepAudioSource);
             }

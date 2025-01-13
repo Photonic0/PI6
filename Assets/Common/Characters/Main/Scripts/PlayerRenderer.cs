@@ -41,6 +41,9 @@ public class PlayerRenderer : MonoBehaviour
     }
     void Update()
     {
+        bodyAnimator.speed = 1f;
+        armNormalAnimator.speed = 1f;
+        armCannonAnimator.speed = 1f;
         bool armCannon = playerControl.shootCooldown + .1f > 0;
         armNormalSprite.gameObject.SetActive(true);
         armCannonSprite.gameObject.SetActive(true);
@@ -120,8 +123,12 @@ public class PlayerRenderer : MonoBehaviour
 
         if (absVelX > 0)
         {
+            float moveSpeedMult = GameManager.PlayerControl.MoveSpeedMult;
+            bodyAnimator.speed = moveSpeedMult;
+            armNormalAnimator.speed = moveSpeedMult;
+            armCannonAnimator.speed = moveSpeedMult;
             bodyAnimator.CrossFade(walk, 0);
-            footstepTimer += Time.deltaTime;
+            footstepTimer += Time.deltaTime * moveSpeedMult;
             if (footstepTimer > FootstepSoundTimerThreshold)
             {
                 footstepTimer %= FootstepSoundTimerThreshold;

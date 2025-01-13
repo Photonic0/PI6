@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace Assets.Helpers
 {
@@ -47,7 +48,6 @@ namespace Assets.Helpers
 
             for (int i = 1; i <= numberOfLines; i++)
             {
-
                 float startX = topLeftCorner.x;
                 float startY = topLeftCorner.y - (i * lineSpacing);
 
@@ -64,61 +64,6 @@ namespace Assets.Helpers
                 Gizmos.DrawLine(new Vector2(startX, startY), new Vector2(endX, endY));
             }
 
-        }
-
-        public static Mesh GetHDWireCircleMesh(Vector3 center, float radius, int baseVertexAmount = 20)
-        {
-            Mesh mesh = new();
-            baseVertexAmount = (int)(baseVertexAmount * radius);
-            Vector3[] vertices = new Vector3[baseVertexAmount];
-            Vector3[] normals = new Vector3[baseVertexAmount];
-            for (int i = 0; i < baseVertexAmount; i++)
-            {
-                float rotation = Helper.Remap(i, 0, baseVertexAmount - 2, 0, Mathf.PI * 2f, false);
-                Vector3 offset = rotation.PolarVector(radius);
-                vertices[i] = offset + center;
-                normals[i] = new Vector3(offset.y, offset.x, 0);
-
-            }
-            mesh.vertices = vertices;
-            mesh.normals = normals;
-            baseVertexAmount--;
-            baseVertexAmount *= 2;
-            int[] indices = new int[baseVertexAmount];
-            for (int i = 0; i < baseVertexAmount; i++)
-            {
-                indices[i] = i / 2;
-                indices[i] = i / 2 + 1;
-            }
-            mesh.SetIndices(indices, MeshTopology.LineStrip, 0);
-            return mesh;
-        }
-        public static void DrawHDWireCircle(Vector3 center, float radius, int baseVertexAmount = 20)
-        {
-            Mesh mesh = new();
-            baseVertexAmount = (int)(baseVertexAmount * radius);
-            Vector3[] vertices = new Vector3[baseVertexAmount];
-            Vector3[] normals = new Vector3[baseVertexAmount];
-            for (int i = 0; i < baseVertexAmount; i++)
-            {
-                float rotation = Helper.Remap(i, 0, baseVertexAmount - 2, 0, Mathf.PI * 2f, false);
-                Vector3 offset = rotation.PolarVector(radius);
-                vertices[i] = offset + center;
-                normals[i] = new Vector3(offset.y, offset.x, 0);
-
-            }
-            mesh.vertices = vertices;
-            mesh.normals = normals;
-            baseVertexAmount--;
-            baseVertexAmount *= 2;
-            int[] indices = new int[baseVertexAmount];
-            for (int i = 0; i < baseVertexAmount; i++)
-            {
-                indices[i] = i / 2;
-                indices[i] = i / 2 + 1;
-            }
-            mesh.SetIndices(indices, MeshTopology.LineStrip, 0);
-            Gizmos.DrawWireMesh(mesh);
         }
         public static void DrawQuad(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight)
         {
@@ -210,6 +155,34 @@ namespace Assets.Helpers
             {
                 Gizmos.DrawSphere(positions[i], radius);
             }
+        }
+        public static void DrawHDWireCircle(float radius, Vector2 center)
+        {
+            int dots = (int)(10 * radius);
+            float increment = 1f / dots;
+            for (float i = 0; i <= 0.99999f; i += increment)
+            {
+                Vector2 offset = (i * Helper.Tau).PolarVector(radius);
+                Vector2 nextOffset = ((i + increment) * Helper.Tau).PolarVector(radius);
+
+                offset += center;
+                nextOffset += center;
+                Gizmos.DrawLine(nextOffset, offset);
+            }
+        }
+        public static void DrawArrow(Vector2 center, Vector2 directionAndLength, float arrowHeadAngle = 20f)
+        {
+            float arrowHeadLength = 0.25f * directionAndLength.magnitude;
+            Vector2 arrowEnd = center + directionAndLength;
+            Vector2 directionNormalized = -directionAndLength.normalized;
+            Vector2 arrowheadOffset = (Vector2)(Quaternion.Euler(0, 0, arrowHeadAngle) * directionNormalized) * arrowHeadLength;
+            Vector2 leftHead = arrowEnd + arrowheadOffset;
+            Vector2 rightHead = arrowEnd + (Vector2)(Quaternion.Euler(0, 0, -arrowHeadAngle) * directionNormalized) * arrowHeadLength;
+            Gizmos.DrawLine(arrowEnd, leftHead);
+            Gizmos.DrawLine(arrowEnd, rightHead);
+            Gizmos.DrawLine(leftHead, rightHead);
+            arrowEnd = center + directionAndLength - Vector2.Dot(arrowheadOffset, directionAndLength) * directionNormalized;
+            Gizmos.DrawLine(center, arrowEnd);
         }
     }
 }

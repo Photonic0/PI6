@@ -9,7 +9,10 @@ public class ScreenShakeManager : MonoBehaviour
     const float SpiralShakeRotationSpeed_DegPerSec = 360 * Helper.Phi * 30;
     const float DirectionalShakeSpeed_CyclePerSec = 30;
     const float MagnitudeThresholdToConsiderAsFreeSlot = 0.0001f;
-
+    public const float TinyShakeMagnitude = 0.06f;
+    public const float SmallShakeMagnitude = 0.1f;
+    public const float MediumShakeMagnitude = 0.15f;
+    public const float LargeShakeMagnitude = 0.25f;
     static ScreenShakeManager instance;
 
     //will use as pool for shake data
@@ -107,46 +110,54 @@ public class ScreenShakeManager : MonoBehaviour
 
     public static void AddTinyShake()
     {
-        AddDirectionalShake(Vector2.up, 0.06f);
+        AddDirectionalShake(Vector2.up, TinyShakeMagnitude);
     }
     public static void AddSmallShake()
     {
-        AddDirectionalShake(Vector2.up, 0.1f);
+        AddDirectionalShake(Vector2.up, SmallShakeMagnitude);
+    }
+    public static void AddTinySpiralShake()
+    {
+        AddSpiralShake(TinyShakeMagnitude);
+    }
+    public static void AddSmallSpiralShake()
+    {
+        AddSpiralShake(SmallShakeMagnitude);
     }
     public static void AddMediumShake()
     {
-        AddSpiralShake(0.15f);
+        AddSpiralShake(MediumShakeMagnitude);
     }
     public static void AddLargeShake()
     {
-        AddSpiralShake(0.25f);
+        AddSpiralShake(LargeShakeMagnitude);
     }
     public static void AddTinyShake(Vector2 pos, int group)
     {
         if (Helper.PointInView(pos))
         {
-            AddDirectionalShake(Vector2.up, 0.06f, group);
+            AddDirectionalShake(Vector2.up, TinyShakeMagnitude, group);
         }
     }
     public static void AddSmallShake(Vector2 pos, int group)
     {
         if (Helper.PointInView(pos))
         {
-            AddDirectionalShake(Vector2.up, 0.1f, group);
+            AddDirectionalShake(Vector2.up, SmallShakeMagnitude, group);
         }
     }
     public static void AddMediumShake(Vector2 pos, int group)
     {
         if (Helper.PointInView(pos))
         {
-            AddSpiralShake(0.15f, group);
+            AddSpiralShake(MediumShakeMagnitude, group);
         }
     }
     public static void AddLargeShake(Vector2 pos, int group)
     {
         if (Helper.PointInView(pos))
         {
-            AddSpiralShake(0.25f, group);
+            AddSpiralShake(LargeShakeMagnitude, group);
         }
     }
 

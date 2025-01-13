@@ -59,6 +59,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             }
             weaponUnlockFlags = new bool[] { true, false, false, false };
             selectedWeaponIndex = BasicWeaponIndex;
+            RechargeAll();
         }
         private void Update()
         {

@@ -13,11 +13,14 @@ public class WeaponDisco : PlayerWeapon
     {
         if(!PlayerProjectilesPool.GetDiscoShot(out DiscoShot proj))
             return 0f;
+        float directionSign = Mathf.Sign(Helper.MouseWorld.x - GameManager.PlayerPosition.x);
+        Vector2 velocity = new Vector2(directionSign * 15, 0);
+        ScreenShakeManager.AddDirectionalShake(new Vector2(directionSign,0), ScreenShakeManager.SmallShakeMagnitude);
+        CommonSounds.PlayBwow(GameManager.PlayerControl.shootAudioSource);
         proj.parent.SetActive(true);
         proj.gameObject.SetActive(true);
-        proj.ResetValues();
+        proj.Initialize();
         Vector2 origin = CannonPosition;
-        Vector2 velocity = new Vector2(Mathf.Sign(Helper.MouseWorld.x - GameManager.PlayerPosition.x) * 15, 0);
         proj.transform.position = origin;
         proj.rb.velocity = velocity;
         return 1f;

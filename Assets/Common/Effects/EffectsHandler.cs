@@ -27,4 +27,25 @@ public static class EffectsHandler
         obj.GetComponent<SpriteRenderer>().color = col;
         Object.Destroy(obj, duration);
     }
+    public static void SpawnSmallExplosion(Color col, Vector2 position, float duration = 0.15f)
+    {
+        GameObject obj = Object.Instantiate(CommonPrefabs.ExplosionSmall, position, Quaternion.identity);
+        obj.transform.Rotate(0, 0, 90 * Random.Range(0, 4));//for a bit more visual variety
+        obj.GetComponent<SpriteRenderer>().color = col;
+        Object.Destroy(obj, duration);
+    }
+    public static void SpawnMediumExplosion(Color col, Vector2 position, float duration = 0.25f)
+    {
+        GameObject obj = Object.Instantiate(CommonPrefabs.ExplosionMedium, position, Quaternion.identity);
+        obj.transform.Rotate(0, 0, 90 * Random.Range(0, 4));//for a bit more visual variety
+        obj.GetComponent<SpriteRenderer>().color = col;
+        Object.Destroy(obj, duration);
+    }
+    public static void SpawnBigExplosion(Color col, Vector2 position, float duration = .4f)
+    {
+        GameObject obj = Object.Instantiate(CommonPrefabs.ExplosionBig, position, Quaternion.identity);
+        obj.transform.Rotate(0, 0, 90 * Random.Range(0, 4));//for a bit more visual variety
+        obj.GetComponent<SpriteRenderer>().color = col;
+        Object.Destroy(obj, duration);
+    }
 }

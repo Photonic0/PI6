@@ -50,7 +50,7 @@ public class SpikeEnemySlam : Enemy
     {
         Vector2 currentPos = transform.position;
         Vector2 playerpos = GameManager.PlayerPosition;
-        return Mathf.Abs(playerpos.x - currentPos.x) < aggroDist && MathF.Abs(playerpos.y - (currentPos.y + 4)) < 12;
+        return Mathf.Abs(playerpos.x - currentPos.x) < aggroDist && MathF.Abs(playerpos.y - (currentPos.y + 4)) < 12.1f;
     }
     private void State_Idle()
     {

@@ -17,7 +17,7 @@ public class DiscoMusicEventManager : MonoBehaviour
     }
     public const float BPM = 144f;
     public const double SecondsPerBeat = 60.0 / BPM;
-    public const double SecondsPerFootstepCheck = 60.0 / (BPM * 2);
+    public static double SecondsPerFootstepCheck => 60.0 / (BPM * 2);
     public const int BeatsPerMusicSplit = 16;
     public bool Paused { get; private set; }
     public DiscoBossMusicHandler discoBossMusicHandler;
@@ -92,7 +92,7 @@ public class DiscoMusicEventManager : MonoBehaviour
             Vector2 playerVel = GameManager.PlayerControl.rb.velocity;
             playerVel.x = (int)(10000 * playerVel.x) / 10000;
             playerVel.y = (int)(10000 * playerVel.y) / 10000;
-            if (playerVel.x != 0 && playerVel.y == 0 && GameManager.PlayerControl.NotInKBAnim)
+            if (playerVel.x != 0 && playerVel.y == 0 && GameManager.PlayerControl.NotInKBAnim && (Mathf.Repeat((float)beatTimer, (float)SecondsPerBeat) > SecondsPerBeat * .75f || !GameManager.PlayerControl.SlowWalkKeyInput))
             {
                 CommonSounds.PlayFootstep(GameManager.PlayerRenderer.FootstepAudioSource);
             }

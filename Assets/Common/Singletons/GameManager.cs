@@ -68,7 +68,10 @@ public class GameManager : MonoBehaviour
     {
 #if UNITY_EDITOR
         Application.targetFrameRate = debug_FPS;
-        Time.timeScale = debug_timeScale;
+        if (!Paused)
+        {
+            Time.timeScale = debug_timeScale;
+        }
         if (debug_addTinyShake)
         {
             debug_addTinyShake = false;
@@ -111,7 +114,7 @@ public class GameManager : MonoBehaviour
         Paused = true;
         Time.timeScale = 0;
         int buildIndex = SceneManager.GetActiveScene().buildIndex;
-        if (buildIndex == SceneIndices.DiscoStage || buildIndex == SceneIndices.DiscoStage_TestDaniel)
+        if (buildIndex == SceneIndices.DiscoStage)
         {
             DiscoMusicEventManager.PauseMusic();
         }
@@ -148,7 +151,7 @@ public class GameManager : MonoBehaviour
         Paused = false;
         Time.timeScale = 1;
         int buildIndex = SceneManager.GetActiveScene().buildIndex;
-        if (buildIndex == SceneIndices.DiscoStage || buildIndex == SceneIndices.DiscoStage_TestDaniel)
+        if (buildIndex == SceneIndices.DiscoStage)
         {
             DiscoMusicEventManager.UnPauseMusic();
         }

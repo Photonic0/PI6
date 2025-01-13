@@ -14,6 +14,10 @@ public class CommonSounds : MonoBehaviour
     [SerializeField] AudioClip[] typhoonStageSteps;
     [SerializeField] AudioClip commonShot;
     [SerializeField] AudioClip throwSfx;
+    [SerializeField] AudioClip bwow;
+    [SerializeField] AudioClip snareReverb;
+    [SerializeField] AudioClip electronicSnare;
+    [SerializeField] AudioClip electronicKick;
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -89,5 +93,29 @@ public class CommonSounds : MonoBehaviour
         {
             instance.footSteps = instance.spikeStageSteps;
         }
+    }
+    public static void PlaySnareReverb(AudioSource source, float pitchMultiplier = 1f, float volumeMultiplier = 1f)
+    {
+        source.pitch = pitchMultiplier;
+        source.volume = volumeMultiplier;
+        source.PlayOneShot(instance.snareReverb);
+    }
+    public static void PlaySnare(AudioSource source, float pitchMultiplier = 1f, float volumeMultiplier = 1f)
+    {
+        source.pitch = pitchMultiplier;
+        source.volume = volumeMultiplier;
+        source.PlayOneShot(instance.electronicSnare);
+    }
+    public static void PlayBwow(AudioSource source, float pitchMultiplier = 1f, float volumeMultiplier = 1f)
+    {
+        source.pitch = pitchMultiplier;
+        source.volume = volumeMultiplier;
+        source.PlayOneShot(instance.bwow);
+    }
+    public static void PlayKick(AudioSource source, float pitchMultiplier = 1f, float volumeMultiplier = 1f)
+    {
+        source.pitch = pitchMultiplier;
+        source.volume = volumeMultiplier;
+        source.PlayOneShot(instance.electronicKick);
     }
 }

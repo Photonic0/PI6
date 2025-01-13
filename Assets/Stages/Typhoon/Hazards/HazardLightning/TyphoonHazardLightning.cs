@@ -25,14 +25,8 @@ public class TyphoonHazardLightning : MonoBehaviour
 
     Vector2 currentPos;
     const float DeactivationDist = 15;
-#if UNITY_EDITOR
-    Mesh hdWireCircleMesh;
-#endif
     void Start()
     {
-#if UNITY_EDITOR
-        hdWireCircleMesh = Gizmos2.GetHDWireCircleMesh(transform.position, DeactivationDist, 25);
-#endif
         currentPos = transform.position;
         inactive = true;
         node1Animator.CrossFade(TyphoonTilesLightningNodePair.RandAnimHash, 0);
@@ -135,7 +129,7 @@ public class TyphoonHazardLightning : MonoBehaviour
         float rotation = transform.rotation.eulerAngles.z;
 
         Gizmos2.DrawRotatedRectangle(collider.offset.RotatedBy(rotation * Mathf.Deg2Rad) + (Vector2)transform.position, collider.size, rotation, Handles.UIColliderHandleColor);
-        Gizmos.DrawMesh(hdWireCircleMesh);
+        Gizmos2.DrawHDWireCircle(DeactivationDist, transform.position);
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(node1transform.position, .1f);
         Gizmos.color = Color.blue;

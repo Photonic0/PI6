@@ -61,11 +61,12 @@ public class TyphoonEnemyTornado : Enemy
 
     private void State_Aggrod()
     {
-        AccelerateTowards(GameManager.PlayerControl.Position);
+        Vector3 plrPos = GameManager.PlayerControl.Position;
+        AccelerateTowards(plrPos);
         if (timer > ProjFireDelay)    
         {
             timer -= ProjFireDelay;
-            Vector2 toPlayer = (GameManager.PlayerControl.Position - transform.position).normalized;
+            Vector2 toPlayer = (plrPos - transform.position).normalized;
             if(!Helper.TryFindFreeIndex(lightningProjPool, out int index))
             {
                 index = lightningProjPool.Length;
@@ -77,7 +78,7 @@ public class TyphoonEnemyTornado : Enemy
             proj.rb.velocity = toPlayer * ProjSpeed;
             proj.transform.position = transform.position;
             proj.rb.rotation = toPlayer.Atan2Deg();
-            CommonSounds.PlayRandom(thunderShoot, audioSource);
+            CommonSounds.PlayRandom(thunderShoot, audioSource, 1f, 1f);
         }
     }
     void AccelerateTowards(Vector2 targetPos)

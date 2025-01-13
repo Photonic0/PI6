@@ -311,6 +311,10 @@ namespace Assets.Helpers
         {
             return targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * Time.deltaTime);
         }
+        public static Quaternion Decay(Quaternion currentValue, Quaternion targetValue, float decay)
+        {
+            return Quaternion.LerpUnclamped(currentValue, targetValue, Mathf.Exp(-decay * Time.deltaTime));
+        }
         public static Vector2 Decay(Vector2 currentValue, Vector2 targetValue, float decay)
         {
             return targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * Time.deltaTime);

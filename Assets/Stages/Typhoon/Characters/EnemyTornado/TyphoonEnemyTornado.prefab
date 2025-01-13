@@ -178,9 +178,8 @@ MonoBehaviour:
   - {fileID: 7670568771371334400}
   - {fileID: 5486007549867736362}
   thunderShoot:
-  - {fileID: 8300000, guid: ec1eb815616fff04e9e3d51b6c389aa3, type: 3}
-  - {fileID: 8300000, guid: 62d9dcf447e23954487dcf3070e36fbc, type: 3}
-  - {fileID: 8300000, guid: 9d381461df6cea74487addd655b68148, type: 3}
+  - {fileID: 8300000, guid: 2e55add0965f30a488bb266c0021399f, type: 3}
+  - {fileID: 8300000, guid: bd1b8de7cae62994199564e66d07f1c0, type: 3}
   audioSource: {fileID: 6679388498737423550}
 --- !u!82 &6679388498737423550
 AudioSource:

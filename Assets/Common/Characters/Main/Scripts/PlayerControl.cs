@@ -28,6 +28,8 @@ public class PlayerControl : MonoBehaviour
     public Vector3 Position { get; private set; }
     public bool NotInKBAnim => GameManager.PlayerLife.immuneTime < PlayerLife.ImmuneTimeMax - KBTime;
     public bool InKBAnim => GameManager.PlayerLife.immuneTime >= PlayerLife.ImmuneTimeMax - KBTime;
+    public bool SlowWalkKeyInput => Input.GetKey(KeyCode.LeftShift);
+    public float MoveSpeedMult => Input.GetKey(KeyCode.LeftShift) ? 0.5f : 1f;
     private void Awake()//can do in awake because gamemanager instance will already be loaded from previous scene
     {
         GameManager.instance.playerControl = this;
@@ -78,7 +80,7 @@ public class PlayerControl : MonoBehaviour
     {
 
         Vector2 velocity = rb.velocity;
-        Vector2 move = new(Input.GetAxisRaw("Horizontal") * moveSpeed, velocity.y);
+        Vector2 move = new(Input.GetAxisRaw("Horizontal") * moveSpeed * MoveSpeedMult, velocity.y);
         if (jumpTimeLeft > 0 && Input.GetKey(KeyCode.W))
         {
             if (move.y < jumpSpeed)
