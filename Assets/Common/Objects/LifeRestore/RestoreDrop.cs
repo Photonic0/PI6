@@ -5,13 +5,14 @@ using UnityEngine;
 public class RestoreDrop : MonoBehaviour
 {
     [SerializeField] GameObject parentObj;
-    //put this on enemy class
     [SerializeField] SpriteRenderer sprite;
     public static void SpawnRestore(Vector3 position)
     { 
+        position.z = 0;
         GameObject obj = Instantiate(CommonPrefabs.RestoreDrop, position, Quaternion.identity);
         obj.GetComponentInChildren<RestoreDrop>().sprite.color =
            PlayerWeapon.GetWeaponColorSafely(GameManager.PlayerControl.weapon);
+        obj.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

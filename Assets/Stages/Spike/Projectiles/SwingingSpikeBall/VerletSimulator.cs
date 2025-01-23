@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -70,7 +68,7 @@ public class VerletSimulator
     public void TransferPositions(Transform[] transforms)
     {
         int loopCount = dots.Count;
-        if(transforms.Length < loopCount)
+        if (transforms.Length < loopCount)
         {
             loopCount = transforms.Length;
         }

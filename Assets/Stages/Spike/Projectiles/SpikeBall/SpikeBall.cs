@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SpikeBall : Projectile
 {
-    public override int Damage => 1;
+    public override int Damage => 4;
     [SerializeField] new Collider2D collider;
     public Rigidbody2D rb;
     float timer = 0;

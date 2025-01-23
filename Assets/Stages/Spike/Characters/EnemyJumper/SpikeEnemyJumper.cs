@@ -1,4 +1,3 @@
-using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Consts;
 using Assets.Helpers;
 using UnityEngine;
@@ -6,12 +5,13 @@ using UnityEngine;
 public class SpikeEnemyJumper : Enemy
 {
 
-    float WalkSpeed => 7f;
-    float AggroRange => 7f;
-    float JumpRange => 3.5f;
-    float WarnTime => .5f;
-    float JumpXSpeed => 9;
-    float StuckDuration => .5f;
+    const float WalkSpeed = 7f;
+    const float AggroRange = 7f;
+    const float JumpRange = 3.5f;
+    const float WarnTime = .5f;
+    const float JumpXSpeed = 9;
+    const float StuckDuration = .5f;
+    const float VerticalRange = 9;
     public override int LifeMax => 10;
     [SerializeField] Animator animator;
     [SerializeField] float timer;
@@ -70,7 +70,7 @@ public class SpikeEnemyJumper : Enemy
             sprite.flipX = Random2.Bool;
             timer = 0;
         }
-        if (timer >= 0 && Helper.EnemyAggroCheck(transform.position, GameManager.PlayerPosition, AggroRange, 9))
+        if (timer >= 0 && Helper.EnemyAggroCheck(transform.position, GameManager.PlayerPosition, AggroRange, VerticalRange))
         {
             timer = -Time.deltaTime;
             state = StateIDWalkToPlayer;
@@ -81,14 +81,21 @@ public class SpikeEnemyJumper : Enemy
     {
         animator.CrossFade(animWalk, 0);
         float deltaX = GameManager.PlayerPosition.x - transform.position.x;
+        float absDeltaX = Mathf.Abs(deltaX);
         rb.velocity = new Vector2(Mathf.Sign(deltaX) * WalkSpeed, rb.velocity.y);
         FlipSprite(Mathf.Sign(deltaX));
         footstepSimulator.Update();
-        if (Mathf.Abs(GameManager.PlayerPosition.x - transform.position.x) < JumpRange)
+        if (absDeltaX < JumpRange)
         {
             rb.velocity = Vector2.zero;
             timer = -Time.deltaTime;
             state = StateIDPrepareJump;
+        }
+        else if (absDeltaX > 7f)
+        {
+            rb.velocity = Vector2.zero;
+            timer = -Time.deltaTime;
+            state = StateIDIdle;
         }
     }
     void State_Jump()
@@ -134,6 +141,12 @@ public class SpikeEnemyJumper : Enemy
             timer = -1;
             state = StateIDIdle;
             rb.velocity = Vector2.up * 10;
+        }
+        GetOverlapCircleParams(out Vector2 center, out float radius);
+        Collider2D collider = Physics2D.OverlapCircle(center, radius, Layers.Player);
+        if (collider != null && collider.CompareTag(Tags.Player))
+        {
+            GameManager.PlayerLife.Damage(5);
         }
     }
     void State_Stuck()
@@ -185,4 +198,21 @@ public class SpikeEnemyJumper : Enemy
             }
         }
     }
+    void GetOverlapCircleParams(out Vector2 center, out float radius)
+    {
+        center = rb.position + (Mathf.Deg2Rad * rb.rotation).PolarVector(.5f);
+        radius = .25f;
+    }
+#if UNITY_EDITOR
+
+    private void OnDrawGizmos()
+    {
+        GetOverlapCircleParams(out Vector2 center, out float radius);
+        Gizmos.DrawWireSphere(center, radius);
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos2.DrawEnemyAggroArea(transform.position, AggroRange, VerticalRange);
+    }
+#endif
 }

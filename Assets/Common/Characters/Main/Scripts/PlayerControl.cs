@@ -1,8 +1,6 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
-using Assets.Helpers;
-using UnityEditor;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -21,7 +19,7 @@ public class PlayerControl : MonoBehaviour
     public Collider2D tileCollider;
     public CapsuleCollider2D hurtboxCollider;
     public float shootCooldown;
-    public float jumpTimeLeft = 0.15f;
+    public float jumpTimeLeft = MaxJumpTime;
     const float MaxJumpTime = 0.15f;
     public const float KBTime = .3f;
     public const float KBPushbackVelocity = 2;
@@ -81,6 +79,8 @@ public class PlayerControl : MonoBehaviour
 
         Vector2 velocity = rb.velocity;
         Vector2 move = new(Input.GetAxisRaw("Horizontal") * moveSpeed * MoveSpeedMult, velocity.y);
+        bool justStartedJump = jumpTimeLeft == MaxJumpTime && Input.GetKeyDown(KeyCode.W);
+
         if (jumpTimeLeft > 0 && Input.GetKey(KeyCode.W))
         {
             if (move.y < jumpSpeed)
@@ -93,6 +93,13 @@ public class PlayerControl : MonoBehaviour
         {
             move.y *= .5f;
             jumpTimeLeft = 0;
+        }
+        //trying to make a thing where bonking on the ceiling will reset your speed
+        if (!justStartedJump && coyoteTimeLeft == 0 && jumpTimeLeft < MaxJumpTime && Mathf.Approximately(rb.velocity.y, 0))
+        {
+            move.y = 0;
+            jumpTimeLeft = 0;
+            coyoteTimeLeft = 0;
         }
         //check jumptimeleft >= maxjumptime so that the jump time left
         //doesn't get cut off early if we already started using it
@@ -146,13 +153,25 @@ public class PlayerControl : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        GetOverlapBoxParams(out Vector2 point, out Vector2 size);
+        GetBottomBoxOverlapBoxParams(out Vector2 point, out Vector2 size);
         Collider2D collisionDetect = Physics2D.OverlapBox(point, size, 0, Layers.Tiles);
-        if (collisionDetect != null && collision.gameObject.CompareTag(Tags.Tiles))
+        if (collisionDetect != null)
         {
-            coyoteTimeLeft = MaxCoyoteTime;
-            jumpTimeLeft = MaxJumpTime;
-            coyoteTimeLeft = Mathf.Infinity;
+            if (collision.gameObject.CompareTag(Tags.Tiles))
+            {
+                jumpTimeLeft = MaxJumpTime;
+                coyoteTimeLeft = Mathf.Infinity;
+            }
+        }
+        else
+        {
+            GetTopBoxOverlapBoxParams(out point, out size);
+            collisionDetect = Physics2D.OverlapBox(point, size, 0, Layers.Tiles);
+            if (collisionDetect != null)
+            {
+                jumpTimeLeft = 0;
+                coyoteTimeLeft = 0;
+            }
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
@@ -166,24 +185,31 @@ public class PlayerControl : MonoBehaviour
             coyoteTimeLeft = MaxCoyoteTime;
         }
     }
-    void GetOverlapBoxParams(out Vector2 point, out Vector2 size)
+    void GetBottomBoxOverlapBoxParams(out Vector2 point, out Vector2 size)
     {
         point = (Vector2)transform.position - new Vector2(0, 1.05f);
         size = new Vector2(1.35f, 0.1f);
     }
+    void GetTopBoxOverlapBoxParams(out Vector2 point, out Vector2 size)
+    {
+        point = (Vector2)transform.position + new Vector2(0, 1f);
+        size = new Vector2(0.3021951f * 2f, 0.1f);
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(Position, 1);
-        GetOverlapBoxParams(out Vector2 point, out Vector2 size);
-        Gizmos.DrawLine(transform.position, transform.position + (Vector3)acceleration);
-        if(jumpTimeLeft <= 0)
+        GetBottomBoxOverlapBoxParams(out Vector2 point, out Vector2 size);
+        if (jumpTimeLeft <= 0)
         {
             Gizmos.color = Color.red;
         }
-        else if(coyoteTimeLeft < MaxCoyoteTime)
+        else if (coyoteTimeLeft < MaxCoyoteTime)
         {
             Gizmos.color = Color.green;
         }
+        Gizmos.DrawCube(point, size);
+        GetTopBoxOverlapBoxParams(out point, out size);
+        Gizmos.color = Color.white;
         Gizmos.DrawCube(point, size);
     }
 }

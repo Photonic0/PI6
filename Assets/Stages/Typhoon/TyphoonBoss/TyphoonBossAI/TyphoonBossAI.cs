@@ -447,7 +447,7 @@ public class TyphoonBossAI : Enemy
         sprite.enabled = false;
         EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Blue, transform.position);
         yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration); PlayerWeaponManager.UnlockTyphoon();
-        GameManager.CleanupCheckpoints();
+        LevelInfo.PrepareStageChange();
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }
 #if UNITY_EDITOR

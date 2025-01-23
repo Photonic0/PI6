@@ -65,6 +65,7 @@ MonoBehaviour:
   life: 27
   immuneTime: 0
   deathRestartTimer: 0
+  hitSound: {fileID: 8300000, guid: b600b6732721bd344a54d2f62bd686ca, type: 3}
 --- !u!1 &3506313461167279896
 GameObject:
   m_ObjectHideFlags: 0
@@ -436,6 +437,7 @@ MonoBehaviour:
   armCannonSprite: {fileID: 5611153159475526818}
   playerControl: {fileID: 4856387944039684446}
   footstepAudioSource: {fileID: -3523046779834472282}
+  playFootSteps: 0
 --- !u!114 &4856387944039684446
 MonoBehaviour:
   m_ObjectHideFlags: 0

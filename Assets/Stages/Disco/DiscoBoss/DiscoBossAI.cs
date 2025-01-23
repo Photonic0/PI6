@@ -704,7 +704,7 @@ public class DiscoBossAI : Enemy
         EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
         yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration);
         PlayerWeaponManager.UnlockDisco();
-        GameManager.CleanupCheckpoints();
+        LevelInfo.PrepareStageChange();
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }
     Vector3 GetArenaSide(bool falseForLeftTrueForRight, float padding = 1)

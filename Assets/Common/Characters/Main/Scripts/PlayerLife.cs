@@ -22,6 +22,7 @@ namespace Assets.Common.Characters.Main.Scripts
         public float immuneTime;
         public const float DeathRestartDuration = 3;
         public float deathRestartTimer;
+        [SerializeField] AudioClip hitSound;
         public bool Dead => life <= 0;
         private void Update()
         {
@@ -31,11 +32,9 @@ namespace Assets.Common.Characters.Main.Scripts
             {
                 if (chances < 0)
                 {
+                    LevelInfo.PrepareStageChange();
                     SceneManager.LoadScene(SceneIndices.MainMenu);
-                    GameManager.CleanupCheckpoints();
-
                     chances = StartingChances;
-                    GameManager.latestCheckpointIndex = -1;
                 }
                 else
                 {
@@ -74,6 +73,7 @@ namespace Assets.Common.Characters.Main.Scripts
             CheckDead();
             UIManager.UpdatePlayerLifeBar(life);
             immuneTime = ImmuneTimeMax;
+            CommonSounds.Play(hitSound, audioSource, .8f, .8f);
             PlayerControl control = GameManager.PlayerControl;
             Vector2 vel = control.rb.velocity;
             if (Mathf.Abs(vel.x) > 0.001f)

@@ -456,7 +456,7 @@ public class SpikeBossAI : Enemy
         EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
         yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration);
         PlayerWeaponManager.UnlockSpike();
-        GameManager.CleanupCheckpoints();
+        LevelInfo.PrepareStageChange();
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }
     Vector2 LimitDirection(Vector2 throwPos, Vector2 target)

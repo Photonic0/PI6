@@ -1,3 +1,5 @@
+using Assets.Common.Consts;
+using Assets.Helpers;
 using System;
 using UnityEngine;
 
@@ -7,7 +9,10 @@ public class SpikeEnemySlam : Enemy
     const int stateIDPrepareAttack = 1;
     const int stateIDAttack = 2;
     const int stateIDFollowThrough = 3;
-    const float aggroDist = 7;
+    const float AggroDistX = 7.1f;
+    const float AggroYOffset = .5f;
+    private const float AggroDistY = 3;
+
     const float attackFramesDuration = .15f;
     static readonly int animIdle = Animator.StringToHash("idle");
     static readonly int animAttack0 = Animator.StringToHash("attack0");
@@ -50,7 +55,7 @@ public class SpikeEnemySlam : Enemy
     {
         Vector2 currentPos = transform.position;
         Vector2 playerpos = GameManager.PlayerPosition;
-        return Mathf.Abs(playerpos.x - currentPos.x) < aggroDist && MathF.Abs(playerpos.y - (currentPos.y + 4)) < 12.1f;
+        return Mathf.Abs(playerpos.x - currentPos.x) < AggroDistX && MathF.Abs(playerpos.y - (currentPos.y + AggroYOffset)) < AggroDistY;
     }
     private void State_Idle()
     {
@@ -95,6 +100,10 @@ public class SpikeEnemySlam : Enemy
         {
             ScreenShakeManager.AddSmallShake();
             SpikeWaveSpike.StartSpikeWave(transform.position - new Vector3(0, 1.5f), 3f, 8, .25f, .1f, audioSource);
+            if(Physics2D.OverlapCircle(transform.position, 1f, Layers.PlayerHurtbox) != null)
+            {
+                GameManager.PlayerLife.Damage(5);
+            }
         }
         if(timer > attackFramesDuration)
         {
@@ -147,5 +156,11 @@ public class SpikeEnemySlam : Enemy
         sprite.enabled = false;
         Destroy(gameObject, 1);//let any remaining sound effects play out
         return false;
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Vector2 pos = transform.position;
+        pos.y += AggroYOffset;
+        Gizmos2.DrawRectangle(pos.x - AggroDistX, pos.x + AggroDistX, pos.y - AggroDistY, pos.y + AggroDistY);
     }
 }

@@ -1,6 +1,7 @@
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -27,17 +28,17 @@ public class UIManagerScriptsPopulator : MonoBehaviour
     [SerializeField] GameObject discoWeaponBarBack;
     [SerializeField] GameObject spikeWeaponBarBack;
     [SerializeField] UIButtonAnimator[] uiThingsToAnimate;
+    [SerializeField] TextMeshProUGUI livesLeftText;
 
-    static int debug_sceneToLoadInCoroutine;
     private void Awake()
     {
+#if UNITY_EDITOR
         if(UIManager.Instance == null)
         {
-            debug_sceneToLoadInCoroutine = SceneManager.GetActiveScene().buildIndex;
             SceneManager.LoadScene(SceneIndices.MainMenu);
-            //StartCoroutine(ReloadSceneDelayed());//wont work.... scene change stops coroutines
             return;
         }
+#endif
         UIManager.Instance.lifeBarOutline = lifeBarOutline;
         UIManager.Instance.lifeBarFill = lifeBarFill;
         UIManager.Instance.weaponBarOutline = weaponBarOutline;
@@ -47,6 +48,7 @@ public class UIManagerScriptsPopulator : MonoBehaviour
         UIManager.Instance.bossLifeBarBack = bossLifeBarBack;
         UIManager.Instance.lifeBarBack = lifeBarBack;
         UIManager.Instance.weaponBarBack = weaponBarBack;
+        UIManager.Instance.livesLeftText = livesLeftText;
         PlayerWeaponManager.Initialize(weaponUpgradePanel, basicWeaponBarFill, typhoonWeaponBarFill, discoWeaponBarFill, spikeWeaponBarFill, weaponSelectArrow, typhoonWeaponBarBack, spikeWeaponBarBack, discoWeaponBarBack);
         for (int i = 0; i < uiThingsToAnimate.Length; i++)
         {

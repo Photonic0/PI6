@@ -1,4 +1,5 @@
 using Assets.Common.Characters.Main.Scripts;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ public class UIManager : MonoBehaviour
     public Image bossLifeBarOutline;
     public Image bossLifeBarFill;
     public Image bossLifeBarBack;
+    public TextMeshProUGUI livesLeftText;
     static UIManager instance;
     public static UIManager Instance => instance;
     private void Awake()

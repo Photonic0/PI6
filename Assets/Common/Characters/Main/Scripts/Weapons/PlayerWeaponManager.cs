@@ -159,7 +159,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             instance.typhoonWeaponBarBack.SetActive(instance.UnlockedTyphoonWeapon);
             instance.spikeWeaponBarBack.SetActive(instance.UnlockedSpikeWeapon);
             instance.discoWeaponBarBack.SetActive(instance.UnlockedDiscoWeapon);
-
+            UIManager.Instance.livesLeftText.text = $"Lives: {PlayerLife.chances}";
             instance.typhoonWeaponBarFill.fillAmount = (float)weapons[TyphoonWeaponIndex].charge / PlayerWeapon.MaxCharge;
             instance.spikeWeaponBarFill.fillAmount = (float)weapons[SpikeWeaponIndex].charge / PlayerWeapon.MaxCharge;
             instance.discoWeaponBarFill.fillAmount = (float)weapons[DiscoWeaponIndex].charge / PlayerWeapon.MaxCharge;

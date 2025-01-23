@@ -8,9 +8,8 @@ using UnityEngine.SceneManagement;
 //don't use this for UI elements. use script on canvas prefab instead.
 public class MultiSceneSingletonPopulator : MonoBehaviour
 {
-
     [SerializeField] Checkpoint[] checkpoints;
-
+    [SerializeField] GameObject[] permanentlyDestroyableObjs;
     private void Awake()
     {
 #if UNITY_EDITOR
@@ -18,26 +17,42 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
         {
             SceneManager.LoadScene(SceneIndices.MainMenu);
             Debug.ClearDeveloperConsole();
-            return;
         }
 #endif
-
         for (int i = 0; i < checkpoints.Length; i++)
         {
-            checkpoints[i].index = i;
+            if (checkpoints[i] != null)
+            {
+                checkpoints[i].index = i;
+            }
         }
-        GameManager.checkpoints = checkpoints;
+        LevelInfo.checkpoints = checkpoints;
+        LevelInfo.permanentlyDestroyableObjs = permanentlyDestroyableObjs;
+        if (LevelInfo.permanentlyDestroyedObjsFlags == null)
+        {
+            LevelInfo.permanentlyDestroyedObjsFlags = new bool[permanentlyDestroyableObjs.Length];
+        }
+        else
+        {
+            for (int i = 0; i < LevelInfo.permanentlyDestroyedObjsFlags.Length; i++)
+            {
+                if (LevelInfo.permanentlyDestroyedObjsFlags[i])
+                {
+                    Destroy(permanentlyDestroyableObjs[i]);
+                }
+            }
+        }
         StartCoroutine(RespawnOnEndOfFrame());
+        Destroy(gameObject, 1f);
     }
-
+   
     IEnumerator RespawnOnEndOfFrame()
     {
         yield return new WaitForEndOfFrame();
         //needed to do this here because wasn't working in player life script for some reason????
-        if (GameManager.latestCheckpointIndex != -1)
+        if (LevelInfo.latestCheckpointIndex != -1)
         {
-           
-            GameManager.LatestCheckpoint.RespawnAt();
+            LevelInfo.LatestCheckpoint.RespawnAt();
         }
     }
 }

@@ -184,6 +184,10 @@ namespace Assets.Helpers
             arrowEnd = center + directionAndLength - Vector2.Dot(arrowheadOffset, directionAndLength) * directionNormalized;
             Gizmos.DrawLine(center, arrowEnd);
         }
+        public static void DrawEnemyAggroArea(Vector3 enemyPos, float aggroRange, float verticalRange)
+        {
+            DrawRectangle(enemyPos.x - aggroRange, enemyPos.x + aggroRange, enemyPos.y - verticalRange, enemyPos.y + verticalRange);
+        }
     }
 }
 #endif

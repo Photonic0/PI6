@@ -27,18 +27,14 @@ public class GameManager : MonoBehaviour
     public PlayerLife playerLife;
     public static PlayerLife PlayerLife => instance.playerLife;
     public static Vector3 PlayerPosition => instance.playerControl.Position;
-    //assigned by multi scene populator
-    public static Checkpoint[] checkpoints;
 
-    //keep between scene reloads, but not between scene loads
-    public static int latestCheckpointIndex;
     public static Camera CurrentCam => instance.currentCam;
     Camera currentCam;
 
     public static Transform CurrentCamTransform => instance.currentCamTransform;
     Transform currentCamTransform;
-    public static Checkpoint LatestCheckpoint => latestCheckpointIndex == -1 ? null : checkpoints[latestCheckpointIndex];
     [SerializeField] List<IUpdatableWhenPaused> thingsToUpdateWhenPaused;
+
     private void Awake()//assign player scripts refs in awake of player scripts so it goes fine when changing scenes
     {
         if (instance != null && instance != this)
@@ -47,7 +43,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            latestCheckpointIndex = -1;
+            LevelInfo.latestCheckpointIndex = -1;
             PlayerLife.chances = PlayerLife.StartingChances;
             instance = this;
             thingsToUpdateWhenPaused = new();
@@ -95,18 +91,7 @@ public class GameManager : MonoBehaviour
 #endif
 
     }
-    /// <summary>
-    /// call when transitioning stages
-    /// </summary>
-    public static void CleanupCheckpoints()
-    {
-        latestCheckpointIndex = -1;
-        checkpoints = null;
-    }
-    public static void CleanupCheckpointsButNotIndex()
-    {
-        checkpoints = null;
-    }
+
     public static event UnityAction OnPause;
     public static event UnityAction OnUnPause;
     public static void PauseGame()
@@ -177,5 +162,20 @@ public class GameManager : MonoBehaviour
         {
             instance.thingsToUpdateWhenPaused.Add(obj);
         }
+    }
+    public static void UpdatePermanentlyDestroyedObjFlagsAndDestroyObj(GameObject objToBeDestroyed, float destructionDelay = 1f)
+    {
+        for (int i = 0; i < LevelInfo.permanentlyDestroyableObjs.Length; i++)
+        {
+            //it should have a permanently destroyed flag IF
+            //A. it is either about to be destroyed by this function (objToCheckAndDestroy == instance.permanentlyDestroyableObjs[i])
+            //B. it has already been destroyed (instance.permanentlyDestroyableObjs[i] == null)
+            if (objToBeDestroyed == LevelInfo.permanentlyDestroyableObjs[i] || LevelInfo.permanentlyDestroyableObjs[i] == null)
+            {
+                LevelInfo.permanentlyDestroyedObjsFlags[i] = true;
+            }
+        }
+
+        Destroy(objToBeDestroyed, destructionDelay);
     }
 }

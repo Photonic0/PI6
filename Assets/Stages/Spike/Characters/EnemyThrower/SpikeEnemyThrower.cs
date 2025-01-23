@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class SpikeEnemyThrower : Enemy
 {
-    public override int LifeMax => 10;
-    const float aggroRange = 9;
+    public override int LifeMax => 9;
+    const float AggroRange = 9;
+    const float VerticalRange = 6;
     [SerializeField] GameObject parentObject;
     [SerializeField] SpikeBall[] spikeBalls;
     [SerializeField] Animator animator;
@@ -55,7 +56,7 @@ public class SpikeEnemyThrower : Enemy
     }
     void State_Idle()
     {
-        bool playerClose = Helper.EnemyAggroCheck(transform.position, GameManager.PlayerPosition, aggroRange);
+        bool playerClose = Helper.EnemyAggroCheck(transform.position, GameManager.PlayerPosition, AggroRange, VerticalRange);
         animator.CrossFade(animIdle, 0);
         if (playerClose && timer > .3f)
         {
@@ -179,4 +180,10 @@ public class SpikeEnemyThrower : Enemy
         EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position);
         return base.PreKill();
     }
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos2.DrawEnemyAggroArea(transform.position, AggroRange, VerticalRange);
+    }
+#endif
 }

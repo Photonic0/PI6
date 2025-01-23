@@ -16,6 +16,10 @@ public class MainMenuButtons : MonoBehaviour
         explosiveStageButton.SetActive(true);
     }
 #endif
+    //ADD 1UP WHICH IS AN UPWARDS POINTING ARROW
+    //ADD CHECKPOINT INDICATOR THAT IS EITHER SOME HOLOGRAPHIC PAD IDK
+    //ADD A BIG LIFE UP WHICH IS A BATTERY
+
 
     public void LoadSpikeStage()
     {
@@ -23,23 +27,24 @@ public class MainMenuButtons : MonoBehaviour
     }
     IEnumerator LoadSpikeStageInner()
     {
+        loadBar.gameObject.SetActive(true);
+        loadBar.value = 0f;
         CommonSounds.PlayButtonSound(cameraAudioSource);
-        GameManager.CleanupCheckpoints();
+        LevelInfo.PrepareStageChange();
         CommonSounds.LoadSpikeStageFootsteps();
+        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Yellow);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.SpikeStage);
         loadStatus.allowSceneActivation = false;
-
-        while (loadStatus.progress < 0.9f) // Scene is loaded at 90% but not activated
+        while (loadStatus.progress < 0.9f)
         {
-            //loadBar.fillAmount = loadStatus.progress;
-            yield return new WaitForFixedUpdate();
+            loadBar.value = Helper.Remap(loadStatus.progress, 0, 0.9f, 0.15f, 1f);
+            yield return null;
         }
-
-        // Scene is loaded, now activate it
-       // loadBar.fillAmount = 1f;
-        loadStatus.allowSceneActivation = true;
+        loadBar.value = 1f;
         yield return null;
+        loadStatus.allowSceneActivation = true;
     }
+
     public void LoadDiscoStage() //called by the button
     {
         StartCoroutine(LoadDiscoStageInner());
@@ -50,14 +55,9 @@ public class MainMenuButtons : MonoBehaviour
         loadBar.gameObject.SetActive(true);
         loadBar.value = 0f;
         CommonSounds.PlayButtonSound(cameraAudioSource);
-        loadBar.value += 0.0125f;
-        yield return null;
-        GameManager.CleanupCheckpoints();
-        loadBar.value += 0.0125f;
-        yield return null;
+        LevelInfo.PrepareStageChange();
         CommonSounds.LoadDiscoStageFootsteps();
-        loadBar.value += 0.0125f;
-        yield return null;
+        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Magenta);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.DiscoStage);
         loadStatus.allowSceneActivation = false;
         while (loadStatus.progress < 0.9f)
@@ -68,7 +68,6 @@ public class MainMenuButtons : MonoBehaviour
         loadBar.value = 1f;
         yield return null;
         loadStatus.allowSceneActivation = true;
-        yield return null;
     }
 
     public void LoadTyphoonStage()
@@ -78,22 +77,24 @@ public class MainMenuButtons : MonoBehaviour
 
     IEnumerator LoadTyphoonStageInner()
     {
+        loadBar.gameObject.SetActive(true);
+        loadBar.value = 0f;
         CommonSounds.PlayButtonSound(cameraAudioSource);
-        GameManager.CleanupCheckpoints();
+        LevelInfo.PrepareStageChange();
         CommonSounds.LoadTyphoonStageFootsteps();
+        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Blue);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.TyphoonStage);
         loadStatus.allowSceneActivation = false;
-
-        while (loadStatus.progress < 0.9f) // Scene is loaded at 90% but not activated
+        while (loadStatus.progress < 0.9f)
         {
-           // loadBar.fillAmount = loadStatus.progress;
-            yield return new WaitForFixedUpdate();
+            loadBar.value = Helper.Remap(loadStatus.progress, 0, 0.9f, 0.15f, 1f);
+            yield return null;
         }
-
-        //loadBar.fillAmount = 1f;
-        loadStatus.allowSceneActivation = true;
+        loadBar.value = 1f;
         yield return null;
+        loadStatus.allowSceneActivation = true;
     }
+
 
     public void LoadExplosiveStage()
     {
@@ -102,22 +103,23 @@ public class MainMenuButtons : MonoBehaviour
 
     IEnumerator LoadExplosiveStageInner()
     {
+        loadBar.gameObject.SetActive(true);
+        loadBar.value = 0f;
         CommonSounds.PlayButtonSound(cameraAudioSource);
-        GameManager.CleanupCheckpoints();
-        //CommonSounds.LoadTyphoonStageFootsteps();
+        LevelInfo.PrepareStageChange();
+        //CommonSounds.LoadTyphoonStageFootsteps(); (if needed)
+        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.DarkGreen);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.ExplosiveStage);
         loadStatus.allowSceneActivation = false;
-
-        while (loadStatus.progress < 0.9f) // Scene is loaded at 90% but not activated
+        while (loadStatus.progress < 0.9f)
         {
-           // loadBar.fillAmount = loadStatus.progress;
-            yield return new WaitForFixedUpdate();
+            loadBar.value = Helper.Remap(loadStatus.progress, 0, 0.9f, 0.15f, 1f);
+            yield return null;
         }
-
-        // Scene is loaded, now activate it
-       // loadBar.fillAmount = 1f;
-        loadStatus.allowSceneActivation = true;
+        loadBar.value = 1f;
         yield return null;
+        loadStatus.allowSceneActivation = true;
     }
+
 
 }

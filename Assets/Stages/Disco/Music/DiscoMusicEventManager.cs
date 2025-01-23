@@ -57,7 +57,7 @@ public class DiscoMusicEventManager : MonoBehaviour
     }
     private void Start()
     {
-        if (GameManager.latestCheckpointIndex < 0)
+        if (LevelInfo.latestCheckpointIndex < 0)
         {
             musicAudioSource.PlayOneShot(intro);
             beatTimer = -SecondsPerBeat * 10;//time for the beat timer to wait out the intro
