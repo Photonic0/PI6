@@ -32,9 +32,10 @@ public class SpikeBossAI : Enemy
     [SerializeField] Animator animator;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioSource footstepAudioSource;
-    [SerializeField] SpikeBossSpikeBall[] spikeBalls;
-    FootstepSimulator footstepSimulator;
+    [SerializeField] SpikeBossSpikeBall[] spikeBalls;//make it do like a triple throw, with 2 additional spike balls thrown with rotated angles
+    [SerializeField] FallingSpike[] fallingSpikePool;
     SpikeBossSpikeBall currentSpikeBall;
+    bool[] whichSpikesFallOnlastCeilingSpikeWave;
     Vector2 arenaCenter;
 
 #if UNITY_EDITOR
@@ -51,6 +52,7 @@ public class SpikeBossAI : Enemy
     const short StateIDSpikeShockwave = 3;
     const short StateIDJumpLeftToRight = 4;
     const short StateIDJumpRightToLeft = 5;
+    const short StateIDCeilingSpikes = 6;
 
     const float IntroDuration = 1;
 
@@ -61,6 +63,8 @@ public class SpikeBossAI : Enemy
     const float SpikeBallThrowDelay = .2f;
     const float SpikeBallThrowVelocity = 17;
     const float SpikeBallThrowDistNeededForSideSwitch = 4.5f;
+    const float SpikeBallThrowArcRadians = 0.35f;
+
 
     const int SpikeShockwaveActionCount = 1;//The action is the shockwave creation
     const float SpikeShockwaveGoToAirStallPointDuration = .4f;
@@ -71,7 +75,14 @@ public class SpikeBossAI : Enemy
 
     const float JumpToOtherSideDuration = .7f;
     const float JumpToOtherSideJumpHeight = 6;
-    public override int LifeMax => 30;
+
+    const float CeilingSpikesStartup = 0;
+    const int CeilingSpikesActionCount = 7;
+    const float CeilingSpikesActionRate = 0.5f;
+    const float CeilingSpikesDelay = 0.8f;
+    const int CeilingSpikesMaxSpikesInRow = 4;
+
+    public override int LifeMax => 60;
     bool StateJustStarted => stateTimer >= 0 && stateTimer < 1E-20f;
     bool IsOnLeftSideOfArena => transform.position.x < arenaCenter.x;
     bool IsOnRightSideOfArena => transform.position.x > arenaCenter.x;
@@ -83,7 +94,6 @@ public class SpikeBossAI : Enemy
 
     public override void Start()
     {
-        footstepSimulator = new(CommonSounds.Footstep, .1f, footstepAudioSource);
         DiscardCurrentSpikeBall();
         base.Start();
     }
@@ -112,6 +122,9 @@ public class SpikeBossAI : Enemy
             case StateIDJumpLeftToRight:
             case StateIDJumpRightToLeft:
                 State_JumpToOtherSide();
+                break;
+            case StateIDCeilingSpikes:
+                State_CeilingSpikes();
                 break;
         }
         stateTimer += Time.deltaTime;
@@ -147,7 +160,6 @@ public class SpikeBossAI : Enemy
         float jumpPoint = ParabolaFrom0to1(Mathf.InverseLerp(0, SpikeBallThrowRate, (stateTimer - SpikeBallThrowStartup * 2f) % SpikeBallThrowRate));
         if (actionCounter <= 0 && stateTimer > SpikeBallThrowStartup * 2 + SpikeBallThrowRate * SpikeBallThrowActionCount)
         {
-
             jumpPoint = 0;
         }
         Vector2 position = CurrentArenaSidePoint + new Vector2(0, jumpPoint * SpikeBallThrowJumpHeight);
@@ -191,16 +203,35 @@ public class SpikeBossAI : Enemy
         }
         if (ShouldDoAction(SpikeBallThrowStartup, SpikeBallThrowRate))
         {
+            Vector2 primaryBallThrowVelocity = Vector2.zero;
+            Vector3 throwPos = transform.position + new Vector3(0, 1);
             if (currentSpikeBall != null)
             {
-                Vector3 throwPos = transform.position + new Vector3(0, 1);
                 currentSpikeBall.transform.position = throwPos;
- 
-                currentSpikeBall.rb.velocity = LimitDirection(throwPos, GameManager.PlayerPosition) * SpikeBallThrowVelocity;
+                primaryBallThrowVelocity = LimitDirection(throwPos, GameManager.PlayerPosition) * SpikeBallThrowVelocity;
+                currentSpikeBall.rb.velocity = primaryBallThrowVelocity;
                 currentSpikeBall.EnablePhysics();
+                currentSpikeBall.dontSpawnShockwave = false;
                 currentSpikeBall = null;
                 audioSource.transform.position = throwPos;
                 CommonSounds.PlayThrowSound(audioSource);
+            }
+            for (int i = -1; i < 2; i++)
+            {
+                if(i == 0)
+                {
+                    continue;
+                }
+                if(Helper.TryFindFreeIndex(spikeBalls, out int index))
+                {
+                    SpikeBossSpikeBall ball = spikeBalls[index];
+                    float angleDiff = Helper.Remap(i, -1, 1, -SpikeBallThrowArcRadians * .5f, SpikeBallThrowArcRadians * .5f);
+                    ball.EnablePhysics();
+                    ball.gameObject.SetActive(true);
+                    ball.rb.velocity = primaryBallThrowVelocity.RotatedBy(angleDiff);
+                    ball.dontSpawnShockwave = true;
+                    ball.transform.position = throwPos;
+                }   
             }
         }
         if (Mathf.Abs(transform.position.x - GameManager.PlayerPosition.x) < SpikeBallThrowDistNeededForSideSwitch)
@@ -256,7 +287,7 @@ public class SpikeBossAI : Enemy
             {
                 ScreenShakeManager.AddMediumShake();
                 Vector2 arenaFloorCenter = arenaCenter - new Vector2(0, ArenaHeight / 2 + .5f);
-                SpikeWaveSpike.StartSpikeWave(arenaFloorCenter, 2, 8, .3f, .15f, audioSource);
+                SpikeWaveSpike.StartSpikeWave(arenaFloorCenter, 1f, 8, .3f, .15f, audioSource);
                 arenaFloorCenter.y += 1.5f;
                 transform.position = arenaFloorCenter;
                 actionCounter = 0;
@@ -284,7 +315,7 @@ public class SpikeBossAI : Enemy
                 : IsOnLeftSideOfArena ? leftStandingPoint : rightStandingPoint;
             if (Mathf.Abs(transform.position.x - walkTarget.x) <= 1E-7f)
             {
-                SwitchState(StateIDSpikeBallThrow, SpikeBallThrowActionCount);
+                SwitchState(StateIDCeilingSpikes, CeilingSpikesActionCount);
                 animator.CrossFade(AnimIDIdle, 0);
             }
             else
@@ -321,13 +352,104 @@ public class SpikeBossAI : Enemy
         if (stateTimer > JumpToOtherSideDuration)
         {
             animator.CrossFade(AnimIDIdle, 0);
-            if (Random2.Bool)
+            if (Random2.OneIn(3))
             {
                 SwitchState(StateIDSpikeBallThrow, SpikeBallThrowActionCount);
             }
-            else
+            else if (Random2.Bool)
             {
                 SwitchState(StateIDSpikeShockwave, SpikeShockwaveActionCount);
+            }
+            else
+            {
+                SwitchState(StateIDCeilingSpikes, CeilingSpikesActionCount);
+            }
+        }
+    }
+    void State_CeilingSpikes()
+    {
+        float jumpProgress = actionCounter <= 0 ? 1 : Mathf.InverseLerp(0, CeilingSpikesActionRate, (stateTimer - CeilingSpikesStartup * 2f) % CeilingSpikesActionRate);
+        float jumpPoint = ParabolaFrom0to1(jumpProgress);
+        if (actionCounter <= 0 && stateTimer > CeilingSpikesStartup * 2 + CeilingSpikesActionRate * CeilingSpikesActionCount)
+        {
+            jumpPoint = 0;
+            animator.CrossFade(AnimIDIdle, 0);
+        }
+        else
+        {
+            float derivative = ParabolaFrom0To1Derivative(jumpProgress);
+            if (derivative > 0)
+            {
+                animator.CrossFade(AnimIDMidairUp, 0);
+            }
+            else if (derivative < 0)
+            {
+                animator.CrossFade(AnimIDSlamFall, 0);
+            }
+            else
+            {
+                animator.CrossFade(AnimIDIdle, 0);
+            }
+        }
+        Vector2 position = CurrentArenaSidePoint + new Vector2(0, jumpPoint * SpikeBallThrowJumpHeight);
+        transform.position = position;
+        if (StateJustStarted || ShouldDoAction(CeilingSpikesStartup, CeilingSpikesActionRate))
+        {
+            ScreenShakeManager.AddSmallShake();
+            Vector2 spikePos = arenaCenter;
+            spikePos.x -= 7.5f;
+            spikePos.y += 3.5f;
+            int amountToGenerate = Random.Range(2, CeilingSpikesMaxSpikesInRow + 1);
+
+            if (whichSpikesFallOnlastCeilingSpikeWave == null)
+            {
+                whichSpikesFallOnlastCeilingSpikeWave = new bool[(int)ArenaWidth];
+                for (int i = 0; i < ArenaWidth; i++)
+                {
+                    if (amountToGenerate > 0)
+                    {
+                        whichSpikesFallOnlastCeilingSpikeWave[i] = true;
+                        SpawnSpike(spikePos);
+                        amountToGenerate--;
+                        spikePos.x += 1;
+                        continue;
+                    }
+                    spikePos.x += 2;
+                    i++;
+                    //2 as the minimum so the secondary wave where it drops spikes on places that spikes didn't spawn doesn't have any 1-block gaps
+                    amountToGenerate = Random.Range(2, CeilingSpikesMaxSpikesInRow + 1);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < ArenaWidth; i++)
+                {
+                    if (!whichSpikesFallOnlastCeilingSpikeWave[i])
+                    {
+                        SpawnSpike(spikePos);
+                    }
+                    spikePos.x += 1;
+                }
+                whichSpikesFallOnlastCeilingSpikeWave = null;
+            }
+        }
+        TrySwitchState(StateIDSpikeBallThrow, CeilingSpikesActionCount, CeilingSpikesStartup, CeilingSpikesActionRate, CeilingSpikesDelay, SpikeBallThrowActionCount);
+        if(state != StateIDCeilingSpikes)
+        {
+            whichSpikesFallOnlastCeilingSpikeWave = null;
+        }
+    }
+    void SpawnSpike(Vector2 pos)
+    {
+        for (int i = 0; i < fallingSpikePool.Length; i++)
+        {
+            FallingSpike spike = fallingSpikePool[i];
+            if (!spike.enabled)
+            {
+                spike.transform.position = pos;
+                spike.Start();
+                spike.StartFallAndMakeNotRespawnAndNotDestroy(Random2.Float(0.7f, 0.8f));
+                break;
             }
         }
     }
@@ -474,7 +596,7 @@ public class SpikeBossAI : Enemy
         float dotBottomRightThrowDir = Vector2.Dot(throwDir, toBottomRight);
         float dotBottomLeftThrowDir = Vector2.Dot(throwDir, toBottomLeft);
         float dotBottomRightBottomLeft = Vector2.Dot(toBottomRight, toBottomLeft);
-        float dotThrowDirHalfwayBackwards = Vector2.Dot(throwDir, halfwaybackwards);        
+        float dotThrowDirHalfwayBackwards = Vector2.Dot(throwDir, halfwaybackwards);
 
         if (dotBottomLeftThrowDir <= dotBottomRightBottomLeft || dotBottomRightThrowDir <= dotBottomRightBottomLeft || dotThrowDirHalfwayBackwards > 0)
         {
@@ -492,7 +614,7 @@ public class SpikeBossAI : Enemy
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
-    {       
+    {
     }
 #endif
 }

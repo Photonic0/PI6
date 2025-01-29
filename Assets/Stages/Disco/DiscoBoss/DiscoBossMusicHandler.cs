@@ -27,7 +27,6 @@ public class DiscoBossMusicHandler : MonoBehaviour
     [SerializeField] AudioClip music;
     [SerializeField] TilemapRenderer[] tileRenderers;
     [SerializeField] Material discoTileMaterialAsset;
-    [SerializeField] TextMeshProUGUI debugtext;
     [SerializeField] DiscoBossAI boss;
     [SerializeField] IMusicSyncable[] syncableObjs;
     bool playMusicFileNextBeat;
@@ -188,10 +187,6 @@ public class DiscoBossMusicHandler : MonoBehaviour
         {
             syncableObjs[i].DoMusicSyncedAction();
         }
-#if UNITY_EDITOR
-        debugtext.color = beatCounter % 2 == 0 ? Color.magenta : FlipnoteColors.Yellow;
-        debugtext.text = "current beat: " + beatCounter;
-#endif
         boss.beatFrame = true;
         discoTileMaterialAsset.SetFloat(discoTileMaterialFlipColFloatHash, beatCounter % 2);
         for (int i = 0; i < tileRenderers.Length; i++)

@@ -65,7 +65,7 @@ namespace Assets.Helpers
         public static Vector2 Ring(float minDist, float maxDist)
         {
             float minDistNormalized = minDist / maxDist;
-            minDistNormalized *= minDistNormalized;
+            minDistNormalized *= minDistNormalized;//compensate for the square rooting.
             float dist = Random.value * (1 - minDistNormalized) + minDistNormalized;
             dist = Mathf.Sqrt(dist);//even out distribution of points
             dist *= maxDist;

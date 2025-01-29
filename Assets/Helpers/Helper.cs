@@ -19,6 +19,16 @@ namespace Assets.Helpers
                 return (Vector2)cam.ScreenToWorldPoint(posToCheck);
             }
         }
+        public static void GetCameraViewBoundsAtZ(Vector3 cameraPos, float fov, float targetZ, float aspectRatio, out float minX, out float maxX, out float minY, out float maxY)
+        {
+            float halfHeightAtTargetZ = Mathf.Tan(Mathf.Deg2Rad * (fov / 2f)) * (float)Mathf.Abs(targetZ - cameraPos.z);
+            float halfWidthAtTargetZ = halfHeightAtTargetZ * aspectRatio;
+            minX = cameraPos.x - halfWidthAtTargetZ;
+            maxX = cameraPos.x + halfWidthAtTargetZ;
+            minY = cameraPos.y - halfHeightAtTargetZ;
+            maxY = cameraPos.y + halfHeightAtTargetZ;
+        }
+
         public static bool PointInView(Vector2 pos, int padding = 2)
         {
             Vector2 topLeft = GameManager.CurrentCamTransform.position;
@@ -110,21 +120,36 @@ namespace Assets.Helpers
         /// <summary>
         /// expects radians
         /// </summary>
-        /// <param name="angle"></param>
-        /// <param name="magnitude"></param>
-        /// <returns></returns>
-        public static Vector2 PolarVector(this float angle, float magnitude)
+        public static Vector2 PolarVector_Old(this float angle, float magnitude)
         {
+            //I messed this up lmao. It should be Cos and Sin, not Sin and Cos....
+            //because of this, angles get mirrored diagonally top right-bottom left
+            //leaving this here so I don't have to rewrite code
             return new Vector2(Mathf.Sin(angle), Mathf.Cos(angle)) * magnitude;
         }
         /// <summary>
         /// expects radians
         /// </summary>
-        /// <param name="angle"></param>
-        /// <returns></returns>
+        public static Vector2 PolarVector_Old(this float angle)
+        {
+            //I messed this up lmao. It should be Cos and Sin, not Sin and Cos....
+            //because of this, angles get mirrored diagonally top right-bottom left
+            //leaving this here so I don't have to rewrite code
+            return new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
+        }
+        /// <summary>
+        /// expects radians
+        /// </summary>
+        public static Vector2 PolarVector(this float angle, float magnitude)
+        {
+            return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * magnitude;
+        }
+        /// <summary>
+        /// expects radians
+        /// </summary>
         public static Vector2 PolarVector(this float angle)
         {
-            return new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
+            return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
         public static Vector2 RotatedBy(this Vector2 v, float radians, Vector2 center = default)
         {
@@ -135,13 +160,6 @@ namespace Assets.Helpers
             center.y += relative.x * sin + relative.y * cos;
             return center;
         }
-        //public static void RefreshIndices<T>(ref List<T> list, int startIndex = 0) where T : Entity2D
-        //{
-        //    for (int i = startIndex; i < list.Count; i++)
-        //    {
-        //        list[i].index = i;
-        //    }
-        //}
         public static bool IndexInRange(this Array array, int index)
         {
             return index >= 0 && index < array.Length;
@@ -201,8 +219,6 @@ namespace Assets.Helpers
             col.b = 1 - col.b;
             return col;
         }
-
-
         //bad
         public static float WeightedRandom(params (float input, float chance)[] inputsChances)
         {
@@ -242,6 +258,19 @@ namespace Assets.Helpers
             index = -1;
             return false;
         }
+        public static bool TryFindFreeIndex<T>(T[] objects, out T obj) where T : MonoBehaviour
+        {
+            for (int i = 0; i < objects.Length; i++)
+            {
+                if (!objects[i].gameObject.activeInHierarchy)
+                {
+                    obj = objects[i];
+                    return true;
+                }
+            }
+            obj = null;
+            return false;
+        }
         public static int FindFreeIndex<T>(T[] objects) where T : MonoBehaviour
         {
             for (int i = 0; i < objects.Length; i++)
@@ -268,7 +297,6 @@ namespace Assets.Helpers
         }
         public static bool TryFindFreeIndex(GameObject[] objects, out GameObject obj)
         {
-
             for (int i = 0; i < objects.Length; i++)
             {
                 if (!objects[i].activeInHierarchy)
@@ -303,12 +331,9 @@ namespace Assets.Helpers
         /// <summary>
         /// lower decay value = slower movement
         /// </summary>
-        /// <param name="currentValue"></param>
-        /// <param name="targetValue"></param>
-        /// <param name="decay"></param>
-        /// <returns></returns>
         public static float Decay(float currentValue, float targetValue, float decay)
         {
+            //thanks freya holmer
             return targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * Time.deltaTime);
         }
         public static Quaternion Decay(Quaternion currentValue, Quaternion targetValue, float decay)
@@ -366,7 +391,6 @@ namespace Assets.Helpers
                     emitParams.startSize = Random2.Float(.01f, .11f) + sizeIncrease;
                     lightningTelegraphParticles.Emit(emitParams, 1);
                 }
-
             }
         }
         public static Vector2[] ConvertArray(Vector3[] array)
@@ -386,6 +410,18 @@ namespace Assets.Helpers
                 result[i] = array[i];
             }
             return result;
+        }
+        public static void ResetCamera(Vector2 referencePoint)
+        {
+            if (CameraRailSystem.instance != null)
+            {
+                CameraRailSystem.QueueCameraPositionSnap();
+            }
+            else
+            {
+                referencePoint.y += 1f;
+                TyphoonCameraSystem.SetCameraPos(referencePoint);
+            }
         }
     }
 }

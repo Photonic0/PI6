@@ -175,6 +175,7 @@ MonoBehaviour:
   collider: {fileID: 108371987658864498}
   sprite: {fileID: 108371987658864503}
   audioSOurce: {fileID: -5771566641376220609}
+  transform: {fileID: 108371987658864496}
 --- !u!82 &-5771566641376220609
 AudioSource:
   m_ObjectHideFlags: 0

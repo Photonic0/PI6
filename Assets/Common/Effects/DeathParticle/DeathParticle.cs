@@ -22,7 +22,7 @@ public class DeathParticle : MonoBehaviour
             {
                 Transform particle = particles[i];
                 particle.gameObject.SetActive(true);
-                particle.position = center + (i * Mathf.PI + Helper.Remap(timer, 0, SpinEffectDuration, 0, Mathf.PI * 2, false)).PolarVector(.5f);
+                particle.position = center + (i * Mathf.PI + Helper.Remap(timer, 0, SpinEffectDuration, 0, Mathf.PI * 2, false)).PolarVector_Old(.5f);
             }
         }
         else if (timer < TotalEffectDuration)
@@ -37,21 +37,21 @@ public class DeathParticle : MonoBehaviour
             {
                 Transform particle = particles[i];
                 particle.gameObject.SetActive(true);
-                particle.position = center + (i * Mathf.PI * .5f).PolarVector(relativeTimer * particleSpreadSpeed);
+                particle.position = center + (i * Mathf.PI * .5f).PolarVector_Old(relativeTimer * particleSpreadSpeed);
                 particleRenderers[i].color = colorWithUpdatedOpacity;
             }
             for (int i = 6; i < 14; i++)
             {
                 Transform particle = particles[i];
                 particle.gameObject.SetActive(true);
-                particle.position = center + (i * Mathf.PI * .25f).PolarVector(relativeTimer * 3 * particleSpreadSpeed);
+                particle.position = center + (i * Mathf.PI * .25f).PolarVector_Old(relativeTimer * 3 * particleSpreadSpeed);
                 particleRenderers[i].color = colorWithUpdatedOpacity;
             }
             for (int i = 14; i < 30; i++)
             {
                 Transform particle = particles[i];
                 particle.gameObject.SetActive(true);
-                particle.position = center + (i * Mathf.PI * .125f + Mathf.PI * 0.0625f + (0.25f / relativeTimer * (i % 2 * 2 - 1))).PolarVector(relativeTimer * 5 * particleSpreadSpeed);
+                particle.position = center + (i * Mathf.PI * .125f + Mathf.PI * 0.0625f + (0.25f / relativeTimer * (i % 2 * 2 - 1))).PolarVector_Old(relativeTimer * 5 * particleSpreadSpeed);
                 particleRenderers[i].color = colorWithUpdatedOpacity;
             }
         }

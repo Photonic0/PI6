@@ -14,8 +14,8 @@ public class DiscoShot : Projectile
     float hitTimer;
     float deactivationTimer;
     short hitCounter;
-    const float hitRate = 3f / 50f;
-    const short maxHits = 10;
+    const float hitRate = 7f / 50f;
+    const short maxHits = 7;
     const float SparkleFrequency = 0.1f;
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] SpriteRenderer outline;
@@ -25,7 +25,7 @@ public class DiscoShot : Projectile
     List<byte> soundIDsToPlay;
     private void Start()
     {
-       
+
         Initialize();
     }
     private void Update()
@@ -36,13 +36,13 @@ public class DiscoShot : Projectile
             if (hitCounter > maxHits)
             {
                 deactivationTimer += Time.deltaTime;
-                if (deactivationTimer > .2f)
+                if (deactivationTimer > 1f)//time for the sound effects to fade
                 {
                     gameObject.SetActive(false);
                     parent.SetActive(false);
                     deactivationTimer = 0;
                 }
-                else if(Mathf.Approximately(deactivationTimer, Time.deltaTime))
+                else if (Mathf.Approximately(deactivationTimer, Time.deltaTime))
                 {
                     outline.enabled = false;
                     sprite.enabled = false;
@@ -116,22 +116,20 @@ public class DiscoShot : Projectile
             {
                 hitTimer -= hitRate;
                 hitCounter++;
-                Collider2D[] hitObjs = Physics2D.OverlapBoxAll(transform.position, new Vector3(1, 3), 0, Layers.Enemy);
-                if (hitCounter % 2 == 1)
+
+                int index = Random.Range(0, soundIDsToPlay.Count);
+                byte id = soundIDsToPlay[index];
+                soundIDsToPlay.RemoveAt(index);
+                if (id == 0)
                 {
-                    int index = Random.Range(0, soundIDsToPlay.Count);
-                    byte id = soundIDsToPlay[index];
-                    soundIDsToPlay.RemoveAt(index);
-                    if (id == 0)
-                    {
-                        CommonSounds.PlayKick(audioSource);
-                    }
-                    else
-                    {
-                        CommonSounds.PlaySnare(audioSource);
-                    }
-                    ScreenShakeManager.AddSpiralShake(ScreenShakeManager.TinyShakeMagnitude);
+                    CommonSounds.PlayKick(audioSource);
                 }
+                else
+                {
+                    CommonSounds.PlaySnare(audioSource);
+                }
+                ScreenShakeManager.AddSpiralShake(ScreenShakeManager.TinyShakeMagnitude);
+                Collider2D[] hitObjs = Physics2D.OverlapBoxAll(transform.position, new Vector3(1, 3), 0, Layers.Enemy);
                 for (int i = 0; i < hitObjs.Length; i++)
                 {
                     GameObject obj = hitObjs[i].gameObject;

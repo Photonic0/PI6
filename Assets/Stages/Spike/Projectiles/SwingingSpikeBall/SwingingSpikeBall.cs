@@ -1,5 +1,5 @@
-using Assets.Common.Characters.Main.Scripts;
 using Assets.Helpers;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,21 +8,26 @@ public class SwingingSpikeBall : Projectile
 
     [SerializeField] new Transform transform;
     [SerializeField] Transform anchor;
-    [SerializeField] float timer;
+    [SerializeField] float timerOffset;
     [SerializeField] float oscillationSpeed;
     [SerializeField] int verletIterations;
     [SerializeField] float ballDist;
-    [SerializeField] LineRenderer line;
-    [SerializeField] bool debug_clickToInitializeVerlet;
-    const float ChainSegmentSize = .5f;
+    [SerializeField] GameObject frontFacingChainSegmentPrefab;
+    [SerializeField] GameObject sideFacingChainSegmentPrefab;
+    [SerializeField] Transform[] chainSegments;
+    const float ChainSegmentSize = 0.45f;
     const float BallSize = 1.041f;
+    const float CullSimulationDistanceSqr = 500;
     VerletSimulator verletSimulator;
     public override int Damage => 5;
 
+
     void Start()
     {
-        //random offsets so they aren't all synced up
-        timer += Random2.Float(Mathf.PI * 2);
+        //random offsets so they aren't all synced up,  but based on transform x so it's consistent between checkpoints
+        System.Random rnd = new System.Random((int)transform.position.x * 200);
+        timerOffset += (float)rnd.NextDouble() * Mathf.PI * 2;
+
         transform.Rotate(0, 0, Random2.Float(Mathf.PI));
         InitializeVerlet();
     }
@@ -31,7 +36,8 @@ public class SwingingSpikeBall : Projectile
     private void InitializeVerlet()
     {
         verletSimulator = new VerletSimulator(1, verletIterations);
-        int dotCount = 40;
+        int dotCount = (int)((ballDist - BallSize / 2f + ChainSegmentSize) / ChainSegmentSize);
+        Array.Resize(ref chainSegments, dotCount - 1);
         List<Dot> dots = new(dotCount);
         verletSimulator.dots = dots;
         Dot firstDot = new(anchor.position, true);
@@ -45,65 +51,88 @@ public class SwingingSpikeBall : Projectile
             {
                 dot.isLocked = true;
             }
-            Dot.Connect(dot, dots[i - 1]);
+            Dot.Connect(dot, dots[i - 1], ChainSegmentSize);
             dots.Add(dot);
+        }
+        for (int i = 0; i < chainSegments.Length; i++)
+        {
+            Vector2 prevDot = verletSimulator.dots[i].position;
+            Vector2 currentDot = verletSimulator.dots[i + 1].position;
+            chainSegments[i] = Instantiate(i % 2 == 0 ? sideFacingChainSegmentPrefab : frontFacingChainSegmentPrefab, (currentDot + prevDot) / 2, (currentDot - prevDot).ToRotation(90), anchor).transform;
         }
     }
 
     void FixedUpdate()
     {
-        if(debug_clickToInitializeVerlet)
+#if UNITY_EDITOR
+        if (debug_clickToInitializeVerlet)
         {
             InitializeVerlet();
             debug_clickToInitializeVerlet = false;
         }
-        Vector2 sineOffset = (Mathf.Sin(timer * oscillationSpeed) + Mathf.PI).PolarVector(ballDist);
+#endif
+        //distance culling
+        if((GameManager.PlayerPosition - anchor.position).sqrMagnitude > CullSimulationDistanceSqr)
+        {
+            return;
+        }
+
+        int dotCount = verletSimulator.dots.Count;
+        float timer = Time.time + timerOffset;
+        Vector2 sineOffset = (Mathf.Sin(timer * oscillationSpeed) + Mathf.PI).PolarVector_Old(ballDist);
         transform.Rotate(0, 0, Mathf.Cos(timer * oscillationSpeed * Helper.Phi) * ballDist * Helper.Phi);
         Vector2 anchorPos = anchor.position;
         Vector2 spikeBallPos = transform.position;
         verletSimulator.iterations = verletIterations;
         verletSimulator.dots[0].position = anchorPos;
         transform.position = anchorPos + sineOffset;
-        verletSimulator.dots[^1].position = spikeBallPos + .73f * BallSize * (anchorPos - spikeBallPos).normalized;
+        verletSimulator.dots[^1].position = anchorPos + (sineOffset.normalized * ChainSegmentSize) * dotCount;
+#if UNITY_EDITOR
+        verletSimulator.dots[^1].position += (sineOffset * debug_TestExtraDistance);
+#endif
         verletSimulator.Simulate(Time.fixedDeltaTime);
-        Color yellow = new(.99f, .91f, 0);
-        int dotCount = verletSimulator.dots.Count;
-        line.startColor = yellow;
-        line.endColor = yellow;
-        Vector3[] positions = new Vector3[dotCount];
-        for (int j = 0; j < positions.Length; j++)
+        for (int j = 0; j < dotCount - 1; j++)
         {
-            positions[j] = verletSimulator.dots[j].position;      
+            Vector2 prevDot = verletSimulator.dots[j].position;
+            Vector2 currentDot = verletSimulator.dots[j + 1].position;
+            chainSegments[j].position = (currentDot + prevDot) / 2;
+            chainSegments[j].rotation = (currentDot - prevDot).ToRotation(90);
         }
-        line.SetPositions(positions);
         timer += Time.fixedDeltaTime;
     }
+
+#if UNITY_EDITOR
+    [SerializeField] bool debug_clickToInitializeVerlet;
+    [SerializeField] bool debug_clickToSetBallHeightInEditor;
+    [SerializeField] float debug_TestExtraDistance;
     private void OnDrawGizmos()
     {
         Vector3 anchorPos = anchor.position;
-        Vector3 pos = transform.position;
-        Vector2 sineOffset = (Mathf.Sin(timer * oscillationSpeed)).PolarVector(ballDist);
+        float timer = Time.time + timerOffset;
+        Vector2 sineOffset = (Mathf.Sin(timer * oscillationSpeed)).PolarVector_Old(ballDist);
         //sineOffset = new Vector2(-sineOffset.y, sineOffset.x);
-        Gizmos.DrawLine(pos, pos + (Vector3)sineOffset);
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(anchorPos, pos);
-        Gizmos.DrawSphere(anchorPos, .05f);
-        Vector3 relativePos = anchorPos - pos;
-        relativePos = new Vector3(-relativePos.y, relativePos.x) * Mathf.Cos(timer * oscillationSpeed);
-        Gizmos.DrawLine(pos + relativePos, pos);
+        float colliderRadius = 0.8f;
+        Gizmos2.DrawArc(anchorPos, ballDist, -Mathf.PI / 2f, 2f, 20);
+        Gizmos2.DrawCappedArc(anchorPos, ballDist, -Mathf.PI / 2f, 2f, colliderRadius * 2f);
+        if (debug_clickToSetBallHeightInEditor && !Application.isPlaying)
+        {
+            transform.position = anchorPos - (Vector3)sineOffset;
+            //debug_clickToSetBallHeightInEditor = false;
+        }
         if (verletSimulator != null)
         {
             for (int i = 0; i < verletSimulator.dots.Count; i++)
             {
-                Dot dot = verletSimulator.dots[i];
-                Gizmos.DrawSphere(dot.position, 0.1f);
-                if (i > 0)
-                {
-                    Gizmos.DrawLine(dot.position, verletSimulator.dots[i - 1].position);
-                }
+                Gizmos.DrawWireSphere(verletSimulator.dots[i].position, 0.05f);
             }
         }
     }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(anchor.position, Mathf.Sqrt(CullSimulationDistanceSqr));
+    }
+#endif
     //private void Chain_Old()
     //{
     //    Vector3 anchorPos = anchor.position;

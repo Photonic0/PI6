@@ -220,7 +220,7 @@ public class TyphoonBossAI : Enemy
             int orbSide = i % 2 * 2 - 1;
             float orbDist = perArmOrbIndex * 0.95f + 1f;
             float offset = orbSide * Mathf.PI * 0.5f - perArmOrbIndex * 2f / orbCount;
-            orb.transform.SetPositionAndRotation(center + (spinAmount + offset).PolarVector(orbDist), Quaternion.Euler(0, 0, stateTimer * 200));
+            orb.transform.SetPositionAndRotation(center + (spinAmount + offset).PolarVector_Old(orbDist), Quaternion.Euler(0, 0, stateTimer * 200));
         }
     }
 
@@ -281,7 +281,7 @@ public class TyphoonBossAI : Enemy
             float progress = (stateTimer - LightningOrbsStartup - (LightningActionRate * LightningActionCount)) / LightningDelay;
             float dist = progress * RainBossYOffsetFromArenaCenterInitially;
             float offsetRotation = Mathf.LerpUnclamped(Mathf.PI * 3, 0, progress);
-            transform.position = Helper.Decay(transform.position, arenaCenter + offsetRotation.PolarVector(dist), 10);
+            transform.position = Helper.Decay(transform.position, arenaCenter + offsetRotation.PolarVector_Old(dist), 10);
 #if UNITY_EDITOR
             debug_numberDisplay = progress;
             handlesColor = Color.red;

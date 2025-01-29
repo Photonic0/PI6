@@ -6,17 +6,20 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     const int SegmentsInDisplay = 27;
-    public Image lifeBarOutline;
-    public Image lifeBarFill;
-    public Image lifeBarBack;
-    public Image weaponBarOutline;
-    public Image weaponBarFill;
-    public Image weaponBarBack;
-    public Image bossLifeBarOutline;
-    public Image bossLifeBarFill;
-    public Image bossLifeBarBack;
-    public TextMeshProUGUI livesLeftText;
+    [SerializeField] Image lifeBarOutline;
+    [SerializeField] Image lifeBarFill;
+    [SerializeField] Image lifeBarBack;
+    [SerializeField] Image weaponBarOutline;
+    [SerializeField] Image weaponBarFill;
+    [SerializeField] Image weaponBarBack;
+    [SerializeField] Image bossLifeBarOutline;
+    [SerializeField] Image bossLifeBarFill;
+    [SerializeField] Image bossLifeBarBack;
+    [SerializeField] TextMeshProUGUI livesLeftText;
+    public static TextMeshProUGUI LivesLeftText => instance.livesLeftText;
     static UIManager instance;
+    [SerializeField] AudioSource audioSource;
+    public static AudioSource AudioSource => instance.audioSource;
     public static UIManager Instance => instance;
     private void Awake()
     {
@@ -71,5 +74,19 @@ public class UIManager : MonoBehaviour
     public static void ChangePlayerLifeBarColor(Color color)
     {
         instance.lifeBarOutline.color = color;
+    }
+
+    public static void Initialize(Image lifeBarOutline, Image lifeBarFill, Image weaponBarOutline, Image weaponBarFill, Image bossLifeBarOutline, Image bossLifeBarFill, Image bossLifeBarBack, Image lifeBarBack, Image weaponBarBack, TextMeshProUGUI livesLeftText)
+    {
+        instance.lifeBarOutline = lifeBarOutline;
+        instance.lifeBarFill = lifeBarFill;
+        instance.weaponBarOutline = weaponBarOutline;
+        instance.weaponBarFill = weaponBarFill;
+        instance.bossLifeBarOutline = bossLifeBarOutline;
+        instance.bossLifeBarFill = bossLifeBarFill;
+        instance.bossLifeBarBack = bossLifeBarBack;
+        instance.lifeBarBack = lifeBarBack;
+        instance.weaponBarBack = weaponBarBack;
+        instance.livesLeftText = livesLeftText;
     }
 }

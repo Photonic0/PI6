@@ -78,7 +78,7 @@ public class ExplosiveHazardTurret : MonoBehaviour
         float currentDist = (turretHeadApparentPos - (Vector2)reticle.position).magnitude;
         float dist = deltaPos.magnitude;
         dist = Helper.Decay(currentDist, dist, 30f);
-        reticle.transform.position = (turretHead.rotation.eulerAngles.z * -Mathf.Deg2Rad - Mathf.PI * .5f).PolarVector(dist) + turretHeadApparentPos;
+        reticle.transform.position = (turretHead.rotation.eulerAngles.z * -Mathf.Deg2Rad - Mathf.PI * .5f).PolarVector_Old(dist) + turretHeadApparentPos;
         reticle.gameObject.SetActive(true);
         if (timer >= AimDuration)
         {
@@ -102,7 +102,7 @@ public class ExplosiveHazardTurret : MonoBehaviour
                     ExplosiveHazardTurretBullet bullet = bulletProjPool[index];
                     Vector2 projOrigin = projOriginTransform.position;
                     EffectsHandler.SpawnSmallExplosion(FlipnoteColors.DarkGreen, projOrigin);
-                    Vector2 shootDirection = (turretHead.eulerAngles.z * -Mathf.Deg2Rad - Mathf.PI * .5f).PolarVector();
+                    Vector2 shootDirection = (turretHead.eulerAngles.z * -Mathf.Deg2Rad - Mathf.PI * .5f).PolarVector_Old();
                     bullet.transform.SetPositionAndRotation(projOrigin, shootDirection.ToRotation(90));
                     bullet.gameObject.SetActive(true);
                     shootDirection.Normalize();

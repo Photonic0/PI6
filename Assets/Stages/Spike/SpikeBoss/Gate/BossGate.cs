@@ -43,7 +43,7 @@ public class BossGate : MonoBehaviour
                 CameraRailSystem.instance.enabled = false;
                 Vector3 newCameraPos = cameraParentTransform.position;
                 float cameraZ = newCameraPos.z;
-                newCameraPos = Vector2.MoveTowards(newCameraPos, cameraPositionLockPoint.position, Time.deltaTime * 8);
+                newCameraPos = Vector2.MoveTowards(newCameraPos, cameraPositionLockPoint.position, Time.deltaTime * 20);
                 newCameraPos.z = cameraZ;
                 cameraParentTransform.position = newCameraPos;
             }

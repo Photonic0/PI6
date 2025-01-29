@@ -34,14 +34,10 @@ public class DiscoMusicEventManager : MonoBehaviour
     [SerializeField] AudioClip[] musicSplits;
     [SerializeField] TilemapRenderer[] tileRenderers;
     [SerializeField] Material discoTileMaterialAsset;
-    [SerializeField] TextMeshProUGUI debugtext;
     static readonly int discoTileMaterialFlipColFloatHash = Shader.PropertyToID("_FlipColFloat");
 
     void Awake()
     {
-#if UNITY_EDITOR
-        debugtext.gameObject.SetActive(true);
-#endif
         syncableObjects = new List<IMusicSyncable>();
         if (instance != null && instance != this)
         {
@@ -103,7 +99,6 @@ public class DiscoMusicEventManager : MonoBehaviour
         }
         delayTimer += deltaTime;
         beatTimer += deltaTime;
-        debugtext.text = beatTimer.ToString();
        
         if (beatTimer > SecondsPerBeat)
         {
@@ -112,9 +107,6 @@ public class DiscoMusicEventManager : MonoBehaviour
             if (beatCounter % BeatsPerMusicSplit == 0)
             {
                 musicAudioSource.PlayOneShot(musicSplits[(beatCounter / BeatsPerMusicSplit) % musicSplits.Length]);
-#if UNITY_EDITOR
-                debugtext.text = "music split index playing: " + (beatCounter / BeatsPerMusicSplit % musicSplits.Length);
-#endif
             }
             beatCounter++;
 

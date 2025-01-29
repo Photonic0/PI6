@@ -155,12 +155,16 @@ public class SpikeEnemySlam : Enemy
         collider.enabled = false;
         sprite.enabled = false;
         Destroy(gameObject, 1);//let any remaining sound effects play out
+        RollForDrop();
         return false;
     }
-    private void OnDrawGizmosSelected()
+#if UNITY_EDITOR
+ private void OnDrawGizmosSelected()
     {
         Vector2 pos = transform.position;
         pos.y += AggroYOffset;
         Gizmos2.DrawRectangle(pos.x - AggroDistX, pos.x + AggroDistX, pos.y - AggroDistY, pos.y + AggroDistY);
     }
+#endif
+   
 }

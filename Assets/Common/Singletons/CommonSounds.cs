@@ -4,7 +4,8 @@ using UnityEngine;
 public class CommonSounds : MonoBehaviour
 {
     static CommonSounds instance;
-    [SerializeField] AudioClip buttonClick;
+    [SerializeField] AudioClip uiConfirm;
+    [SerializeField] AudioClip uiChange;
     [SerializeField] AudioClip deathBig;
     [SerializeField] AudioClip gateOpen;
     public static AudioClip[] Footstep => instance.footSteps;
@@ -56,11 +57,14 @@ public class CommonSounds : MonoBehaviour
         source.volume = 1;
         source.PlayOneShot(instance.deathBig);
     }
-    //might add random variation
-    public static void PlayButtonSound(AudioSource source)
+    public static void PlayUIConfirm()
     {
-        source.volume = 1;
-        source.PlayOneShot(instance.buttonClick);
+        UIManager.AudioSource.PlayOneShot(instance.uiConfirm);
+    }
+    public static void PlayUIChange()
+    {
+        UIManager.AudioSource.volume = 1;
+        UIManager.AudioSource.PlayOneShot(instance.uiChange);
     }
     public static void PlayCommonShotSound(AudioSource source)
     {

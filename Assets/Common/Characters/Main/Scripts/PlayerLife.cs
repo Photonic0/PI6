@@ -26,6 +26,14 @@ namespace Assets.Common.Characters.Main.Scripts
         public bool Dead => life <= 0;
         private void Update()
         {
+
+#if UNITY_EDITOR
+            if (Input.GetKey(KeyCode.H))
+            {
+                HealMax();
+            }
+#endif
+
             immuneTime -= Time.deltaTime;
             deathRestartTimer -= Time.deltaTime;
             if (Dead && deathRestartTimer < 0)
@@ -95,10 +103,10 @@ namespace Assets.Common.Characters.Main.Scripts
             {
                 deathRestartTimer = DeathRestartDuration;
                 DeathParticle.Spawn(transform.position, GameManager.PlayerRenderer.Color, audioSource);
-                GameManager.PlayerControl.DisableCollision();                
+                GameManager.PlayerControl.DisableCollision();
                 chances--;
                 StartCoroutine(ShakeWithDelay());
-                if(chances < 0)
+                if (chances < 0)
                 {
                     PlayerWeaponManager.ResetUnlocks();
                 }

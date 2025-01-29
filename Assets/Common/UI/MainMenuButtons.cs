@@ -14,6 +14,7 @@ public class MainMenuButtons : MonoBehaviour
     private void Start()
     {
         explosiveStageButton.SetActive(true);
+        Debug.ClearDeveloperConsole();
     }
 #endif
     //ADD 1UP WHICH IS AN UPWARDS POINTING ARROW
@@ -29,7 +30,7 @@ public class MainMenuButtons : MonoBehaviour
     {
         loadBar.gameObject.SetActive(true);
         loadBar.value = 0f;
-        CommonSounds.PlayButtonSound(cameraAudioSource);
+        CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         CommonSounds.LoadSpikeStageFootsteps();
         LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Yellow);
@@ -54,7 +55,7 @@ public class MainMenuButtons : MonoBehaviour
     {
         loadBar.gameObject.SetActive(true);
         loadBar.value = 0f;
-        CommonSounds.PlayButtonSound(cameraAudioSource);
+        CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         CommonSounds.LoadDiscoStageFootsteps();
         LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Magenta);
@@ -79,7 +80,7 @@ public class MainMenuButtons : MonoBehaviour
     {
         loadBar.gameObject.SetActive(true);
         loadBar.value = 0f;
-        CommonSounds.PlayButtonSound(cameraAudioSource);
+        CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         CommonSounds.LoadTyphoonStageFootsteps();
         LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Blue);
@@ -105,7 +106,7 @@ public class MainMenuButtons : MonoBehaviour
     {
         loadBar.gameObject.SetActive(true);
         loadBar.value = 0f;
-        CommonSounds.PlayButtonSound(cameraAudioSource);
+        CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         //CommonSounds.LoadTyphoonStageFootsteps(); (if needed)
         LevelInfo.SetLevelColor(FlipnoteColors.ColorID.DarkGreen);

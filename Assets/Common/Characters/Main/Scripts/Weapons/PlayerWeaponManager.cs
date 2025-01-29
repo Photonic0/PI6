@@ -72,7 +72,8 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             dKeyPressLockout--;
             if (SceneManager.GetActiveScene().buildIndex == SceneIndices.MainMenu)
                 return;
-            //operação XOR
+            // XOR
+            //need this here because otherwise the panel would deactivate immediately
             if(GameManager.Paused ^ weaponUpgradePanel.activeInHierarchy)
                 return;
     
@@ -103,22 +104,26 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
                     arrowKeyChangeDirection = 1;
                     dKeyPressLockout = 2;
                 }
-                selectedWeaponIndex = (int)Mathf.Repeat(selectedWeaponIndex, weaponUnlockFlags.Length);
 
-                //ensure that it will skip non unlocked weapons when trying to change the selected weapons
-                while(true)
+                //so we check that if a directional button was pressed this frame
+                if (arrowKeyChangeDirection != 0)
                 {
-                    if (weaponUnlockFlags[selectedWeaponIndex])
-                    {
-                        break;
-                    }
-                    selectedWeaponIndex += arrowKeyChangeDirection;
                     selectedWeaponIndex = (int)Mathf.Repeat(selectedWeaponIndex, weaponUnlockFlags.Length);
+                    //ensure that it will skip non unlocked weapons when trying to change the selected weapons
+                    while (true)
+                    {
+                        if (weaponUnlockFlags[selectedWeaponIndex])
+                        {
+                            CommonSounds.PlayUIChange();
+                            break;
+                        }
+                        selectedWeaponIndex += arrowKeyChangeDirection;
+                        selectedWeaponIndex = (int)Mathf.Repeat(selectedWeaponIndex, weaponUnlockFlags.Length);
+                    }
+                    Vector2 pos = weaponSelectArrow.position;
+                    pos.x = weaponBarFillTransforms[selectedWeaponIndex].position.x;
+                    weaponSelectArrow.position = pos;
                 }
-
-                Vector2 pos = weaponSelectArrow.position;
-                pos.x = weaponBarFillTransforms[selectedWeaponIndex].position.x;
-                weaponSelectArrow.position = pos;
             }
         }
         public static void ChangeWeapon(PlayerWeaponID id)
@@ -155,11 +160,12 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
 
         public static void OpenMenu()
         {
+            CommonSounds.PlayUIConfirm();
             GameManager.PauseGame();
             instance.typhoonWeaponBarBack.SetActive(instance.UnlockedTyphoonWeapon);
             instance.spikeWeaponBarBack.SetActive(instance.UnlockedSpikeWeapon);
             instance.discoWeaponBarBack.SetActive(instance.UnlockedDiscoWeapon);
-            UIManager.Instance.livesLeftText.text = $"Lives: {PlayerLife.chances}";
+            UIManager.LivesLeftText.text = $"Lives: {PlayerLife.chances}";
             instance.typhoonWeaponBarFill.fillAmount = (float)weapons[TyphoonWeaponIndex].charge / PlayerWeapon.MaxCharge;
             instance.spikeWeaponBarFill.fillAmount = (float)weapons[SpikeWeaponIndex].charge / PlayerWeapon.MaxCharge;
             instance.discoWeaponBarFill.fillAmount = (float)weapons[DiscoWeaponIndex].charge / PlayerWeapon.MaxCharge;
@@ -167,6 +173,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         }
         public static void CloseMenu()
         {
+            CommonSounds.PlayUIConfirm();
             GameManager.UnpauseGame();
             GameManager.PlayerControl.weapon = weapons[instance.selectedWeaponIndex];
             instance.weaponUpgradePanel.SetActive(false);

@@ -103,7 +103,12 @@ public class PlayerControl : MonoBehaviour
         }
         //check jumptimeleft >= maxjumptime so that the jump time left
         //doesn't get cut off early if we already started using it
-        if (coyoteTimeLeft <= 0 && jumpTimeLeft >= MaxJumpTime)
+
+        bool ignoreCoyoteTime = false;
+#if UNITY_EDITOR
+        ignoreCoyoteTime = Input.GetKey(KeyCode.LeftControl);
+#endif
+        if ((ignoreCoyoteTime || coyoteTimeLeft <= 0) && jumpTimeLeft >= MaxJumpTime)
         {
             jumpTimeLeft = 0;
         }
@@ -115,10 +120,9 @@ public class PlayerControl : MonoBehaviour
     {
         shootCooldown -= Time.deltaTime;
         if (shootCooldown <= 0 && Input.GetKey(shootKey))
-            if (shootCooldown <= 0 && Input.GetKey(shootKey))
-            {
-                weapon.TryUse(ref shootCooldown);
-            }
+        {
+            weapon.TryUse(ref shootCooldown);
+        }
     }
 
     private void FixedUpdate()

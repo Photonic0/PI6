@@ -21,7 +21,7 @@ public class SetTransformsSimmetric : MonoBehaviour
             {
                 Vector3 source = this.source[i].position;
                 Vector3 result = transformsToSet[i].position;
-                Vector2 sourceRotation = (transform.rotation.eulerAngles.z * Mathf.Deg2Rad).PolarVector();
+                Vector2 sourceRotation = (transform.rotation.eulerAngles.z * Mathf.Deg2Rad).PolarVector_Old();
 
                 if (symmetryX)
                 {

@@ -15,6 +15,7 @@ public class SpikeEnemyThrower : Enemy
     [SerializeField] new Transform transform;
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] float targetDetectionOffsetX;
     SpikeBall currentSpikeBall;
     int state = 0;
     const int StateIDIdle = 0;
@@ -56,7 +57,7 @@ public class SpikeEnemyThrower : Enemy
     }
     void State_Idle()
     {
-        bool playerClose = Helper.EnemyAggroCheck(transform.position, GameManager.PlayerPosition, AggroRange, VerticalRange);
+        bool playerClose = Helper.EnemyAggroCheck(transform.position + new Vector3(targetDetectionOffsetX, 0), GameManager.PlayerPosition, AggroRange, VerticalRange);
         animator.CrossFade(animIdle, 0);
         if (playerClose && timer > .3f)
         {
@@ -183,7 +184,7 @@ public class SpikeEnemyThrower : Enemy
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        Gizmos2.DrawEnemyAggroArea(transform.position, AggroRange, VerticalRange);
+        Gizmos2.DrawEnemyAggroArea(transform.position + new Vector3(targetDetectionOffsetX,0), AggroRange, VerticalRange);
     }
 #endif
 }

@@ -26,7 +26,7 @@ public class DiscoBossBallProj : Projectile
         firstDot.isLocked = true;
         for (int i = 1; i < dotCount; i++)
         {
-            Dot dot = new(ballTopPos + (transform.rotation.eulerAngles.z).PolarVector((i - 1) * (RopeLength / dotCount)), false);
+            Dot dot = new(ballTopPos + (transform.rotation.eulerAngles.z).PolarVector_Old((i - 1) * (RopeLength / dotCount)), false);
             Dot.Connect(dot, dots[i - 1]);
             dots.Add(dot);
         }
@@ -75,7 +75,7 @@ public class DiscoBossBallProj : Projectile
     Vector2 GetBallTop()
     {
         Vector2 center = transform.position;
-        center += (transform.rotation.eulerAngles.z * -Mathf.Deg2Rad).PolarVector(0.4f);//a bit inside the ball is better, makes it more cohesive visually
+        center += (transform.rotation.eulerAngles.z * -Mathf.Deg2Rad).PolarVector_Old(0.4f);//a bit inside the ball is better, makes it more cohesive visually
         return center;
     }
     static void TimeToReachYPoint(float fromY, float toY, float yAccel, float initialYVel, out float onWayDown, out float onWayUp)

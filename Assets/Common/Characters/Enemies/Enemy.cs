@@ -52,17 +52,21 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         {
             if (PreKill())
             {
-                bool spawnDrop = Random2.OneIn(7);
-#if UNITY_EDITOR
-                spawnDrop = true;
-#endif
-                if (spawnDrop)
-                {
-                    RestoreDrop.SpawnRestore(transform.position);
-                }
-                Destroy(gameObject);
+                RollForDrop();
             }
         }
     }
 
+    protected void RollForDrop()
+    {
+        bool spawnDrop = Random2.OneIn(7);
+#if UNITY_EDITOR
+        spawnDrop = true;
+#endif
+        if (spawnDrop)
+        {
+            RestoreDrop.SpawnRestore(transform.position);
+        }
+        Destroy(gameObject);
+    }
 }

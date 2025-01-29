@@ -186,7 +186,7 @@ public class DiscoHazardConfettiEmitter : MonoBehaviour, IMusicSyncable
     {
         Vector3 center = transform.position;
         center.y += height / 2;
-        Gizmos.DrawWireCube(center, new Vector3(width, height, .1f));
+        Gizmos.DrawWireCube(center, new Vector3(width, height, 0f));
     }
 #endif
 

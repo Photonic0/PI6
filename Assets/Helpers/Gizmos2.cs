@@ -1,7 +1,6 @@
 ﻿#if UNITY_EDITOR
 
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace Assets.Helpers
 {
@@ -64,6 +63,140 @@ namespace Assets.Helpers
                 Gizmos.DrawLine(new Vector2(startX, startY), new Vector2(endX, endY));
             }
 
+        }
+        public static void DrawLinesInBounds(Bounds bounds, float lineSpacingMultiplier = 2, bool drawOutline = false)
+        {
+            Vector2 topLeftCorner = new(bounds.min.x, bounds.max.y);
+            Vector2 bottomRightCorner = new(bounds.max.x, bounds.min.y);
+            Vector2 bottomLeft = new(topLeftCorner.x, bottomRightCorner.y);
+            Vector2 topRight = new(bottomRightCorner.x, topLeftCorner.y);
+            float rectWidth = Mathf.Abs(topLeftCorner.x - bottomRightCorner.x);
+            float rectHeight = Mathf.Abs(topLeftCorner.y - bottomRightCorner.y);
+            float longerSide = Mathf.Max(rectWidth, rectHeight);
+            float shorterSide = Mathf.Min(rectWidth, rectHeight);
+            int numberOfLines = (int)((longerSide + shorterSide) * lineSpacingMultiplier);
+
+            if (drawOutline)
+            {
+                Gizmos.DrawLine(topLeftCorner, new Vector2(bottomRightCorner.x, topLeftCorner.y)); // Top side
+                Gizmos.DrawLine(new Vector2(bottomRightCorner.x, topLeftCorner.y), bottomRightCorner); // Right side
+                Gizmos.DrawLine(bottomRightCorner, new Vector2(topLeftCorner.x, bottomRightCorner.y)); // Bottom side
+                Gizmos.DrawLine(new Vector2(topLeftCorner.x, bottomRightCorner.y), topLeftCorner); // Left side
+            }
+
+            float lineSpacing = (longerSide + shorterSide) / (numberOfLines + 1);
+
+            for (int i = 1; i <= numberOfLines; i++)
+            {
+                float startX = topLeftCorner.x;
+                float startY = topLeftCorner.y - (i * lineSpacing);
+
+                float endX = startX + shorterSide;
+                float endY = startY + shorterSide;
+
+                float distOutOfBounds = Mathf.Max(0, bottomLeft.y - startY);
+                startX += distOutOfBounds;
+                startY = Mathf.Max(startY, bottomLeft.y);
+                distOutOfBounds = Mathf.Min(0, topRight.y - endY);
+                endX += distOutOfBounds;
+                endY = Mathf.Min(endY, topRight.y);
+
+                Gizmos.DrawLine(new Vector2(startX, startY), new Vector2(endX, endY));
+            }
+
+        }
+
+        public static void DrawArc(Vector2 center, float radius, float angle, float circleFraction, int lineSegments)
+        {
+            float halfArc = circleFraction / 2;
+            float angleStart = angle - halfArc;
+            float angleStep = circleFraction / lineSegments;
+            Vector2 previousPoint = center + new Vector2(Mathf.Cos(angleStart) * radius, Mathf.Sin(angleStart) * radius);
+            for (int i = 1; i <= lineSegments; i++)
+            {
+                float currentAngle = angleStart + i * angleStep;
+                Vector2 nextPoint = center + new Vector2(Mathf.Cos(currentAngle) * radius, Mathf.Sin(currentAngle) * radius);
+                Gizmos.DrawLine(previousPoint, nextPoint);
+                previousPoint = nextPoint;
+            }
+        }
+        public static void DrawCappedArc(Vector2 center, float radius, float angle, float circleFraction, float width)
+        {
+            Vector2 lowerRadiusEdge1, lowerRadiusEdge2, upperRadiusEdge1, upperRadiusEdge2;
+            float edge1Angle, edge2Angle;
+            int lineSegments = (int)(radius * circleFraction * 2);
+            float halfWidth = width / 2f;
+            float lowerRadius = radius - halfWidth;
+            float upperRadius = radius + halfWidth;
+            float capRadius = (upperRadius - lowerRadius) * .5f; //not sure why .5 needs to be here. but it is required for the caps to align properly
+            float halfArc = circleFraction / 2;
+            float angleStart = angle - halfArc;
+            float angleStep = circleFraction / lineSegments;
+
+            Vector2 previousPoint = center + new Vector2(Mathf.Cos(angleStart) * lowerRadius, Mathf.Sin(angleStart) * lowerRadius);
+            lowerRadiusEdge1 = previousPoint;
+            edge1Angle = angleStart;
+            edge2Angle = 0; //failsafe value so it compiles
+            for (int i = 1; i <= lineSegments; i++)
+            {
+                float currentAngle = angleStart + i * angleStep;
+                Vector2 nextPoint = center + new Vector2(Mathf.Cos(currentAngle) * lowerRadius, Mathf.Sin(currentAngle) * lowerRadius);
+                Gizmos.DrawLine(previousPoint, nextPoint);
+                previousPoint = nextPoint;
+                edge2Angle = currentAngle;
+            }
+            lowerRadiusEdge2 = previousPoint;
+
+            previousPoint = center + new Vector2(Mathf.Cos(angleStart) * upperRadius, Mathf.Sin(angleStart) * upperRadius);
+            upperRadiusEdge1 = previousPoint;
+            for (int i = 1; i <= lineSegments; i++)
+            {
+                float currentAngle = angleStart + i * angleStep;
+                Vector2 nextPoint = center + new Vector2(Mathf.Cos(currentAngle) * upperRadius, Mathf.Sin(currentAngle) * upperRadius);
+                Gizmos.DrawLine(previousPoint, nextPoint);
+                previousPoint = nextPoint;
+            }
+            upperRadiusEdge2 = previousPoint;
+            edge1Angle -= Mathf.PI * .5f;
+            edge2Angle += Mathf.PI * .5f;
+            lineSegments = (int)(capRadius * 10);
+            angleStart = edge1Angle - Mathf.PI / 2f;
+            angleStep = Mathf.PI / lineSegments;
+            previousPoint = (upperRadiusEdge1 + lowerRadiusEdge1) * .5f + new Vector2(Mathf.Cos(angleStart) * capRadius, Mathf.Sin(angleStart) * capRadius);
+            for (int i = 1; i <= lineSegments; i++)
+            {
+                float currentAngle = angleStart + i * angleStep;
+                Vector2 nextPoint = (upperRadiusEdge1 + lowerRadiusEdge1) * .5f + new Vector2(Mathf.Cos(currentAngle) * capRadius, Mathf.Sin(currentAngle) * capRadius);
+                Gizmos.DrawLine(previousPoint, nextPoint);
+                previousPoint = nextPoint;
+            }
+            angleStart = edge2Angle - Mathf.PI / 2f;
+            angleStep = Mathf.PI / lineSegments;
+            previousPoint = (upperRadiusEdge2 + lowerRadiusEdge2) * .5f + new Vector2(Mathf.Cos(angleStart) * capRadius, Mathf.Sin(angleStart) * capRadius);
+            for (int i = 1; i <= lineSegments; i++)
+            {
+                float currentAngle = angleStart + i * angleStep;
+                Vector2 nextPoint = (upperRadiusEdge2 + lowerRadiusEdge2) * .5f + new Vector2(Mathf.Cos(currentAngle) * capRadius, Mathf.Sin(currentAngle) * capRadius);
+                Gizmos.DrawLine(previousPoint, nextPoint);
+                previousPoint = nextPoint;
+            }
+
+        }
+
+        public static void DrawSemiCircle(Vector2 center, float radius, float angle, int lineSegments)
+        {
+            float halfCircle = Mathf.PI;
+            float halfArc = halfCircle / 2;
+            float angleStart = angle - halfArc;
+            float angleStep = halfCircle / lineSegments;
+            Vector2 previousPoint = center + new Vector2(Mathf.Cos(angleStart) * radius, Mathf.Sin(angleStart) * radius);
+            for (int i = 1; i <= lineSegments; i++)
+            {
+                float currentAngle = angleStart + i * angleStep;
+                Vector2 nextPoint = center + new Vector2(Mathf.Cos(currentAngle) * radius, Mathf.Sin(currentAngle) * radius);
+                Gizmos.DrawLine(previousPoint, nextPoint);
+                previousPoint = nextPoint;
+            }
         }
         public static void DrawQuad(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight)
         {
@@ -162,8 +295,8 @@ namespace Assets.Helpers
             float increment = 1f / dots;
             for (float i = 0; i <= 0.99999f; i += increment)
             {
-                Vector2 offset = (i * Helper.Tau).PolarVector(radius);
-                Vector2 nextOffset = ((i + increment) * Helper.Tau).PolarVector(radius);
+                Vector2 offset = (i * Helper.Tau).PolarVector_Old(radius);
+                Vector2 nextOffset = ((i + increment) * Helper.Tau).PolarVector_Old(radius);
 
                 offset += center;
                 nextOffset += center;
@@ -187,6 +320,20 @@ namespace Assets.Helpers
         public static void DrawEnemyAggroArea(Vector3 enemyPos, float aggroRange, float verticalRange)
         {
             DrawRectangle(enemyPos.x - aggroRange, enemyPos.x + aggroRange, enemyPos.y - verticalRange, enemyPos.y + verticalRange);
+        }
+        public static void DrawPath(Vector2[] path)
+        {
+            for (int i = 1; i < path.Length; i++)
+            {
+                Gizmos.DrawLine(path[i - 1], path[i]);
+            }
+        }
+        public static void DrawPath(Vector3[] path)
+        {
+            for (int i = 1; i < path.Length; i++)
+            {
+                Gizmos.DrawLine(path[i - 1], path[i]);
+            }
         }
     }
 }

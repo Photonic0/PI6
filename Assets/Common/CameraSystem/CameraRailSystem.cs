@@ -1,5 +1,6 @@
 using Assets.Helpers;
 using Assets.Systems;
+using UnityEditor;
 using UnityEngine;
 public class CameraRailSystem : MonoBehaviour
 {
@@ -173,7 +174,7 @@ public class CameraRailSystem : MonoBehaviour
     };
     public Vector2 SampleNearestPoint(Vector2 lineStart, Vector2 lineEnd, Vector2 point)
     {
-        
+
         switch (positionSamplingMode)
         {
             case PositionSamplingMode.Horizontal:
@@ -299,25 +300,28 @@ public class CameraRailSystem : MonoBehaviour
         //execution order issues -.-
         shouldSnapNextUpdate = true;
     }
+    [SerializeField] float debug_railDirection = 1;
+    [SerializeField] int debug_indexOffsetForCameraDirection = 0;
     private void OnDrawGizmos()
     {
-        for (int i = 1; i < railPoints.Length; i++)
-        {
-            Gizmos.DrawLine(railPoints[i - 1].position, railPoints[i].position);
-        }
+        Camera mainCam = Camera.main;
+        Helper.GetCameraViewBoundsAtZ(cameraTransform.position, mainCam.fieldOfView, 0f, mainCam.aspect, out float minX, out float maxX, out float minY, out float maxY);
+        float halfCamWidth = (maxX - minX) / 2f;
+        float halfCamHeight = (maxY - minY) / 2f;
+        
         Gizmos.color = Color.blue;
         for (int i = 1; i < railPoints.Length; i++)
         {
             Gizmos.DrawLine(railPoints[i - 1].OffsetPosition, railPoints[i].OffsetPosition);
         }
         Gizmos.color = Color.green;
+        //DrawRailGuide(halfCamWidth, halfCamHeight);
+        Vector3[] points = new Vector3[railPoints.Length];
         for (int i = 0; i < railPoints.Length; i++)
         {
-            if (railPoints[i].offset != Vector2.zero)
-            {
-                Gizmos.DrawLine(railPoints[i].position, railPoints[i].OffsetPosition);
-            }
+            points[i] = railPoints[i].OffsetPosition;
         }
+        DrawRailGuideNew(halfCamWidth, halfCamHeight);
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(closest.position, .1f);
         Gizmos.color = Color.yellow;
@@ -330,4 +334,110 @@ public class CameraRailSystem : MonoBehaviour
             UpdatePositionsArray();
         }
     }
+    //DOESN'T WORK PROPERLY FOR ALL ANGLES BUT GOOD ENOUGH FOR NOW
+    void DrawRailGuideNew(float halfCamWidth, float halfCamHeight)
+    {
+
+
+        int pointsAmount = railPoints.Length + 2;
+        Vector2[] railPointPositions = new Vector2[pointsAmount];
+        for (int i = 1; i < pointsAmount - 1; i++)
+        {
+            railPointPositions[i] = railPoints[i - 1].OffsetPosition;
+        }
+        railPointPositions[0] = railPointPositions[1];
+        railPointPositions[^1] = railPointPositions[^2];
+        Vector2[] bottomLinePoints = new Vector2[pointsAmount];
+        Vector2[] topLinePoints = new Vector2[pointsAmount];
+        Vector2[] directions = new Vector2[pointsAmount];
+
+        for (int i = 0; i < pointsAmount; i++)
+        {
+            Vector2 railPointPos = railPointPositions[i];
+           
+            bottomLinePoints[i] = railPointPos - new Vector2(0, halfCamHeight);
+            topLinePoints[i] = railPointPos + new Vector2(0, halfCamHeight);
+            if (i + 1 < pointsAmount)
+            {
+                directions[i] = (railPointPositions[i + 1] - railPointPos).normalized;
+            }
+        }
+        directions[^1] = Vector2.right;
+        for (int i = 0; i < pointsAmount - 1; i++)
+        {
+#if UNITY_EDITOR
+            Gizmos2.DrawArrow(railPointPositions[i], directions[i]);
+
+#endif
+            Vector2 directionOfThisAndPrevPoint = directions[i] + directions[Mathf.Max(0, i - 1)];
+            if (directionOfThisAndPrevPoint.y > 0)
+            {
+                topLinePoints[i].x -= halfCamWidth;
+                bottomLinePoints[i].x += halfCamWidth;
+            }
+            if (directionOfThisAndPrevPoint.y < 0)
+            {
+                topLinePoints[i].x += halfCamWidth;
+                bottomLinePoints[i].x -= halfCamWidth;
+            }
+        }
+        bottomLinePoints[^1].x += halfCamWidth;
+        topLinePoints[^1].x += halfCamWidth;
+        bottomLinePoints[0].x -= halfCamWidth;
+        topLinePoints[0].y -= halfCamWidth;
+#if UNITY_EDITOR
+        Gizmos.DrawLine(topLinePoints[^1], bottomLinePoints[^1]);
+        Gizmos.DrawLine(topLinePoints[0], bottomLinePoints[0]);
+        Gizmos2.DrawPath(topLinePoints);
+        Gizmos2.DrawPath(bottomLinePoints);
+#endif
+
+    }
+
+    private void DrawRailGuide(float halfCamWidth, float halfCamHeight)
+    {
+      
+    }
+
+    private float GetLineDirection(Vector2 prevPos, Vector2 currentPos, Vector2 nextPos)
+    {
+        //if the line formedby current point and the previous is a descent, should be negative
+        //if the line formed by current point and the next one is a descent, should be negative
+        //positive otherwise
+        return Mathf.Sign(SignOrZero(nextPos.y - currentPos.y) + -SignOrZero(prevPos.y - currentPos.y));
+    }
+
+    static float SignOrZero(float x)
+    {
+        if (x > 0)
+        {
+            return 1;
+        }
+        if (x < -0)
+        {
+            return -1;
+        }
+        return 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -151,7 +151,7 @@ TextureImporter:
         width: 100
         height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -172,7 +172,7 @@ TextureImporter:
         width: 100
         height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -193,7 +193,7 @@ TextureImporter:
         width: 100
         height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -201,6 +201,27 @@ TextureImporter:
       bones: []
       spriteID: 619ec038dbb2d6c4dacffbadfda37e5f
       internalID: -366095683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpikeBallBigBack
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 300
+        width: 100
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3286ad2c1013ea04ca388cbddb753d6c
+      internalID: 712369927
       vertices: []
       indices: 
       edges: []
@@ -217,6 +238,7 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       SpikeBallBig_1: 12511830
+      SpikeBallBigBack: 712369927
       SpikeBallBig_2: -366095683
       SpikeBallBig_0: -47625115
   spritePackingTag: 

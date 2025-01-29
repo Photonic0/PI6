@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class UIManagerScriptsPopulator : MonoBehaviour
 {
-
     [SerializeField] Image lifeBarOutline;
     [SerializeField] Image lifeBarFill;
     [SerializeField] Image lifeBarBack;
@@ -33,31 +32,20 @@ public class UIManagerScriptsPopulator : MonoBehaviour
     private void Awake()
     {
 #if UNITY_EDITOR
-        if(UIManager.Instance == null)
+        if (UIManager.Instance == null)
         {
             SceneManager.LoadScene(SceneIndices.MainMenu);
             return;
         }
 #endif
-        UIManager.Instance.lifeBarOutline = lifeBarOutline;
-        UIManager.Instance.lifeBarFill = lifeBarFill;
-        UIManager.Instance.weaponBarOutline = weaponBarOutline;
-        UIManager.Instance.weaponBarFill = weaponBarFill;
-        UIManager.Instance.bossLifeBarOutline = bossLifeBarOutline;
-        UIManager.Instance.bossLifeBarFill = bossLifeBarFill;
-        UIManager.Instance.bossLifeBarBack = bossLifeBarBack;
-        UIManager.Instance.lifeBarBack = lifeBarBack;
-        UIManager.Instance.weaponBarBack = weaponBarBack;
-        UIManager.Instance.livesLeftText = livesLeftText;
+        //I love readability
+        UIManager.Initialize(lifeBarOutline, lifeBarFill, weaponBarOutline, weaponBarFill, bossLifeBarOutline, bossLifeBarFill, bossLifeBarBack, lifeBarBack, weaponBarBack, livesLeftText);
         PlayerWeaponManager.Initialize(weaponUpgradePanel, basicWeaponBarFill, typhoonWeaponBarFill, discoWeaponBarFill, spikeWeaponBarFill, weaponSelectArrow, typhoonWeaponBarBack, spikeWeaponBarBack, discoWeaponBarBack);
         for (int i = 0; i < uiThingsToAnimate.Length; i++)
         {
             GameManager.AddToPausedUpatedObjs(uiThingsToAnimate[i]);
         }
+        //gameobj has other scripts, so only destroy the script component, not the game object
+        Destroy(this);
     }
-    //IEnumerator ReloadSceneDelayed()
-    //{
-    //    yield return 1f;
-    //    SceneManager.LoadScene(debug_sceneToLoadInCoroutine);
-    //}
 }

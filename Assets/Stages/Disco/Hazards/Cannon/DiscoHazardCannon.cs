@@ -54,7 +54,7 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
         Vector2 direction = (target - firePoint).normalized;
         float zRot = transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         direction = direction.RotatedBy(-zRot);
-        direction = LimitDirection(direction);
+        direction = LimitDirection(direction, default, 0);
         direction = direction.RotatedBy(zRot);
         float colliderRadius = ammoPool[0].collider.radius;
         RaycastHit2D hit = Physics2D.CircleCast(firePoint, colliderRadius, direction, maxDistanceToFire - colliderRadius, Layers.Tiles | Layers.PlayerHurtbox);
@@ -67,13 +67,13 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
     /// <summary>
     /// expects direction to be normalized
     /// </summary>
-    static Vector2 LimitDirection(Vector2 direction)
+    static Vector2 LimitDirection(Vector2 directionToLimit, Vector2 rangeCenter, float range)
     {
-        if (direction.y < 0)
+        if (directionToLimit.y < 0)
         {
-            return new Vector2(Mathf.Sign(direction.x), 0);
+            return new Vector2(Mathf.Sign(directionToLimit.x), 0);
         }
-        return direction;
+        return directionToLimit;
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
@@ -85,14 +85,14 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
         float zRot = Mathf.Deg2Rad * -transform.rotation.eulerAngles.z;
         for (float i = 0; i <= 0.99999f; i += increment)
         {
-            Vector2 offset = (i * Mathf.PI - Mathf.PI / 2f + zRot).PolarVector(radius);
-            Vector2 nextOffset = ((i + increment) * Mathf.PI - Mathf.PI / 2f + zRot).PolarVector(radius);
+            Vector2 offset = (i * Mathf.PI - Mathf.PI / 2f + zRot).PolarVector_Old(radius);
+            Vector2 nextOffset = ((i + increment) * Mathf.PI - Mathf.PI / 2f + zRot).PolarVector_Old(radius);
 
             offset += center;
             nextOffset += center;
             Gizmos.DrawLine(nextOffset, offset);
         }
-        Vector2 aaa = (Mathf.PI / 2 + zRot).PolarVector(radius);
+        Vector2 aaa = (Mathf.PI / 2 + zRot).PolarVector_Old(radius);
         Gizmos.DrawLine(center - aaa, center + aaa);
     }
 #endif
