@@ -53,6 +53,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             if (PreKill())
             {
                 RollForDrop();
+                Destroy(gameObject, 1f);
             }
         }
     }
@@ -67,6 +68,5 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         {
             RestoreDrop.SpawnRestore(transform.position);
         }
-        Destroy(gameObject);
     }
 }

@@ -9,10 +9,16 @@ public class TyphoonCameraSystem : MonoBehaviour
     [SerializeField] new Transform transform;
     static TyphoonCameraSystem instance;
     const float ZPos = -8.660254f;
+    const float ZPosForTyphoonBossPhase2 = -10.7179676972f;
     float targetY = 4;
     const float targetYLeniencyUp = 3;
     const float targetYLeniencyDown = 1.5f;
     float[] pastXVelocities;
+    float zoomOutForTyphoonBossProgress;
+    public static float GetZPos()
+    {
+        return Mathf.LerpUnclamped(ZPos, ZPosForTyphoonBossPhase2, instance.zoomOutForTyphoonBossProgress);
+    }
     private void Awake()
     {
         instance = this;
@@ -53,16 +59,21 @@ public class TyphoonCameraSystem : MonoBehaviour
         targetX *= .001f;
         targetX = Mathf.Clamp(targetX, -1, 1);
         targetX = Helper.Decay(targetX, relativePlayerPos.x, 10);
-        parentTransform.position = new(targetX + cameraPos.x, targetY, ZPos);
+        parentTransform.position = new(targetX + cameraPos.x, targetY, GetZPos());
         transform.localPosition = ScreenShakeManager.GetCameraOffset();
     }
     public static void SetCameraPos(Vector3 pos)
     {
-        pos.z = ZPos;
+        pos.z = GetZPos();
         instance.targetY = pos.y;
         instance.parentTransform.position = pos;
         instance.transform.position = pos;
 
+    }
+
+    public static void SetTyphoonBossPhase2ZoomOutProgress(float progress)
+    {
+        instance.zoomOutForTyphoonBossProgress = progress;
     }
 #if UNITY_EDITOR
 
@@ -70,7 +81,17 @@ public class TyphoonCameraSystem : MonoBehaviour
     {
         Vector3 drawPos = transform.position;
         drawPos.z = 0;
-        Vector3 viewSize = new Vector3(18, 10);
+        Camera mainCam = null;
+        if(GameManager.instance != null)
+        {
+            mainCam = GameManager.CurrentCam;
+        }
+        if(mainCam == null)
+        {
+            mainCam = Camera.main;
+        }
+        Helper.GetCameraViewBoundsAtZ(transform.position, mainCam.fieldOfView, 0f, mainCam.aspect, out float minX, out float maxX, out float minY, out float maxY);
+        Vector3 viewSize = new Vector3(maxX - minX, maxY - minY);
         Gizmos.DrawWireCube(drawPos, viewSize);
     }
 #endif

@@ -189,7 +189,10 @@ public class DiscoHazardConfettiEmitter : MonoBehaviour, IMusicSyncable
         Gizmos.DrawWireCube(center, new Vector3(width, height, 0f));
     }
 #endif
-
+    private void OnDestroy()
+    {
+        DiscoMusicEventManager.RemoveLevelSyncableObject(this);
+    }
     public void DoMusicSyncedAction()
     {
         float time = (float)(DiscoMusicEventManager.SecondsPerBeat * .5f);

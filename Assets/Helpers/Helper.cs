@@ -362,6 +362,9 @@ namespace Assets.Helpers
             if (lightningTelegraphParticles != null)
             {
                 float chancePer45thSec = .5f;
+                Vector2 particlePos = lightningTelegraphParticles.transform.position;
+                pointA -= particlePos;
+                pointB -= particlePos;
                 Vector2 node1 = pointA;
                 Vector2 node2 = pointB;
                 float timeLeftUntilActivation = telegraphDuration - timer - timerOffset;

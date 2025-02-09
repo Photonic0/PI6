@@ -26,7 +26,7 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
 
     void FireProjectile(Vector2 projDirection)
     {
-        ScreenShakeManager.AddSmallShake(transform.position, 2);
+        ScreenShakeManager.AddSmallShake(transform.position, ScreenShakeManager.ShakeGroupIDDiscoCannon);
         DiscoHazardCannonCannonball projectile;
         Vector2 firepoint = firePoint.transform.position;
         if (Helper.TryFindFreeIndex(ammoPool, out int index))
@@ -74,6 +74,10 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
             return new Vector2(Mathf.Sign(directionToLimit.x), 0);
         }
         return directionToLimit;
+    }
+    private void OnDestroy()
+    {
+        DiscoMusicEventManager.RemoveLevelSyncableObject(this);
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()

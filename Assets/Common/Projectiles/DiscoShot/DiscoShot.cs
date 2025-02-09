@@ -117,6 +117,7 @@ public class DiscoShot : Projectile
                 hitTimer -= hitRate;
                 hitCounter++;
 
+
                 int index = Random.Range(0, soundIDsToPlay.Count);
                 byte id = soundIDsToPlay[index];
                 soundIDsToPlay.RemoveAt(index);
@@ -129,7 +130,7 @@ public class DiscoShot : Projectile
                     CommonSounds.PlaySnare(audioSource);
                 }
                 ScreenShakeManager.AddSpiralShake(ScreenShakeManager.TinyShakeMagnitude);
-                Collider2D[] hitObjs = Physics2D.OverlapBoxAll(transform.position, new Vector3(1, 3), 0, Layers.Enemy);
+                Collider2D[] hitObjs = Physics2D.OverlapBoxAll(transform.position, new Vector3(2, 3), 0, Layers.Enemy);
                 for (int i = 0; i < hitObjs.Length; i++)
                 {
                     GameObject obj = hitObjs[i].gameObject;
@@ -146,16 +147,15 @@ public class DiscoShot : Projectile
     private void OnDrawGizmos()
     {
         Gizmos2.DrawHDWireCircle(0.35f, transform.position);
-        Gizmos.DrawWireCube(transform.position, new Vector3(1, 3));
+        Gizmos.DrawWireCube(transform.position, new Vector3(2, 3));
     }
 #endif
 
     public void Initialize()
     {
         //not sure why but sometimes gives out of bounds with 5....
-        soundIDsToPlay = new List<byte>(6) { 0, 0, 0, 0, 0, 0 };
-        int snareAmount = (byte)Random.Range(0, 5);
-        for (int i = snareAmount; i < soundIDsToPlay.Count; i++)
+        soundIDsToPlay = new List<byte>(9) { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        for (int i = 0; i < soundIDsToPlay.Count / 2; i++)
         {
             soundIDsToPlay[i] = 1;
         }

@@ -1,6 +1,4 @@
 using Assets.Common.Characters.Main.Scripts.Weapons;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerWeaponButtons : MonoBehaviour

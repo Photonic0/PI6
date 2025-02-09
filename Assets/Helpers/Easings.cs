@@ -4,6 +4,12 @@ namespace Assets.Systems
 {
     public static class Easings
     {
+        public static float InBack(float x)
+        {
+            return 2.70158f * x * x * x - 1.70158f * x * x;
+        }
+
+
         public static float SqrInOut(float t)
         {
             if (t < 0.5f)

@@ -19,4 +19,8 @@ public class TyphoonEnemyTornadoLightning : Projectile
             gameObject.SetActive(false);
         }
     }
+    public void SetLifetime(float lifetime)
+    {
+        timer = MaxLifetime - lifetime;
+    }
 }

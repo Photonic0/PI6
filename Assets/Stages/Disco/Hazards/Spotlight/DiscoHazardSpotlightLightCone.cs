@@ -20,7 +20,10 @@ public class DiscoHazardSpotlightLightCone : MonoBehaviour, IMusicSyncable
             GameManager.PlayerLife.Damage(4);
         }
     }
-
+    private void OnDestroy()
+    {
+        DiscoMusicEventManager.RemoveLevelSyncableObject(this);
+    }
     public void DoMusicSyncedAction()
     {
         collider.enabled = !collider.enabled;

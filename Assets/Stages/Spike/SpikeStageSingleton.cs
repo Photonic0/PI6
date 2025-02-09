@@ -26,10 +26,10 @@ public class SpikeStageSingleton : MonoBehaviour
     [SerializeField] TileBase tilePillarRepeat, tilePillarUpperCap, tilePillarBottomCap;
     [SerializeField] TileBase tileRowRepeat, tileRowLeftCap, tileRowRightCap;
     [SerializeField] TileBase tileSingle;
+#endif
     [SerializeField] Tile backTile;
     [SerializeField] TileBase backTileBottomLeft, backTileBottom, backTileBottomRight, backTilePillarBottomCap, backTileRowLeftCap, backTileRowRepeat, backTileRowRightCap;
     [SerializeField] Tilemap backLayer;
-#endif
 
 
     private void Awake()
@@ -46,10 +46,22 @@ public class SpikeStageSingleton : MonoBehaviour
             {
                 Vector3Int pos = new(i, j, 0);
                 TileBase tile = solidTiles.GetTile(pos);
-                if (tile == middleTile && Random2.XInY(amountOfVariationTiles - 1, amountOfVariationTiles) && IndexClamped(tilePresence, i, j - 1))
+                if (tile == middleTile && Random2.XInY(amountOfVariationTiles - 1, amountOfVariationTiles)/* && IndexClamped(tilePresence, i, j - 1)*/)
                 {
                     solidTiles.SetTile(pos, animatedTilesForVariation[Random.Range(0, amountOfVariationTiles)]);
                 }
+            }
+        }
+        SwingingSpikeBall[] balls = FindObjectsOfType<SwingingSpikeBall>();
+        if (balls != null)
+        {
+            for (int i = 0; i < balls.Length; i++)
+            {
+                Vector3 anchorPos = balls[i].transform.parent.position;
+                anchorPos.y += 1;
+                Vector3Int pos = new((int)anchorPos.x, (int)anchorPos.y);
+                solidTiles.SetTile(pos, middleTile);
+                backLayer.SetTile(pos, backTile);
             }
         }
     }

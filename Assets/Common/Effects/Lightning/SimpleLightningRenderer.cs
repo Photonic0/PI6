@@ -100,5 +100,36 @@ namespace Assets.Common.Effects.Lightning
             timer = 0;
             gameObject.SetActive(false);
         }
+        public void Move(float dy)
+        {
+            Vector3[] positions = new Vector3[lineRenderer.positionCount];
+            lineRenderer.GetPositions(positions);
+            start.y += dy;
+            end.y += dy;
+            for (int i = 0; i < positions.Length; i++)
+            {
+                positions[i].y += dy;
+            }
+            lineRenderer.SetPositions(positions);
+        }
+        //creating a function to adapt all the points of the lightning to a new start and end position
+        public void Move(Vector2 newStart, Vector2 newEnd)
+        {
+            Vector3[] vertexPositions = new Vector3[lineRenderer.positionCount];
+            lineRenderer.GetPositions(vertexPositions);
+            for (int i = 1; i < vertexPositions.Length - 1; i++)
+            {
+                Vector3 currentVertexPos = vertexPositions[i];
+                float newX = Helper.Remap(currentVertexPos.x, start.x, end.x, newStart.x, newEnd.x);
+                float newY = Helper.Remap(currentVertexPos.y, start.y, end.y, newStart.y, newEnd.y);
+                Vector3 newVertexPos = new Vector3(newX, newY);
+                vertexPositions[i] = newVertexPos;
+            }
+            vertexPositions[0] = newStart;
+            vertexPositions[^1] = newEnd;
+            start = newStart;
+            end = newEnd;
+            lineRenderer.SetPositions(vertexPositions);
+        }
     }
 }

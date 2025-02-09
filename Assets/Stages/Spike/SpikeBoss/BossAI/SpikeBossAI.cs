@@ -21,6 +21,8 @@ public class SpikeBossAI : Enemy
     static readonly int AnimIDSlamGrounded = Animator.StringToHash("SlamGrounded");
     static readonly int AnimIDSlamGroundedToIdle = Animator.StringToHash("SlamGroundedToIdle");
     static readonly int AnimIDWalk = Animator.StringToHash("Walk");
+    //add swinging spike ball attack
+    //
     [SerializeField] new Transform transform;
     [SerializeField] Transform arenaCenterTransform;
     [SerializeField] Rigidbody2D rb;
@@ -34,6 +36,7 @@ public class SpikeBossAI : Enemy
     [SerializeField] AudioSource footstepAudioSource;
     [SerializeField] SpikeBossSpikeBall[] spikeBalls;//make it do like a triple throw, with 2 additional spike balls thrown with rotated angles
     [SerializeField] FallingSpike[] fallingSpikePool;
+    [SerializeField] SpikeBossSwingingSpikeBall swingingSpikeBall;
     SpikeBossSpikeBall currentSpikeBall;
     bool[] whichSpikesFallOnlastCeilingSpikeWave;
     Vector2 arenaCenter;
@@ -53,6 +56,7 @@ public class SpikeBossAI : Enemy
     const short StateIDJumpLeftToRight = 4;
     const short StateIDJumpRightToLeft = 5;
     const short StateIDCeilingSpikes = 6;
+    const short StateIDSwingingSpikeBall = 7;
 
     const float IntroDuration = 1;
 
@@ -79,10 +83,16 @@ public class SpikeBossAI : Enemy
     const float CeilingSpikesStartup = 0;
     const int CeilingSpikesActionCount = 7;
     const float CeilingSpikesActionRate = 0.5f;
-    const float CeilingSpikesDelay = 0.8f;
+    const float CeilingSpikesDelay = 1.5f;
     const int CeilingSpikesMaxSpikesInRow = 4;
 
-    public override int LifeMax => 60;
+    const float SwingingSpikeBallStartup = 0;
+    const int SwingingSpikeBallActionCount = 8;
+    const float SwingingSpikeBallActionRate = .4f;
+    const float SwingingSpikeBallDelay = 2f;
+    const float SwingingSpikeBallSwingDuration = 2f;
+
+    public override int LifeMax => 70;
     bool StateJustStarted => stateTimer >= 0 && stateTimer < 1E-20f;
     bool IsOnLeftSideOfArena => transform.position.x < arenaCenter.x;
     bool IsOnRightSideOfArena => transform.position.x > arenaCenter.x;
@@ -125,6 +135,9 @@ public class SpikeBossAI : Enemy
                 break;
             case StateIDCeilingSpikes:
                 State_CeilingSpikes();
+                break;
+            case StateIDSwingingSpikeBall:
+                State_SwingingSpikeBall();
                 break;
         }
         stateTimer += Time.deltaTime;
@@ -218,11 +231,11 @@ public class SpikeBossAI : Enemy
             }
             for (int i = -1; i < 2; i++)
             {
-                if(i == 0)
+                if (i == 0)
                 {
                     continue;
                 }
-                if(Helper.TryFindFreeIndex(spikeBalls, out int index))
+                if (Helper.TryFindFreeIndex(spikeBalls, out int index))
                 {
                     SpikeBossSpikeBall ball = spikeBalls[index];
                     float angleDiff = Helper.Remap(i, -1, 1, -SpikeBallThrowArcRadians * .5f, SpikeBallThrowArcRadians * .5f);
@@ -231,7 +244,7 @@ public class SpikeBossAI : Enemy
                     ball.rb.velocity = primaryBallThrowVelocity.RotatedBy(angleDiff);
                     ball.dontSpawnShockwave = true;
                     ball.transform.position = throwPos;
-                }   
+                }
             }
         }
         if (Mathf.Abs(transform.position.x - GameManager.PlayerPosition.x) < SpikeBallThrowDistNeededForSideSwitch)
@@ -400,7 +413,7 @@ public class SpikeBossAI : Enemy
             spikePos.x -= 7.5f;
             spikePos.y += 3.5f;
             int amountToGenerate = Random.Range(2, CeilingSpikesMaxSpikesInRow + 1);
-
+            bool dontPlaySpikeSound = false;
             if (whichSpikesFallOnlastCeilingSpikeWave == null)
             {
                 whichSpikesFallOnlastCeilingSpikeWave = new bool[(int)ArenaWidth];
@@ -409,7 +422,8 @@ public class SpikeBossAI : Enemy
                     if (amountToGenerate > 0)
                     {
                         whichSpikesFallOnlastCeilingSpikeWave[i] = true;
-                        SpawnSpike(spikePos);
+                        SpawnSpike(spikePos, dontPlaySpikeSound);
+                        dontPlaySpikeSound = true;
                         amountToGenerate--;
                         spikePos.x += 1;
                         continue;
@@ -426,20 +440,56 @@ public class SpikeBossAI : Enemy
                 {
                     if (!whichSpikesFallOnlastCeilingSpikeWave[i])
                     {
-                        SpawnSpike(spikePos);
+                        SpawnSpike(spikePos, dontPlaySpikeSound);
+                        dontPlaySpikeSound = true;
                     }
                     spikePos.x += 1;
                 }
                 whichSpikesFallOnlastCeilingSpikeWave = null;
             }
         }
-        TrySwitchState(StateIDSpikeBallThrow, CeilingSpikesActionCount, CeilingSpikesStartup, CeilingSpikesActionRate, CeilingSpikesDelay, SpikeBallThrowActionCount);
-        if(state != StateIDCeilingSpikes)
+        TrySwitchState(StateIDSwingingSpikeBall, CeilingSpikesActionCount, CeilingSpikesStartup, CeilingSpikesActionRate, CeilingSpikesDelay, SwingingSpikeBallActionCount);
+        if (state != StateIDCeilingSpikes)
         {
             whichSpikesFallOnlastCeilingSpikeWave = null;
         }
     }
-    void SpawnSpike(Vector2 pos)
+    void State_SwingingSpikeBall()
+    {
+        if (StateJustStarted || ShouldDoAction(SwingingSpikeBallStartup, SwingingSpikeBallActionRate))
+        {
+            float delay = 0.9f;
+            Vector2 spikePos = arenaCenter;
+            spikePos.x -= 7.5f;
+            spikePos.y += 3.5f;
+            SpawnSpike(spikePos, delay);
+            spikePos.x+= 2;
+            SpawnSpike(spikePos, delay);
+            spikePos.x += ArenaWidth - 5;
+            SpawnSpike(spikePos, delay, false);
+            spikePos.x+= 2;
+            SpawnSpike(spikePos, delay);
+
+            if (actionCounter == SwingingSpikeBallActionCount - 1)
+            {
+                swingingSpikeBall.StartAnimation(SwingingSpikeBallSwingDuration);
+            }
+            else if ((SwingingSpikeBallActionCount - actionCounter) % 2 == 0)
+            {
+                spikePos.x -= 3;
+                SpawnSpike(spikePos, delay);
+                spikePos.x -= 2;
+                SpawnSpike(spikePos, delay);
+                spikePos.x -= 5;
+                SpawnSpike(spikePos, delay);
+                spikePos.x -= 2;
+                SpawnSpike(spikePos, delay);
+            }
+
+        }
+        TrySwitchState(StateIDSpikeBallThrow, SwingingSpikeBallActionCount, SwingingSpikeBallStartup, SwingingSpikeBallActionRate, SwingingSpikeBallDelay, SpikeBallThrowActionCount);
+    }
+    void SpawnSpike(Vector2 pos, bool dontPlaySound = true)
     {
         for (int i = 0; i < fallingSpikePool.Length; i++)
         {
@@ -448,7 +498,22 @@ public class SpikeBossAI : Enemy
             {
                 spike.transform.position = pos;
                 spike.Start();
-                spike.StartFallAndMakeNotRespawnAndNotDestroy(Random2.Float(0.7f, 0.8f));
+                spike.StartFallAndMakeNotRespawnAndNotDestroy(Random2.Float(0.7f, 0.8f), dontPlaySound);
+                break;
+            }
+        }
+    }
+    void SpawnSpike(Vector2 pos, float delay, bool dontPlaySound = true)
+    {
+        delay += Random.value * .1f - 0.05f;
+        for (int i = 0; i < fallingSpikePool.Length; i++)
+        {
+            FallingSpike spike = fallingSpikePool[i];
+            if (!spike.enabled)
+            {
+                spike.transform.position = pos;
+                spike.Start();
+                spike.StartFallAndMakeNotRespawnAndNotDestroy(delay, dontPlaySound);
                 break;
             }
         }

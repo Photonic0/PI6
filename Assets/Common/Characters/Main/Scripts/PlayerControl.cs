@@ -23,6 +23,9 @@ public class PlayerControl : MonoBehaviour
     const float MaxJumpTime = 0.15f;
     public const float KBTime = .3f;
     public const float KBPushbackVelocity = 2;
+#if UNITY_EDITOR
+    bool ignoreCoyoteTime;
+#endif
     public Vector3 Position { get; private set; }
     public bool NotInKBAnim => GameManager.PlayerLife.immuneTime < PlayerLife.ImmuneTimeMax - KBTime;
     public bool InKBAnim => GameManager.PlayerLife.immuneTime >= PlayerLife.ImmuneTimeMax - KBTime;
@@ -106,7 +109,11 @@ public class PlayerControl : MonoBehaviour
 
         bool ignoreCoyoteTime = false;
 #if UNITY_EDITOR
-        ignoreCoyoteTime = Input.GetKey(KeyCode.LeftControl);
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            this.ignoreCoyoteTime = !this.ignoreCoyoteTime;
+        }
+        ignoreCoyoteTime = this.ignoreCoyoteTime;
 #endif
         if ((ignoreCoyoteTime || coyoteTimeLeft <= 0) && jumpTimeLeft >= MaxJumpTime)
         {
@@ -155,7 +162,7 @@ public class PlayerControl : MonoBehaviour
         tileCollider.enabled = true;
         hurtboxCollider.enabled = true;
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void OnCollisionEnter2D(Collision2D collision)
     {
         GetBottomBoxOverlapBoxParams(out Vector2 point, out Vector2 size);
         Collider2D collisionDetect = Physics2D.OverlapBox(point, size, 0, Layers.Tiles);

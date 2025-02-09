@@ -20,6 +20,7 @@ public class TyphoonHazardFan : MonoBehaviour
     //state begins at 0, being on, so don't need to call particleSystem.Stop() inside Start() method.
     private void Start()
     {
+        audioSource.volume = .5f;
         audioSource.clip = TyphoonStageSingleton.instance.fanNoises[Random.Range(0, TyphoonStageSingleton.instance.fanNoises.Length)];
         audioSource.Play();
         GameManager.OnPause += PauseFanNoise;

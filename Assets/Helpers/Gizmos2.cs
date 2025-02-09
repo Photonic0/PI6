@@ -120,6 +120,7 @@ namespace Assets.Helpers
                 previousPoint = nextPoint;
             }
         }
+        //broken if the angle is > 180???
         public static void DrawCappedArc(Vector2 center, float radius, float angle, float circleFraction, float width)
         {
             Vector2 lowerRadiusEdge1, lowerRadiusEdge2, upperRadiusEdge1, upperRadiusEdge2;
@@ -133,6 +134,7 @@ namespace Assets.Helpers
             float angleStart = angle - halfArc;
             float angleStep = circleFraction / lineSegments;
 
+            //drawing the inner arc
             Vector2 previousPoint = center + new Vector2(Mathf.Cos(angleStart) * lowerRadius, Mathf.Sin(angleStart) * lowerRadius);
             lowerRadiusEdge1 = previousPoint;
             edge1Angle = angleStart;
@@ -146,7 +148,7 @@ namespace Assets.Helpers
                 edge2Angle = currentAngle;
             }
             lowerRadiusEdge2 = previousPoint;
-
+            //drawing the outer arc
             previousPoint = center + new Vector2(Mathf.Cos(angleStart) * upperRadius, Mathf.Sin(angleStart) * upperRadius);
             upperRadiusEdge1 = previousPoint;
             for (int i = 1; i <= lineSegments; i++)
@@ -156,6 +158,8 @@ namespace Assets.Helpers
                 Gizmos.DrawLine(previousPoint, nextPoint);
                 previousPoint = nextPoint;
             }
+
+            //drawing the caps
             upperRadiusEdge2 = previousPoint;
             edge1Angle -= Mathf.PI * .5f;
             edge2Angle += Mathf.PI * .5f;
@@ -291,7 +295,7 @@ namespace Assets.Helpers
         }
         public static void DrawHDWireCircle(float radius, Vector2 center)
         {
-            int dots = (int)(10 * radius);
+            int dots = Mathf.Max(6,(int)(10 * radius));
             float increment = 1f / dots;
             for (float i = 0; i <= 0.99999f; i += increment)
             {
@@ -314,7 +318,7 @@ namespace Assets.Helpers
             Gizmos.DrawLine(arrowEnd, leftHead);
             Gizmos.DrawLine(arrowEnd, rightHead);
             Gizmos.DrawLine(leftHead, rightHead);
-            arrowEnd = center + directionAndLength - Vector2.Dot(arrowheadOffset, directionAndLength) * directionNormalized;
+            arrowEnd = center + directionAndLength - Vector2.Dot(arrowheadOffset.normalized, directionAndLength.normalized) * directionNormalized * arrowHeadLength;
             Gizmos.DrawLine(center, arrowEnd);
         }
         public static void DrawEnemyAggroArea(Vector3 enemyPos, float aggroRange, float verticalRange)

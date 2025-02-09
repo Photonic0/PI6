@@ -3,6 +3,7 @@ using Assets.Common.Systems;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 //doing this because gamemanager, uimanager etc are DontDestroyOnLoad
 //and these objects are scene-specific.
 //don't use this for UI elements. use script on canvas prefab instead.
@@ -10,14 +11,16 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
 {
     [SerializeField] Checkpoint[] checkpoints;
     [SerializeField] GameObject[] permanentlyDestroyableObjs;
+
+
     private void Awake()
     {
 #if UNITY_EDITOR
         if (GameManager.instance == null)
         {
             SceneManager.LoadScene(SceneIndices.MainMenu);
-            Debug.ClearDeveloperConsole();
         }
+        Debug.ClearDeveloperConsole();
 #endif
         for (int i = 0; i < checkpoints.Length; i++)
         {
@@ -42,8 +45,11 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
                 }
             }
         }
+#if UNITY_EDITOR
+        StartCoroutine(ClearDevConsole());
+#endif
         StartCoroutine(RespawnOnEndOfFrame());
-        Destroy(gameObject, 1f);
+        Destroy(gameObject, 5f);
     }
    
     IEnumerator RespawnOnEndOfFrame()
@@ -55,4 +61,18 @@ public class MultiSceneSingletonPopulator : MonoBehaviour
             LevelInfo.LatestCheckpoint.RespawnAt();
         }
     }
+
+#if UNITY_EDITOR
+    IEnumerator ClearDevConsole()
+    {
+        // wait until console visible
+        while (!Debug.developerConsoleVisible)
+        {
+            yield return null;
+        }
+        yield return null; // this is required to wait for an additional frame, without this clearing doesn't work
+        Debug.ClearDeveloperConsole(); 
+    }
+#endif
+
 }

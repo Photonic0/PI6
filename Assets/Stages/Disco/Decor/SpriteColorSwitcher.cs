@@ -1,6 +1,4 @@
 using Assets.Common.Consts;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpriteColorSwitcher : MonoBehaviour, IMusicSyncable
@@ -42,5 +40,9 @@ public class SpriteColorSwitcher : MonoBehaviour, IMusicSyncable
         {
             sprite.color = FlipnoteColors.Yellow;
         }
+    }
+    private void OnDestroy()
+    {
+        DiscoMusicEventManager.RemoveLevelSyncableObject(this);
     }
 }

@@ -12,7 +12,7 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
     public int BeatsPerAction => 1;
     public int BeatOffset => 0;
 
-    public override int LifeMax => 14;
+    public override int LifeMax => 10;
     [SerializeField] int state = 0;
     [SerializeField] float timer;
     const int StateIDChasingOrPassive = 0;
@@ -24,8 +24,17 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
     [SerializeField] ParticleSystem confettiParticles;
     [SerializeField] int direction;
     [SerializeField] SpriteRenderer sprite;
+    [SerializeField] AudioSource audioSource;
     public void DoMusicSyncedAction()
     {
+        if(life <= 0)
+        {
+            RollForDrop();
+            gameObject.SetActive(true);
+            EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
+            CommonSounds.PlayBwow(audioSource);
+            return;
+        }
         if (state == StateIDPostAttack || state == StateIDAboutToAttack)
         {
             return;
@@ -68,6 +77,10 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
     }
     void Update()
     {
+        if(life <= 0)
+        {
+            return;
+        }
         direction = (int)Mathf.Sign(GameManager.PlayerPosition.x - transform.position.x);
         UpdateSpriteFlip();
         timer += Time.deltaTime;
@@ -153,6 +166,21 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
             vel.x = 0;
             rb.velocity = vel;
         }
+    }
+    private void OnDestroy()
+    {
+        DiscoMusicEventManager.RemoveLevelSyncableObject(this);
+    }
+    public override bool PreKill()
+    {
+        rb.velocity = Vector2.zero;
+        rb.isKinematic = true;
+        GetComponent<Collider2D>().enabled = false;
+        return false;
+    }
+    public override void OnHit(int damageTaken)
+    {
+        DiscoStageSingleton.PlayBwowLite(audioSource);
     }
     private void OnDrawGizmos()
     {

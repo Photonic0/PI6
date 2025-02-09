@@ -15,6 +15,11 @@ public class ScreenShakeManager : MonoBehaviour
     public const float LargeShakeMagnitude = 0.25f;
     static ScreenShakeManager instance;
 
+    public const int ShakeGroupIDLightningRenderer = 1;
+    public const int ShakeGroupIDConfettiEmitter = 1;
+    public const int ShakeGroupIDDiscoCannon = 2;
+    public const int ShakeGroupIDFallingSpike = 3;
+
     //will use as pool for shake data
     //increase length when needed, don't decrease length.
     //reset to 4 on scene change
@@ -124,6 +129,13 @@ public class ScreenShakeManager : MonoBehaviour
     {
         AddSpiralShake(SmallShakeMagnitude);
     }
+    public static void AddSmallSpiralShake(Vector2 pos, int group)
+    {
+        if (Helper.PointInView(pos))
+        {
+            AddSpiralShake(SmallShakeMagnitude, group);
+        }
+    }
     public static void AddMediumShake()
     {
         AddSpiralShake(MediumShakeMagnitude);
@@ -132,6 +144,7 @@ public class ScreenShakeManager : MonoBehaviour
     {
         AddSpiralShake(LargeShakeMagnitude);
     }
+
     public static void AddTinyShake(Vector2 pos, int group)
     {
         if (Helper.PointInView(pos))

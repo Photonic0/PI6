@@ -1,6 +1,5 @@
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,7 +27,24 @@ public class UIManagerScriptsPopulator : MonoBehaviour
     [SerializeField] GameObject spikeWeaponBarBack;
     [SerializeField] UIButtonAnimator[] uiThingsToAnimate;
     [SerializeField] TextMeshProUGUI livesLeftText;
-
+    [SerializeField] RectTransform leftWheelPartTransform;
+    [SerializeField] RectTransform leftWheelPartLockTransform;
+    [SerializeField] RectTransform rightWheelPartTransform;
+    [SerializeField] RectTransform rightWheelPartLockTransform;
+    [SerializeField] RectTransform upWheelPartLockTransform;
+    [SerializeField] RectTransform upWheelPartTransform;
+    [SerializeField] RectTransform bottomWheelPartTransform;
+    [SerializeField] RectTransform bottomWheelPartLockTransform;
+    [SerializeField] RectTransform wheelRectTransform;
+    [SerializeField] GameObject wheelGameObj;
+    [SerializeField] RectTransform typhoonWeaponIcon;
+    [SerializeField] RectTransform basicWeaponIcon;
+    [SerializeField] RectTransform spikeWeaponIcon;
+    [SerializeField] RectTransform discoWeaponIcon;
+    [SerializeField] Image typhoonWeaponChargeDisplayWheelFill;
+    [SerializeField] Image basicWeaponChargeDisplayWheelFill;
+    [SerializeField] Image spikeWeaponChargeDisplayWheelFill;
+    [SerializeField] Image discoWeaponChargeDisplayWheelFill;
     private void Awake()
     {
 #if UNITY_EDITOR
@@ -40,7 +56,14 @@ public class UIManagerScriptsPopulator : MonoBehaviour
 #endif
         //I love readability
         UIManager.Initialize(lifeBarOutline, lifeBarFill, weaponBarOutline, weaponBarFill, bossLifeBarOutline, bossLifeBarFill, bossLifeBarBack, lifeBarBack, weaponBarBack, livesLeftText);
-        PlayerWeaponManager.Initialize(weaponUpgradePanel, basicWeaponBarFill, typhoonWeaponBarFill, discoWeaponBarFill, spikeWeaponBarFill, weaponSelectArrow, typhoonWeaponBarBack, spikeWeaponBarBack, discoWeaponBarBack);
+        PlayerWeaponManager.Initialize(
+            leftWheelPartTransform, leftWheelPartLockTransform, rightWheelPartTransform, rightWheelPartLockTransform,
+            upWheelPartTransform, upWheelPartLockTransform, bottomWheelPartTransform, bottomWheelPartLockTransform,
+            wheelRectTransform, wheelGameObj,
+            typhoonWeaponIcon, basicWeaponIcon, spikeWeaponIcon, discoWeaponIcon,
+            typhoonWeaponChargeDisplayWheelFill, basicWeaponChargeDisplayWheelFill, spikeWeaponChargeDisplayWheelFill, discoWeaponChargeDisplayWheelFill
+        );
+
         for (int i = 0; i < uiThingsToAnimate.Length; i++)
         {
             GameManager.AddToPausedUpatedObjs(uiThingsToAnimate[i]);

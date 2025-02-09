@@ -20,32 +20,38 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         public GameObject GameObject => gameObject;
         [SerializeField] bool debug_clickToRechargeAll;
         static PlayerWeaponManager instance;
-        GameObject weaponUpgradePanel;
-        Image basicWeaponBarFill;
-        Image typhoonWeaponBarFill;
-        Image spikeWeaponBarFill;
-        Image discoWeaponBarFill;
-        RectTransform[] weaponBarFillTransforms;
-        RectTransform weaponSelectArrow;
-        GameObject typhoonWeaponBarBack;
-        GameObject spikeWeaponBarBack;
-        GameObject discoWeaponBarBack;
-
+        RectTransform leftWheelPartTransform;
+        RectTransform leftWheelPartLockTransform;
+        RectTransform rightWheelPartTransform;
+        RectTransform rightWheelPartLockTransform;
+        RectTransform upWheelPartLockTransform;
+        RectTransform upWheelPartTransform;
+        RectTransform bottomWheelPartTransform;
+        RectTransform bottomWheelPartLockTransform;
+        RectTransform wheelRectTransform;
+        GameObject wheelGameObj;
+        RectTransform typhoonWeaponIcon;
+        RectTransform basicWeaponIcon;
+        RectTransform spikeWeaponIcon;
+        RectTransform discoWeaponIcon;
+        Image typhoonWeaponChargeDisplayWheelFill;
+        Image basicWeaponChargeDisplayWheelFill;
+        Image spikeWeaponChargeDisplayWheelFill;
+        Image discoWeaponChargeDisplayWheelFill;
         int selectedWeaponIndex;
+        int hoveredWeaponIndex;
+        const float SelectedScale = 1.5f;
+        const float UnselectedScale = 1f;
         const int BasicWeaponIndex = 0;
         const int TyphoonWeaponIndex = 1;
         const int SpikeWeaponIndex = 2;
         const int DiscoWeaponIndex = 3;
-
+        float pauseButtonReleaseLockoutTimer = 0;
         public bool UnlockedTyphoonWeapon { get => weaponUnlockFlags[TyphoonWeaponIndex]; set => weaponUnlockFlags[TyphoonWeaponIndex] = value; }
         public bool UnlockedSpikeWeapon { get => weaponUnlockFlags[SpikeWeaponIndex]; set => weaponUnlockFlags[SpikeWeaponIndex] = value; }
-        public bool UnlockedDiscoWeapon {get => weaponUnlockFlags[DiscoWeaponIndex]; set => weaponUnlockFlags[DiscoWeaponIndex] = value; }
+        public bool UnlockedDiscoWeapon { get => weaponUnlockFlags[DiscoWeaponIndex]; set => weaponUnlockFlags[DiscoWeaponIndex] = value; }
         [SerializeField] bool[] weaponUnlockFlags;
 
-        int aKeyPressLockout;
-        int dKeyPressLockout;
-        //just use images of the projectiles + a bar
-        //invisible buttons
         private void Awake()
         {
             if (instance != null && instance != this)
@@ -63,67 +69,41 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         }
         private void Update()
         {
+            UpdateWithDT(Time.deltaTime);
+        }
+        void UpdateWithDT(float dt)
+        {
             if (debug_clickToRechargeAll)
             {
                 debug_clickToRechargeAll = false;
                 RechargeAll();
             }
-            aKeyPressLockout--;
-            dKeyPressLockout--;
             if (SceneManager.GetActiveScene().buildIndex == SceneIndices.MainMenu)
                 return;
-            // XOR
-            //need this here because otherwise the panel would deactivate immediately
-            if(GameManager.Paused ^ weaponUpgradePanel.activeInHierarchy)
-                return;
-    
-            if (Input.GetKeyDown(KeyCode.Escape))
+            bool justPaused = false;
+            pauseButtonReleaseLockoutTimer -= dt;
+            if (!GameManager.Paused && Input.GetKeyDown(KeyCode.Escape))
             {
-                if (GameManager.Paused)
-                {
-                    CloseMenu();
-                }
-                else
-                {
-                    OpenMenu();
-                }
+                pauseButtonReleaseLockoutTimer = .2f;
+                justPaused = true;
+                OpenMenu();
+            }
+            else if (GameManager.Paused && ((pauseButtonReleaseLockoutTimer < 0.1f && (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0))) || (pauseButtonReleaseLockoutTimer <= 0 && Input.GetKeyUp(KeyCode.Escape))))
+            {
+                CloseMenu();
             }
             if (GameManager.Paused)
             {
-                //has lockout windows because for some reason sometimesthe key presses were registering twice
-                int arrowKeyChangeDirection = 0;
-                if (Input.GetKeyDown(KeyCode.A) && aKeyPressLockout < 0)
-                {
-                    selectedWeaponIndex--;
-                    arrowKeyChangeDirection = -1;
-                    aKeyPressLockout = 2;
-                }
-                if (Input.GetKeyDown(KeyCode.D) && dKeyPressLockout < 0)
-                {
-                    selectedWeaponIndex++;
-                    arrowKeyChangeDirection = 1;
-                    dKeyPressLockout = 2;
-                }
-
-                //so we check that if a directional button was pressed this frame
-                if (arrowKeyChangeDirection != 0)
-                {
-                    selectedWeaponIndex = (int)Mathf.Repeat(selectedWeaponIndex, weaponUnlockFlags.Length);
-                    //ensure that it will skip non unlocked weapons when trying to change the selected weapons
-                    while (true)
-                    {
-                        if (weaponUnlockFlags[selectedWeaponIndex])
-                        {
-                            CommonSounds.PlayUIChange();
-                            break;
-                        }
-                        selectedWeaponIndex += arrowKeyChangeDirection;
-                        selectedWeaponIndex = (int)Mathf.Repeat(selectedWeaponIndex, weaponUnlockFlags.Length);
-                    }
-                    Vector2 pos = weaponSelectArrow.position;
-                    pos.x = weaponBarFillTransforms[selectedWeaponIndex].position.x;
-                    weaponSelectArrow.position = pos;
-                }
+                float scale = wheelRectTransform.localScale.x;
+                scale = Decay(scale, 1f, 30f, dt);
+                wheelRectTransform.localScale = new Vector3(scale, scale, scale);
+                UpdateWeaponWheel(dt, justPaused);
+            }
+            else
+            {
+                float scale = wheelRectTransform.localScale.x;
+                scale = Decay(scale, 0f, 30f, dt);
+                wheelRectTransform.localScale = new Vector3(scale, scale, scale);
             }
         }
         public static void ChangeWeapon(PlayerWeaponID id)
@@ -154,42 +134,54 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
                 weapons[i].charge = PlayerWeapon.MaxCharge;
             }
         }
-        //add refs to panel and buttons to open and close
-        //then add selections andpreview bars for all 3 upgrades
-        //add a neutral select with no bar
-
         public static void OpenMenu()
         {
+            //instance.wheelGameObj.SetActive(true);
             CommonSounds.PlayUIConfirm();
             GameManager.PauseGame();
-            instance.typhoonWeaponBarBack.SetActive(instance.UnlockedTyphoonWeapon);
-            instance.spikeWeaponBarBack.SetActive(instance.UnlockedSpikeWeapon);
-            instance.discoWeaponBarBack.SetActive(instance.UnlockedDiscoWeapon);
             UIManager.LivesLeftText.text = $"Lives: {PlayerLife.chances}";
-            instance.typhoonWeaponBarFill.fillAmount = (float)weapons[TyphoonWeaponIndex].charge / PlayerWeapon.MaxCharge;
-            instance.spikeWeaponBarFill.fillAmount = (float)weapons[SpikeWeaponIndex].charge / PlayerWeapon.MaxCharge;
-            instance.discoWeaponBarFill.fillAmount = (float)weapons[DiscoWeaponIndex].charge / PlayerWeapon.MaxCharge;
-            instance.weaponUpgradePanel.SetActive(true);
+            instance.rightWheelPartLockTransform.gameObject.SetActive(!instance.weaponUnlockFlags[BasicWeaponIndex]);
+            instance.bottomWheelPartLockTransform.gameObject.SetActive(!instance.weaponUnlockFlags[TyphoonWeaponIndex]);
+            instance.leftWheelPartLockTransform.gameObject.SetActive(!instance.weaponUnlockFlags[SpikeWeaponIndex]);
+            instance.upWheelPartLockTransform.gameObject.SetActive(!instance.weaponUnlockFlags[DiscoWeaponIndex]);
+            instance.basicWeaponChargeDisplayWheelFill.fillAmount = (float)weapons[BasicWeaponIndex].charge / PlayerWeapon.MaxCharge;
+            instance.typhoonWeaponChargeDisplayWheelFill.fillAmount = (float)weapons[TyphoonWeaponIndex].charge / PlayerWeapon.MaxCharge;
+            instance.spikeWeaponChargeDisplayWheelFill.fillAmount = (float)weapons[SpikeWeaponIndex].charge / PlayerWeapon.MaxCharge;
+            instance.discoWeaponChargeDisplayWheelFill.fillAmount = (float)weapons[DiscoWeaponIndex].charge / PlayerWeapon.MaxCharge;
         }
         public static void CloseMenu()
         {
+            instance.ResetScaleOfAllTransforms();
+            //instance.wheelGameObj.SetActive(false);
             CommonSounds.PlayUIConfirm();
             GameManager.UnpauseGame();
             GameManager.PlayerControl.weapon = weapons[instance.selectedWeaponIndex];
-            instance.weaponUpgradePanel.SetActive(false);
         }
-        public static void Initialize(GameObject weaponUpgradePanel, Image basicWeaponBarFill, Image typhoonWeaponBarFill, Image discoWeaponBarFill, Image spikeWeaponBarFill, RectTransform weaponSelectArrow, GameObject typhoonWeaponBarBack, GameObject spikeBarBack, GameObject discoBarBack)
+        public static void Initialize(
+            RectTransform leftWheelPartTransform, RectTransform leftWheelPartLockTransform, RectTransform rightWheelPartTransform, RectTransform rightWheelPartLockTransform,
+            RectTransform upWheelPartTransform, RectTransform upWheelPartLockTransform, RectTransform bottomWheelPartTransform, RectTransform bottomWheelPartLockTransform,
+            RectTransform wheelRectTransform, GameObject wheelGameObj,
+            RectTransform typhoonWeaponIcon, RectTransform basicWeaponIcon, RectTransform spikeWeaponIcon, RectTransform discoWeaponIcon,
+            Image typhoonWeaponChargeDisplayWheelFill, Image basicWeaponChargeDisplayWheelFill, Image spikeWeaponChargeDisplayWheelFill, Image discoWeaponChargeDisplayWheelFill)
         {
-            instance.weaponUpgradePanel = weaponUpgradePanel;
-            instance.basicWeaponBarFill = basicWeaponBarFill;
-            instance.typhoonWeaponBarFill = typhoonWeaponBarFill;
-            instance.spikeWeaponBarFill = spikeWeaponBarFill;
-            instance.discoWeaponBarFill = discoWeaponBarFill;
-            instance.weaponSelectArrow = weaponSelectArrow;
-            instance.typhoonWeaponBarBack = typhoonWeaponBarBack;
-            instance.spikeWeaponBarBack = spikeBarBack;
-            instance.discoWeaponBarBack = discoBarBack;
-            instance.weaponBarFillTransforms = new RectTransform[] { basicWeaponBarFill.rectTransform, typhoonWeaponBarFill.rectTransform, spikeWeaponBarFill.rectTransform, discoWeaponBarFill.rectTransform };
+            instance.leftWheelPartTransform = leftWheelPartTransform;
+            instance.leftWheelPartLockTransform = leftWheelPartLockTransform;
+            instance.rightWheelPartTransform = rightWheelPartTransform;
+            instance.rightWheelPartLockTransform = rightWheelPartLockTransform;
+            instance.upWheelPartTransform = upWheelPartTransform;
+            instance.upWheelPartLockTransform = upWheelPartLockTransform;
+            instance.bottomWheelPartTransform = bottomWheelPartTransform;
+            instance.bottomWheelPartLockTransform = bottomWheelPartLockTransform;
+            instance.wheelRectTransform = wheelRectTransform;
+            instance.wheelGameObj = wheelGameObj;
+            instance.typhoonWeaponIcon = typhoonWeaponIcon;
+            instance.basicWeaponIcon = basicWeaponIcon;
+            instance.spikeWeaponIcon = spikeWeaponIcon;
+            instance.discoWeaponIcon = discoWeaponIcon;
+            instance.typhoonWeaponChargeDisplayWheelFill = typhoonWeaponChargeDisplayWheelFill;
+            instance.basicWeaponChargeDisplayWheelFill = basicWeaponChargeDisplayWheelFill;
+            instance.spikeWeaponChargeDisplayWheelFill = spikeWeaponChargeDisplayWheelFill;
+            instance.discoWeaponChargeDisplayWheelFill = discoWeaponChargeDisplayWheelFill;
             GameManager.AddToPausedUpatedObjs(instance);
         }
         public static void UnlockDisco()
@@ -211,7 +203,100 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         }
         public void PausedUpdate(float unscaledDeltaTime)
         {
-            Update();
+            UpdateWithDT(unscaledDeltaTime);
+        }
+        void UpdateWeaponWheel(float dt, bool justPaused)
+        {
+            Vector2 mousePos = Input.mousePosition;
+            Vector2 wheelCenter = wheelRectTransform.position;
+            Vector2 toMousePos = (mousePos - wheelCenter).normalized;
+            int previousHoveredIndex = hoveredWeaponIndex;
+            if (Within45Deg(toMousePos, Vector2.right))//cloest to right sector
+            {
+                hoveredWeaponIndex = BasicWeaponIndex;
+                selectedWeaponIndex = BasicWeaponIndex;
+                DecayScale(rightWheelPartTransform, rightWheelPartLockTransform, basicWeaponIcon, SelectedScale, dt);
+                DecayScale(leftWheelPartTransform, leftWheelPartLockTransform, spikeWeaponIcon, UnselectedScale, dt);
+                DecayScale(bottomWheelPartTransform, bottomWheelPartLockTransform, typhoonWeaponIcon, UnselectedScale, dt);
+                DecayScale(upWheelPartTransform, upWheelPartLockTransform, discoWeaponIcon, UnselectedScale, dt);
+            }
+            else if (Within45Deg(toMousePos, Vector2.down))//closest to lower sector
+            {
+                hoveredWeaponIndex = TyphoonWeaponIndex;
+                if (UnlockedTyphoonWeapon)
+                {
+                    selectedWeaponIndex = TyphoonWeaponIndex;
+                }
+                DecayScale(rightWheelPartTransform, rightWheelPartLockTransform, basicWeaponIcon, UnselectedScale, dt);
+                DecayScale(leftWheelPartTransform, leftWheelPartLockTransform, spikeWeaponIcon, UnselectedScale, dt);
+                DecayScale(bottomWheelPartTransform, bottomWheelPartLockTransform, typhoonWeaponIcon, SelectedScale, dt);
+                DecayScale(upWheelPartTransform, upWheelPartLockTransform, discoWeaponIcon, UnselectedScale, dt);
+            }
+            else if (Within45Deg(toMousePos, Vector2.left))//closest to left sector
+            {
+                hoveredWeaponIndex = SpikeWeaponIndex;
+                if (UnlockedSpikeWeapon)
+                {
+                    selectedWeaponIndex = SpikeWeaponIndex;
+                }
+                DecayScale(rightWheelPartTransform, rightWheelPartLockTransform, basicWeaponIcon, UnselectedScale, dt);
+                DecayScale(leftWheelPartTransform, leftWheelPartLockTransform, spikeWeaponIcon, SelectedScale, dt);
+                DecayScale(bottomWheelPartTransform, bottomWheelPartLockTransform, typhoonWeaponIcon, UnselectedScale, dt);
+                DecayScale(upWheelPartTransform, upWheelPartLockTransform, discoWeaponIcon, UnselectedScale, dt);
+            }
+            else//closest to up sector
+            {
+                hoveredWeaponIndex = DiscoWeaponIndex;
+                if (UnlockedDiscoWeapon)
+                {
+                    selectedWeaponIndex = DiscoWeaponIndex;
+                }
+                DecayScale(rightWheelPartTransform, rightWheelPartLockTransform, basicWeaponIcon, UnselectedScale, dt);
+                DecayScale(leftWheelPartTransform, leftWheelPartLockTransform, spikeWeaponIcon, UnselectedScale, dt);
+                DecayScale(bottomWheelPartTransform, bottomWheelPartLockTransform, typhoonWeaponIcon, UnselectedScale, dt);
+                DecayScale(upWheelPartTransform, upWheelPartLockTransform, discoWeaponIcon, SelectedScale, dt);
+            }
+            if (hoveredWeaponIndex != previousHoveredIndex && !justPaused)
+            {
+                CommonSounds.PlayUIChange();
+            }
+        }
+        void ResetScaleOfAllTransforms()
+        {
+            rightWheelPartLockTransform.localScale = Vector3.one;
+            rightWheelPartTransform.localScale = Vector3.one;
+            upWheelPartLockTransform.localScale = Vector3.one;
+            upWheelPartTransform.localScale = Vector3.one;
+            bottomWheelPartLockTransform.localScale = Vector3.one;
+            bottomWheelPartTransform.localScale = Vector3.one;
+            leftWheelPartLockTransform.localScale = Vector3.one;
+            leftWheelPartTransform.localScale = Vector3.one;
+            basicWeaponIcon.localScale = Vector3.one;
+            spikeWeaponIcon.localScale = Vector3.one;
+            typhoonWeaponIcon.localScale = Vector3.one;
+            discoWeaponIcon.localScale = Vector3.one;
+        }
+        static void DecayScale(RectTransform sector, RectTransform @lock, RectTransform icon, float targetScale, float dt)
+        {
+            float scale = sector.localScale.x;
+            scale = Decay(scale, targetScale, 20f, dt);
+            Vector3 scaleVec = new(scale, scale, scale);
+            sector.localScale = scaleVec;
+            scale = 1f / scale;
+            scaleVec.Set(scale, scale, scale);
+            @lock.localScale = scaleVec;
+            icon.localScale = scaleVec;
+        }
+        bool Within45Deg(Vector2 direction1, Vector2 direction2)
+        {
+            return Vector2.Dot(direction1, direction2) > 0.707106782f;//1/sqrt(2) with some leniency
+        }
+        static float Decay(float currentValue, float targetValue, float decay, float dt)
+        {
+            //thanks freya holmer
+            currentValue = targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * dt);
+            currentValue = Mathf.MoveTowards(currentValue, targetValue, 0.001f);
+            return currentValue;
         }
     }
 }

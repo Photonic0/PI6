@@ -18,21 +18,23 @@ public class BossGate : MonoBehaviour
     Transform mainCamTransform;
     Transform cameraParentTransform;
     bool locked;
-    Vector2 top;
+    Vector2 Top { get {
+            Vector2 result = transform.position;
+            result.y++;
+            return result;
+        }
+    }
     private void Start()
     {
         Camera mainCam = Camera.main;
         mainCamTransform = mainCam.transform;
         cameraParentTransform = mainCamTransform.parent;
         timer = 0;
-        top = transform.position;
-        //add 1 so the the top is inside the block above the gate
-        top.y += 1;
     }
     void Update()
     {
 
-        if (collider != null && !locked && GameManager.PlayerPosition.x - top.x > .5f)
+        if (collider != null && !locked && GameManager.PlayerPosition.x - Top.x > .5f)
         {
             Lock();
         }
@@ -50,16 +52,16 @@ public class BossGate : MonoBehaviour
             else
             {
                 Vector3 newCameraPos = cameraParentTransform.position;
-                float cameraZ = newCameraPos.z;
+                float cameraZ = TyphoonCameraSystem.GetZPos();
                 newCameraPos = Helper.Decay(newCameraPos, cameraPositionLockPoint.position, 15);
                 newCameraPos.z = cameraZ;
                 cameraParentTransform.position = newCameraPos;
-                mainCamTransform.GetComponent<TyphoonCameraSystem>().enabled = false;           
+                mainCamTransform.GetComponent<TyphoonCameraSystem>().enabled = false;
             }
             mainCamTransform.localPosition = ScreenShakeManager.GetCameraOffset();
         }
         float oldTimer = timer;
-        if (!locked && Mathf.Abs(top.x - GameManager.PlayerPosition.x) < xDistThresholdForOpening)
+        if (!locked && Mathf.Abs(Top.x - GameManager.PlayerPosition.x) < xDistThresholdForOpening)
         {
             timer += Time.deltaTime;
         }
@@ -72,6 +74,7 @@ public class BossGate : MonoBehaviour
         {
             CommonSounds.PlayGateOpen(source);
         }
+        Vector2 top = Top;
         for (int i = 0; i < gateSegments.Length; i++)
         {
             Transform gateSegment = gateSegments[i];

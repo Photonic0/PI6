@@ -48,4 +48,11 @@ public static class EffectsHandler
         obj.GetComponent<SpriteRenderer>().color = col;
         Object.Destroy(obj, duration);
     }
+    public static void SpawnSmallExplosion(Transform parent, Color col, Vector2 position, float duration = 0.15f)
+    {
+        GameObject obj = Object.Instantiate(CommonPrefabs.ExplosionSmall, position, Quaternion.identity, parent);
+        obj.transform.Rotate(0, 0, 90 * Random.Range(0, 4));//for a bit more visual variety
+        obj.GetComponent<SpriteRenderer>().color = col;
+        Object.Destroy(obj, duration);
+    }
 }

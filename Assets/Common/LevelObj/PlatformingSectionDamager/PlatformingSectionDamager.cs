@@ -15,7 +15,10 @@ public class PlatformingSectionDamager : MonoBehaviour
             if (!GameManager.PlayerLife.Dead)
             {
                 GameManager.PlayerControl.transform.position = respawnPoint.position;
-                Helper.ResetCamera(respawnPoint.position);
+                if (CameraRailSystem.instance != null)//don't reset if it has a lerp smoothing camera
+                {
+                    Helper.ResetCamera(respawnPoint.position);
+                }
             }
         }
     }

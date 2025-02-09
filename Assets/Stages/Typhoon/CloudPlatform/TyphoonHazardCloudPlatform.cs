@@ -7,7 +7,7 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
     const int StateIDHarmless = 0;
     const int StateIDHarmful = 1;
     const float HarmlessDuration = 3f;
-    const float HarmfulDuration = 0.5f;
+    const float HarmfulDuration = 0.4f;
     static readonly int animHarmless = Animator.StringToHash("CloudPlatformHarmless");
     static readonly int animHarmful = Animator.StringToHash("CloudPlatformHarmful");
     [SerializeField] SpriteRenderer sprite;

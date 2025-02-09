@@ -1,7 +1,6 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Consts;
 using Assets.Common.Interfaces;
-using Assets.Common.Systems;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,6 +33,8 @@ public class GameManager : MonoBehaviour
     public static Transform CurrentCamTransform => instance.currentCamTransform;
     Transform currentCamTransform;
     [SerializeField] List<IUpdatableWhenPaused> thingsToUpdateWhenPaused;
+    [SerializeField] GameObject playerProjsPool;
+    public static GameObject PlayerProjsPool => instance.playerProjsPool;
 
     private void Awake()//assign player scripts refs in awake of player scripts so it goes fine when changing scenes
     {
@@ -111,7 +112,7 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator UpdatePausedObjects()
     {
-        float unscaledDT = 1f / 30f;//30 fps
+        float unscaledDT = 1f / 60f;//60 fps
 
         while (Paused)
         {
@@ -128,7 +129,7 @@ public class GameManager : MonoBehaviour
                 }
                 thingsToUpdateWhenPaused[i].PausedUpdate(unscaledDT);
             }
-            yield return new WaitForSecondsRealtime(unscaledDT);//30 fps updating
+            yield return new WaitForSecondsRealtime(unscaledDT);//60 fps updating
         }
     }
     internal static void UnpauseGame()

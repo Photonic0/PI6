@@ -24,6 +24,7 @@ public class FallingSpike : Projectile
     public new Transform transform;
     bool dontRespawn;
     bool dontDestroy;
+    bool dontPlaySound;
     public void Start()
     {
         transform = base.transform;
@@ -44,7 +45,10 @@ public class FallingSpike : Projectile
                 if (spikePos.y > playerPos.y && Mathf.Abs(spikePos.x - playerPos.x) < .6f)
                 {
                     state = StateIDFall;
-                    CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce);
+                    if (!dontPlaySound)
+                    {
+                        CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce);
+                    }
                     timer = 0;
                 }
                 break;
@@ -101,11 +105,14 @@ public class FallingSpike : Projectile
         }
         timer += Time.deltaTime;
     }
-    public void StartFallAndMakeNotRespawnAndNotDestroy(float fallDelay = 0.3f)
+    public void StartFallAndMakeNotRespawnAndNotDestroy(float fallDelay = 0.3f, bool dontPlaySound = false)
     {
 
         state = StateIDFall;
-        CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce, 1, 0.1f);
+        if (!dontPlaySound)
+        {
+            CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce);
+        }
         timer = TelegraphDuration - fallDelay;
         dontRespawn = true;
         dontDestroy = true;
@@ -115,14 +122,18 @@ public class FallingSpike : Projectile
         collider.enabled = true;
         rb.velocity = Vector2.zero;
         transform.localScale = Vector3.one;
+        this.dontPlaySound = dontPlaySound;
     }
     public override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
         if (state == StateIDFall && timer > (TelegraphDuration + .1f) && collision.gameObject.CompareTag(Tags.Tiles))
         {
-           
-            CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce);
+
+            if (!dontPlaySound)
+            {
+                CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce);
+            }
             //CommonSounds.Play(SpikeStageSingleton.instance.spikeBreakNew, audioSOurce, .5f, Random2.Float(.9f, 1.1f));
             EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
             if (dontRespawn)
@@ -149,7 +160,7 @@ public class FallingSpike : Projectile
                 rb.gravityScale = 0;
                 timer = 0;
             }
-            ScreenShakeManager.AddSmallShake(transform.position, 3);
+            ScreenShakeManager.AddSmallShake(transform.position, ScreenShakeManager.ShakeGroupIDFallingSpike);
         }
     }
 }

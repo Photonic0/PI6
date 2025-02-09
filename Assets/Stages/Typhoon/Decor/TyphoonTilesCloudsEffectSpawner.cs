@@ -1,4 +1,5 @@
 using Assets.Helpers;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -149,49 +150,43 @@ public class TyphoonTilesCloudsEffectSpawner : MonoBehaviour
         {
             return;
         }
-        GetCameraBounds(out float minX, out float maxX, out float maxY, out float minY, 5);
-        for (int i = 0; i < 100; i++)//try 100 times to get a spawn position within range
+        if (!GetRandomTilePositionInsideCameraBounds(out Vector3 cloudPos))
         {
-            //maybe try an approach based on checking tileExistences so no repeat tries required?
-            Vector3 cloudPos = randomSpawnPositions[Random.Range(0, randomSpawnPositions.Length)];
-            if (cloudPos.x < minX || cloudPos.x > maxX || cloudPos.y > maxY || cloudPos.y < minY)
-            {
-                continue;
-            }
-            cloudPos.x += Random.value - 0.5f;
-            cloudPos.y += Random.value - 0.5f;
-            TyphoonTilesCloudParticle cloud = cloudsPool[index];
-            //important to set position before sprite beound dependent calculations!!
-            cloudPos.z = cloud.transform.position.z;//keep z position so layering doesn't get messed up
-            cloud.transform.position = cloudPos;
-
-            float velX = Random.Range(-1f, 1f);
-            float distTravelled = velX * TyphoonTilesCloudParticle.ParticleDuration;
-            Bounds spriteBounds = cloud.sprite.bounds;
-            float spriteHalfWidth = spriteBounds.extents.x;
-            float endPointX = 999999;// spriteBounds.center.x + spriteHalfWidth * Mathf.Sign(velX);
-            float velXSign = Mathf.Sign(velX);
-            //supposed to not let clouds travel outside blocks,
-            //sometimes fails because only considers the current row, but good enough.
-            for (int j = 0; j <= Mathf.Abs(distTravelled); j++)
-            {
-                float signedHalfWidth = spriteHalfWidth * velXSign;
-                Vector2 endPoint = new(cloudPos.x + ((spriteHalfWidth + j + .5f) * velXSign), cloudPos.y);
-                WorldToTileArrayPosition(endPoint, out int x, out int y, out bool xOutOfBounds, out bool yOutOfBounds);
-                // j == (int)distTravelled is last iteration of the loop
-                if (xOutOfBounds || yOutOfBounds || !TileExists(x, y) || j == (int)Mathf.Abs(distTravelled))
-                {
-                    debug_endPointIndicatorWithBounds.Set(endPoint.x - velXSign, endPoint.y, 0);
-                    endPointX = endPoint.x - signedHalfWidth - velXSign;//subtract sign so it's 1 block before
-                    debug_endPointIndicator.Set(endPointX, endPoint.y, 0);
-                    break;
-                }
-            }
-            cloud.velocity.x = Mathf.Min(Mathf.Abs(distTravelled), Mathf.Abs(cloudPos.x - endPointX)) / TyphoonTilesCloudParticle.ParticleDuration * velXSign;
-            cloud.SetFlipX();
-            cloud.gameObject.SetActive(true);
-            break;
+            return;
         }
+        cloudPos.x += Random.value - 0.5f;
+        cloudPos.y += Random.value - 0.5f;
+        TyphoonTilesCloudParticle cloud = cloudsPool[index];
+        //important to set position before sprite bound dependent calculations!!
+        cloudPos.z = cloud.transform.position.z;//keep z position so layering doesn't get messed up
+        cloud.transform.position = cloudPos;
+
+        float velX = Random.Range(-1f, 1f);
+        float distTravelled = velX * TyphoonTilesCloudParticle.ParticleDuration;
+        Bounds spriteBounds = cloud.sprite.bounds;
+        float spriteHalfWidth = spriteBounds.extents.x;
+        float endPointX = 999999;// spriteBounds.center.x + spriteHalfWidth * Mathf.Sign(velX);
+        float velXSign = Mathf.Sign(velX);
+        //supposed to not let clouds travel outside blocks,
+        //sometimes fails because only considers the current row, but good enough.
+        for (int j = 0; j <= Mathf.Abs(distTravelled); j++)
+        {
+            float signedHalfWidth = spriteHalfWidth * velXSign;
+            Vector2 endPoint = new(cloudPos.x + ((spriteHalfWidth + j + .5f) * velXSign), cloudPos.y);
+            WorldToTileArrayPosition(endPoint, out int x, out int y, out bool xOutOfBounds, out bool yOutOfBounds);
+            // j == (int)distTravelled is last iteration of the loop
+            if (xOutOfBounds || yOutOfBounds || !TileExists(x, y) || j == (int)Mathf.Abs(distTravelled))
+            {
+                debug_endPointIndicatorWithBounds.Set(endPoint.x - velXSign, endPoint.y, 0);
+                endPointX = endPoint.x - signedHalfWidth - velXSign;//subtract sign so it's 1 block before
+                debug_endPointIndicator.Set(endPointX, endPoint.y, 0);
+                break;
+            }
+        }
+        cloud.velocity.x = Mathf.Min(Mathf.Abs(distTravelled), Mathf.Abs(cloudPos.x - endPointX)) / TyphoonTilesCloudParticle.ParticleDuration * velXSign;
+        cloud.SetFlipX();
+        cloud.gameObject.SetActive(true);
+
     }
 
     void SpawnLightning()
@@ -203,20 +198,14 @@ public class TyphoonTilesCloudsEffectSpawner : MonoBehaviour
         {
             return;
         }
-        GetCameraBounds(out float minX, out float maxX, out float maxY, out float minY, 2);
-        for (int i = 0; i < 100; i++)//try 100 times to get a spawn position within range
-        {
-            Vector2 centralPos = randomSpawnPositions[Random.Range(0, randomSpawnPositions.Length)];
 
-            if (centralPos.x < minX || centralPos.x > maxX || centralPos.y > maxY || centralPos.y < minY)
+        for (int i = 0; i < 50; i++)
+        {
+            if (!GetRandomTilePositionInsideCameraBounds(out Vector3 centralPosVec3))
             {
-                continue;
+                return;
             }
-            WorldToTileArrayPosition(centralPos, out int x, out int y, out bool xOutOfBounds, out bool yOutOfBounds);
-            if (xOutOfBounds || yOutOfBounds || !TileExists(x, y))
-            {
-                continue;
-            }
+            Vector2 centralPos = centralPosVec3;
             Vector2 direction = Random2.Direction;
             Vector2 node1Pos;
             Vector2 node2Pos;
@@ -264,25 +253,24 @@ public class TyphoonTilesCloudsEffectSpawner : MonoBehaviour
             {
                 continue;
             }
-            if (!(centralPos.x < minX || centralPos.x > maxX || centralPos.y > maxY || centralPos.y < minY))
-            {
-
-                TyphoonTilesLightningNodePair nodePair = lightningNodeGroupPool[index];
-                Vector3 node1Pos3d = new(node1Pos.x, node1Pos.y, nodePair.transform1.position.z);
-                Vector3 node2Pos3d = new(node2Pos.x, node2Pos.y, nodePair.transform2.position.z);
-                nodePair.timeLeft = 1;
-                nodePair.lightningRenderer.ActivateAndSetAttributes(0.1f, node1Pos, node2Pos, .8f);
-                nodePair.gameObject1.SetActive(true);
-                nodePair.gameObject2.SetActive(true);
-                int randomHash = TyphoonTilesLightningNodePair.RandAnimHash;
-                nodePair.animator1.CrossFade(randomHash, 0);
-                nodePair.animator2.CrossFade(randomHash, 0);
-                nodePair.transform1.SetPositionAndRotation(node1Pos3d, direction.ToRotation(225));
-                //must set transform2 position and rotation *after* setting transform1 because former is parent
-                //and will affect the position and rotation of transform2 is set afterwards.
-                nodePair.transform2.SetPositionAndRotation(node2Pos3d, direction.ToRotation(45));
-                break;
-            }
+            //if (!(centralPos.x < minX || centralPos.x > maxX || centralPos.y > maxY || centralPos.y < minY))
+            //{
+            TyphoonTilesLightningNodePair nodePair = lightningNodeGroupPool[index];
+            Vector3 node1Pos3d = new(node1Pos.x, node1Pos.y, nodePair.transform1.position.z);
+            Vector3 node2Pos3d = new(node2Pos.x, node2Pos.y, nodePair.transform2.position.z);
+            nodePair.timeLeft = 1;
+            nodePair.lightningRenderer.ActivateAndSetAttributes(0.1f, node1Pos, node2Pos, .8f);
+            nodePair.gameObject1.SetActive(true);
+            nodePair.gameObject2.SetActive(true);
+            int randomHash = TyphoonTilesLightningNodePair.RandAnimHash;
+            nodePair.animator1.CrossFade(randomHash, 0);
+            nodePair.animator2.CrossFade(randomHash, 0);
+            nodePair.transform1.SetPositionAndRotation(node1Pos3d, direction.ToRotation(225));
+            //must set transform2 position and rotation *after* setting transform1 because former is parent
+            //and will affect the position and rotation of transform2 is set afterwards.
+            nodePair.transform2.SetPositionAndRotation(node2Pos3d, direction.ToRotation(45));
+            break;
+            //}
         }
     }
 
@@ -355,6 +343,35 @@ public class TyphoonTilesCloudsEffectSpawner : MonoBehaviour
         maxX = cameraX + viewWidth * .5f + padding;
         minY = cameraY - viewHeight * .5f - padding;
         maxY = cameraY + viewHeight * .5f + padding;
+    }
+
+    bool GetRandomTilePositionInsideCameraBounds(out Vector3 randomPosition)
+    {
+        GetCameraBounds(out float minX, out float maxX, out float maxY, out float minY, 10);
+        int minXInt = (int)minX;
+        int maxXInt = (int)maxX + 1;
+        int maxYInt = (int)maxY + 1;
+        int minYInt = (int)minY;
+        List<(ushort x, ushort y)> result = new((maxYInt - minYInt) * (maxXInt - minXInt));
+        for (int i = minXInt; i < maxXInt; i++)
+        {
+            for (int j = minYInt; j < maxYInt; j++)
+            {
+                Vector3Int tilePos = new(i, j, 0);
+                if (TyphoonStageSingleton.instance.solidTiles.HasTile(tilePos))
+                {
+                    result.Add(((ushort)i, (ushort)j));
+                }
+            }
+        }
+        if (result.Count <= 0)
+        {
+            randomPosition = Vector3.zero;
+            return false;
+        }
+        (ushort x, ushort y) = result[Random.Range(0, result.Count)];
+        randomPosition = new(x + .5f, y + .5f, 0);
+        return true;
     }
 
 #if UNITY_EDITOR

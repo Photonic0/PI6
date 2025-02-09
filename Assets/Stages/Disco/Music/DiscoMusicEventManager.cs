@@ -161,7 +161,13 @@ public class DiscoMusicEventManager : MonoBehaviour
             }
         }
     }
-
+    public static void RemoveLevelSyncableObject(IMusicSyncable syncableObj)
+    {
+        if (instance != null && syncableObj != null && instance.syncableObjects != null)
+        {
+            instance.syncableObjects.Remove(syncableObj);
+        }
+    }
     public static void PauseMusic()
     {
         if (instance == null) return;

@@ -90,6 +90,7 @@ public class SwingingSpikeBall : Projectile
 #if UNITY_EDITOR
         verletSimulator.dots[^1].position += (sineOffset * debug_TestExtraDistance);
 #endif
+        verletSimulator.AddForce(new Vector2(0, -50));
         verletSimulator.Simulate(Time.fixedDeltaTime);
         for (int j = 0; j < dotCount - 1; j++)
         {

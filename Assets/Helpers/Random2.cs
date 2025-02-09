@@ -49,6 +49,23 @@ namespace Assets.Helpers
             y -= height / 2;
             return new Vector2(x, y);
         }
+        /// <summary>
+        /// UNTESTED
+        /// </summary>
+        public static Vector2 CenteredRectEdge(float width, float height)
+        {
+            float widthOverHeight = width / height;
+            int sign = Random.Range(0, 2) * 2 - 1;
+            if (Percent(widthOverHeight))
+            {
+                height /= 2;
+                width -= width / 2;
+                return new Vector2(Random.value * width, height * sign);
+            }
+            width /= 2;
+            height -= height / 2;
+            return new Vector2(sign * width, height * Random.value);
+        }
         public static Vector2 CircleEdge(float radius)
         {
             float angle = Random.value * Mathf.PI * 2;

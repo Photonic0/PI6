@@ -24,7 +24,7 @@ public class TyphoonEnemyCloud : Enemy
         base.Start();
         state = 0;
         timer = 0;
-        TyphoonStageSingleton.AddToCloudEnemyArray(this);
+        TyphoonStageSingleton.AddToCloudEnemyList(this);
     }
 
 
@@ -67,7 +67,6 @@ public class TyphoonEnemyCloud : Enemy
             Vector2 deltaPos = center - (Vector2)otherCloud.transform.position;
             targetPos += deltaPos.normalized * (3 - Mathf.Clamp(deltaPos.magnitude, 0, 3));
         }
-        debug_DisplayTargetPos = targetPos;
         Vector2 toTargetPos = (targetPos - rb.position).normalized;
         rb.velocity = Vector2.Lerp(rb.velocity, toTargetPos * MaxMoveSpeed, Time.deltaTime * 3);
         if(playerPos.y < transform.position.y && Mathf.Abs(playerPos.x - transform.position.x) < MinDistForRain && timer >= RainDelay)
@@ -94,19 +93,18 @@ public class TyphoonEnemyCloud : Enemy
             Destroy(parent.gameObject, 1);
         }
     }
-    Vector2 debug_DisplayTargetPos;
+    private void OnDisable()
+    {
+        TyphoonStageSingleton.RemoveCloudEnemyFromList(this);
+    }
     private void OnDestroy()
     {
         TyphoonStageSingleton.RemoveCloudEnemyFromList(this);
     }
     public override bool PreKill()
     {
+        TyphoonStageSingleton.RemoveCloudEnemyFromList(this);
         EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
         return base.PreKill();
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(debug_DisplayTargetPos, transform.position);
-        Gizmos.DrawSphere(debug_DisplayTargetPos, .1f);
     }
 }

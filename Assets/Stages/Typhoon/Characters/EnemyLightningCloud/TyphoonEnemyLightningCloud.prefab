@@ -4989,7 +4989,7 @@ MonoBehaviour:
   deathParticle: {fileID: 5917698243548517950}
   rb: {fileID: 5917698242995581708}
   lightningEffect: {fileID: 3194323136533457098}
-  transform: {fileID: 0}
+  transform: {fileID: 5917698242995581704}
   lightningTelegraphParticles: {fileID: 8359967411242287807}
 --- !u!1 &5917698243548517945
 GameObject:

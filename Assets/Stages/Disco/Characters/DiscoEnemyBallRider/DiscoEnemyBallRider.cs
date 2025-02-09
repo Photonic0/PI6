@@ -15,6 +15,7 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
     [SerializeField] new Transform transform;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform ballTransform;
+    [SerializeField] AudioSource audioSource;
     float bounceTimer;
     public override void Start()
     {
@@ -23,6 +24,16 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
     }
     public void DoMusicSyncedAction()
     {
+        if(life <= 0)
+        {
+            EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, leftSpriteTransform.position);
+            EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, ballTransform.position);
+            leftSprite.SetActive(false);
+            rightSprite.SetActive(false);
+            ballTransform.gameObject.SetActive(false);
+            RollForDrop();
+            return;
+        }
         bounceTimer = 0;
         if(leftSprite == null || rightSprite == null || ballTransform == null)
         {
@@ -48,9 +59,6 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
             GameManager.PlayerLife.Damage(4);
         }
     }
-    //todo: disco hazard confetti emitter
-    //sound effects for  everything
-    //music for most things
     private void Update()
     {
         bounceTimer += Time.deltaTime;
@@ -71,13 +79,19 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
         rightSpriteTransform.position = pos;
         ballTransform.Rotate(0, 0, vel.x * -Mathf.Rad2Deg * Time.deltaTime);
     }
+    public override void OnHit(int damageTaken)
+    {
+        DiscoStageSingleton.PlayBwowLite(audioSource);
+    }
     public override bool PreKill()
     {
-        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, leftSpriteTransform.position);
-        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, ballTransform.position);
-        leftSprite.SetActive(false);
-        rightSprite.SetActive(false);
-        ballTransform.gameObject.SetActive(false);
-        return base.PreKill();
+        rb.velocity = Vector2.zero;
+        rb.isKinematic = true;
+        GetComponent<Collider2D>().enabled = false; 
+        return false;
+    }
+    private void OnDestroy()
+    {
+        DiscoMusicEventManager.RemoveLevelSyncableObject(this);
     }
 }

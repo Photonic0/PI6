@@ -99,7 +99,6 @@ public class DiscoBossAI : Enemy
     [SerializeField] int forcedStateActionCount;
     [SerializeField] int forcedStateActionRate;
     [SerializeField] int forcedStateDelay;
-    [SerializeField] TextMeshProUGUI debugText;
 #endif
     public bool beatFrame;
     public int TotalBeats => musicHandler.beatCounter;
@@ -112,9 +111,6 @@ public class DiscoBossAI : Enemy
     public override void Start()
     {
         base.Start();
-#if UNITY_EDITOR
-        debugText.gameObject.SetActive(true);
-#endif
         arenaCenter = arenaCenterTransform.position;
     }
     int GetBeat() => (musicHandler.beatCounter - 1) % 120;
@@ -353,9 +349,6 @@ public class DiscoBossAI : Enemy
             if (state == StateID.ThrowBallThenDoubleConfetti)
             {
                 int remainingActions = actionCount - (stateBeatCounter - startup) - 1;
-#if UNITY_EDITOR
-                debugText.text = $"remaining actions: {remainingActions}";
-#endif
                 if (remainingActions == 1 && beatFrame)
                 {
                     bool flipOrder = Random2.Bool;

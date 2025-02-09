@@ -4,6 +4,8 @@ using UnityEngine;
 public class TyphoonBackground : MonoBehaviour
 {
     [SerializeField] TyphoonBackgroundCloudParticle[] cloudParticles;
+    static Vector2 spawnOffset;
+    static float spawnCooldownMultiplier = 1;
     float spawnCooldown;
     int nextCloudIndex;//keep things varied
     Camera cam;
@@ -25,7 +27,7 @@ public class TyphoonBackground : MonoBehaviour
                 {
                     continue;
                 }
-                spawnCooldown = .15f;
+                spawnCooldown = 0.15f * spawnCooldownMultiplier;
                 cloudParticle.velocity.x = Random2.Float(2, 6) * (Random.Range(0,2) * 2 - 1);
                 Vector3 pos = cloudParticle.transform.position;
                 float z = Random2.Float(5, 16);
@@ -33,6 +35,8 @@ public class TyphoonBackground : MonoBehaviour
                 pos.x = Random2.Float(minX, maxX);
                 pos.y = Random2.Float(minY, maxY);
                 pos.z = z;
+                pos.x += spawnOffset.x;
+                pos.y += spawnOffset.y;
                 cloudParticle.transform.position = pos;
                 cloudParticle.SetFlipX();
                 cloudParticle.gameObject.SetActive(true);
@@ -51,5 +55,10 @@ public class TyphoonBackground : MonoBehaviour
         maxX = cameraX + viewWidth * .5f + padding;
         minY = cameraY - viewHeight * .5f - padding;
         maxY = cameraY + viewHeight * .5f + padding;
+    }
+    public static void SetSpawnOffsetForBackgroundAndSpawnRateMultiplier(Vector2 offset, float spawnrateMult)
+    {
+        spawnCooldownMultiplier = spawnrateMult;
+        spawnOffset = offset;
     }
 }

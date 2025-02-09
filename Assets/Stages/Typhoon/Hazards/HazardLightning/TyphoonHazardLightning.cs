@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class TyphoonHazardLightning : MonoBehaviour
 {
-    const float Downtime = 2;
-    const float ActiveTime = 3;
+    const float Downtime = 1;
+    const float ActiveTime = 2;
 
     [SerializeField] GameObject objToDeactivateWhenFar;
     bool inactive;
@@ -130,10 +130,6 @@ public class TyphoonHazardLightning : MonoBehaviour
 
         Gizmos2.DrawRotatedRectangle(collider.offset.RotatedBy(rotation * Mathf.Deg2Rad) + (Vector2)transform.position, collider.size, rotation, Handles.UIColliderHandleColor);
         Gizmos2.DrawHDWireCircle(DeactivationDist, transform.position);
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(node1transform.position, .1f);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(node2transform.position, .1f);
 
     }
 #endif

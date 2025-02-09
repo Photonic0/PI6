@@ -17,16 +17,18 @@ public class TyphoonEnemyTornado : Enemy
     Vector2 randomOffset;
     public const int StateIDIdle = 0;
     public const int StateIDAggrod = 1;
-    public const float MoveSpeed = 4;
+    public const float TopSpeed = 4;
     public const float AggroRange = 6;
     public const float ProjSpeed = 6;
     public const float ProjFireDelay = 2;
+    public const float Acceleration = 10;
     public override void Start()
     {
         base.Start();
         initialPosition = transform.position;
         randomOffset = Random2.Circular(2);
         state = StateIDIdle;
+        TyphoonStageSingleton.AddToTornadoEnemyList(this);
     }
     private void Update()
     {
@@ -46,15 +48,15 @@ public class TyphoonEnemyTornado : Enemy
     {
         Vector2 targetPos = initialPosition + randomOffset;
         AccelerateTowards(targetPos);
-        if (timer > 1)
+        if (timer > 0.8f)
         {
             randomOffset = Random2.Circular(2);
-            timer -= 1;
+            timer -= 0.8f;
         }
         if (Helper.EnemyAggroCheck(transform.position, GameManager.PlayerControl.Position, AggroRange))
         {
             state = StateIDAggrod;
-            timer = -Time.deltaTime;
+            timer = -Time.deltaTime + ProjFireDelay;
         }
 
     }
@@ -83,14 +85,30 @@ public class TyphoonEnemyTornado : Enemy
     }
     void AccelerateTowards(Vector2 targetPos)
     {
+        Vector2 center = transform.position;
+        for (int i = 0; i < TyphoonStageSingleton.instance.tornadoEnemies.Count; i++)
+        {
+            TyphoonEnemyTornado otherTornado = TyphoonStageSingleton.instance.tornadoEnemies[i];
+            Vector2 deltaPos = center - (Vector2)otherTornado.transform.position;
+            targetPos += deltaPos.normalized * (3 - Mathf.Clamp(deltaPos.magnitude, 0, 3));
+        }
         Vector2 toTarget = (targetPos - (Vector2)transform.position).normalized;
-        Vector2 velocity = Vector2.Lerp(rb.velocity, toTarget * MoveSpeed, Time.deltaTime);
+        Vector2 velocity = Helper.Decay(rb.velocity, toTarget * TopSpeed, Acceleration);
         //velocity = toTarget * MoveSpeed;
         rb.rotation = velocity.x * -6;
         rb.velocity = velocity;
     }
+    private void OnDisable()
+    {
+        TyphoonStageSingleton.RemoveTornadoEnemyFromList(this);
+    }
+    private void OnDestroy()
+    {
+        TyphoonStageSingleton.RemoveTornadoEnemyFromList(this);
+    }
     public override bool PreKill()
     {
+        TyphoonStageSingleton.RemoveTornadoEnemyFromList(this);
         EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
         return base.PreKill();
     }

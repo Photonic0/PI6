@@ -22,10 +22,11 @@ public class TyphoonEnemyLightningCloud : Enemy
     [SerializeField] SimpleLightningRenderer lightningEffect;
     [SerializeField] new Transform transform;
     [SerializeField] ParticleSystem lightningTelegraphParticles;
-    private void Awake()
+    public override void Start()
     {
+        base.Start();
         transform = base.transform;
-        TyphoonStageSingleton.AddToLightningCloudEnemyArray(this);
+        TyphoonStageSingleton.AddToLightningCloudEnemyList(this);
     }
     float timer;
     int state;
@@ -46,8 +47,6 @@ public class TyphoonEnemyLightningCloud : Enemy
         }
         timer += Time.deltaTime;
     }
-
-
     private void State_Idle()
     {
         rb.velocity = new Vector2(0, Mathf.Cos(timer));
@@ -57,7 +56,6 @@ public class TyphoonEnemyLightningCloud : Enemy
             timer = -Time.deltaTime;
         }
     }
-
     private void State_ChasingPlayer()
     {
         Vector2 playerPos = GameManager.PlayerControl.Position;
@@ -75,10 +73,22 @@ public class TyphoonEnemyLightningCloud : Enemy
         {
             state = StateIDAttacking;
             timer = -Time.deltaTime;
-            attackDirection = (playerPos - (Vector2)transform.position).normalized;
+            RaycastHit2D hit = Physics2D.Raycast(playerPos, Vector2.down, 20f, Layers.Tiles);
+            Vector2 hitPoint = hit.point;
+            if (hit.point == Vector2.zero)
+            {
+                GetFailsafeScanParams(out float dist, out Vector2[] directions, out int layermask, out Vector2 origin);
+                Vector2[] hitPoints = new Vector2[directions.Length];
+                for (int i = 0; i < directions.Length; i++)
+                {
+                    hitPoints[i] = Physics2D.Raycast(origin, directions[i], dist, layermask).point;
+                }
+                hitPoint = GetClosestPosition(hitPoints, playerPos);
+            }
+
+            attackDirection = (hitPoint - (Vector2)transform.position).normalized;
         }
     }
-
     private void State_Attacking()
     {
         Vector2 vel = rb.velocity;
@@ -90,9 +100,8 @@ public class TyphoonEnemyLightningCloud : Enemy
             RaycastHit2D hit = Physics2D.Raycast(rb.position, attackDirection, 20, Layers.Tiles);
             Vector2 start = transform.position + new Vector3(0, -0.3f);
             Vector2 end = hit.point;
-            
-            Vector2 parentPos = lightningTelegraphParticles.transform.position;
-            Helper.TelegraphLightning(timer, start - parentPos, end - parentPos, AttackTelegraphDuration, lightningTelegraphParticles);
+
+            Helper.TelegraphLightning(timer, start, end, AttackTelegraphDuration, lightningTelegraphParticles);
         }
         else if (timer < AttackDuration + AttackTelegraphDuration)
         {
@@ -125,6 +134,35 @@ public class TyphoonEnemyLightningCloud : Enemy
             state = StateIDIdle;
         }
     }
+    private void GetFailsafeScanParams(out float dist, out Vector2[] directions, out int layermask, out Vector2 origin)
+    {
+        const int amountOfScans = 30;
+        dist = 10f;
+        origin = transform.position;
+        layermask = Layers.Tiles;
+        directions = new Vector2[amountOfScans];
+        for (int i = 0; i < amountOfScans; i++)
+        {
+            float angle = (float)i / (amountOfScans - 1) * Mathf.PI + Mathf.PI;
+            directions[i] = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        }
+
+    }
+    public static Vector2 GetClosestPosition(Vector2[] positions, Vector2 target)
+    {
+        Vector2 closestPosition = positions[0];
+        float minDistance = (closestPosition - target).sqrMagnitude;
+        for (int i = 1; i < positions.Length; i++)
+        {
+            float distance = (positions[i] - target).sqrMagnitude;
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestPosition = positions[i];
+            }
+        }
+        return closestPosition;
+    }
 
     private void GetBoxParams(out Vector2 start, out Vector2 end, out Vector2 boxCenter, out Vector2 boxSize)
     {
@@ -136,12 +174,11 @@ public class TyphoonEnemyLightningCloud : Enemy
     }
     public override bool PreKill()
     {
-        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
-        return base.PreKill();
-    }
-    private void OnDestroy()
-    {
+        lightningEffect.Stop();
         TyphoonStageSingleton.RemoveLightningCloudEnemyFromList(this);
+        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        gameObject.SetActive(false);
+        return base.PreKill();
     }
     public override void OnHit(int damageTaken)
     {
@@ -151,5 +188,13 @@ public class TyphoonEnemyLightningCloud : Enemy
             deathParticle.Emit(50);
             Destroy(parent.gameObject, 1);
         }
+    }
+    private void OnDisable()
+    {
+        TyphoonStageSingleton.RemoveLightningCloudEnemyFromList(this);
+    }
+    private void OnDestroy()
+    {
+        TyphoonStageSingleton.RemoveLightningCloudEnemyFromList(this);
     }
 }
