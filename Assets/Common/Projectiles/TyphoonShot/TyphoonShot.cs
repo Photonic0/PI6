@@ -45,7 +45,7 @@ public class TyphoonShot : Projectile
             hitTimers[i] = 0;
             enemiesTargeted[i] = null;
             lightningRendererPool[i].Stop();
-        }    
+        }
     }
     private void Update()
     {
@@ -56,7 +56,7 @@ public class TyphoonShot : Projectile
         Color color = Color.Lerp(Color.white, Color.clear, t);
         backSprite.color = color;
         spriteRenderer.color = color;
-        if(t >= 1)//if the projectile is transparent, deactivate the projectile
+        if (t >= 1)//if the projectile is transparent, deactivate the projectile
         {
             gameObject.SetActive(false);
         }
@@ -77,6 +77,11 @@ public class TyphoonShot : Projectile
                     //remove the enemy from the list
                     enemiesTargeted[i] = null;
                 }
+                enemy.TryGetComponent(out Enemy enm);
+                if (enm == null || enm.life <= 0)
+                {
+                    enemiesTargeted[i] = null;
+                }
             }
         }
         AdjustLigthtningVisuals();
@@ -91,13 +96,13 @@ public class TyphoonShot : Projectile
         if (lifetimeTimer <= TotalDuration)
         {
             DetectEnemies();
-            DamageEnemiesInTheList();
+            DamageTargetedEnemies();
         }
         Vector2 dirToTarget = Vector2.zero;
         for (int i = 0; i < MaxTargets; i++)
         {
             Transform target = enemiesTargeted[i];
-            if(target == null)
+            if (target == null)
             {
                 continue;
             }
@@ -135,7 +140,7 @@ public class TyphoonShot : Projectile
             }
         }
     }
-    private void DamageEnemiesInTheList()
+    private void DamageTargetedEnemies()
     {
         for (int i = 0; i < enemiesTargeted.Length; i++)
         {
@@ -146,7 +151,7 @@ public class TyphoonShot : Projectile
             {
                 //based on the transform component of the enemy, try to get the component that
                 //handles being damaged
-                if(enemy.TryGetComponent(out IDamageable enemyDamageableComponent))
+                if (enemy.TryGetComponent(out IDamageable enemyDamageableComponent))
                 {
                     //if we successfully get it, then deal damage to the enemy
                     enemyDamageableComponent.Damage(Damage);
@@ -155,7 +160,7 @@ public class TyphoonShot : Projectile
                 hitTimers[i] -= SecondsPerHit;
             }
         }
-       
+
     }
     private void DetectEnemies()
     {
@@ -167,6 +172,17 @@ public class TyphoonShot : Projectile
         {
             //for every enemy hitbox in the hitboxes detected list
             Collider2D enemyHitbox = enemyColliders[i];
+            if (enemyHitbox.TryGetComponent(out Enemy enemy))
+            {
+                if (enemy.life <= 0)
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                continue;
+            }
             //check if it isn't already in the targeted enemies list
             //also let's see which slot of the list we can put the enemy detected without overriding anything
             int freeIndex = -1;

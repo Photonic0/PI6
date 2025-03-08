@@ -4,7 +4,17 @@ using UnityEngine;
 public class BasicShot : Projectile
 {
     const float MaxLifetime = .5f;
-    public override int Damage => 1;
+    public override int Damage { get 
+        {
+#if UNITY_EDITOR
+            if (Input.GetKey(KeyCode.Alpha1))
+            {
+                return 99999;
+            }
+#endif
+            return 1;
+        }
+    }
     public Vector2 velocity;
     float lifetime = MaxLifetime;
     private void OnEnable()

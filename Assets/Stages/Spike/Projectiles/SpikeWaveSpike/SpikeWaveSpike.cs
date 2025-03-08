@@ -87,7 +87,7 @@ public class SpikeWaveSpike : Projectile
     {
         if (audioSource != null)
         {
-            audioSource.volume = .5f;
+            audioSource.volume = 0.5f * Settings.sfxVolume;
             audioSource.PlayOneShot(SpikeStageSingleton.instance.spikeShockwave);
         }
         blindSpotWidth *= .5f;

@@ -177,6 +177,14 @@ public class SpikeEnemyThrower : Enemy
     {
         CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
         DiscardCurrentSpikeBall();
+        GetComponent<Collider2D>().enabled = false;
+        sprite.enabled = false;
+        animator.enabled = false;
+        if(TryGetComponent(out Rigidbody2D rb))
+        {
+            rb.simulated = false;
+        }
+        enabled = false;
         Destroy(parentObject, 5);
         EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position);
         return base.PreKill();

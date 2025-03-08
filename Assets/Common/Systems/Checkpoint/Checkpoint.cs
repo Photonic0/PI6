@@ -20,7 +20,7 @@ namespace Assets.Common.Systems
         [SerializeField] MeshRenderer meshRenderer;
         Color meshColor;
         [SerializeField] Texture flagTexture;
-        [SerializeField] SpriteRenderer spriteToColor;
+        [SerializeField] SpriteRenderer[] spritesToColor;
         //add like uhh sparkles or something to indicate that the checkpoint is set
         const int MeshWidth = 25;
         const int MeshHeight = 15;
@@ -30,6 +30,7 @@ namespace Assets.Common.Systems
             {
                 if(LevelInfo.latestCheckpointIndex != index)
                 {
+                    GetComponent<AudioSource>().volume = 0.8f * Settings.sfxVolume;
                     GetComponent<AudioSource>().Play();
                     GameManager.PlayerLife.HealMax();
                 }
@@ -38,7 +39,11 @@ namespace Assets.Common.Systems
         }
         private void Start()
         {
-            spriteToColor.color = LevelInfo.LevelColor;
+            for (int i = 0; i < spritesToColor.Length; i++)
+            {
+                spritesToColor[i].color = LevelInfo.LevelColor;
+
+            }
             InitializeFlag();
         }
 

@@ -7,15 +7,9 @@ using UnityEngine.UI;
 
 public class UIManagerScriptsPopulator : MonoBehaviour
 {
-    [SerializeField] Image lifeBarOutline;
-    [SerializeField] Image lifeBarFill;
-    [SerializeField] Image lifeBarBack;
-    [SerializeField] Image weaponBarOutline;
-    [SerializeField] Image weaponBarFill;
-    [SerializeField] Image weaponBarBack;
-    [SerializeField] Image bossLifeBarOutline;
-    [SerializeField] Image bossLifeBarFill;
-    [SerializeField] Image bossLifeBarBack;
+    [SerializeField] UIVerticalBar weaponBar;
+    [SerializeField] UIVerticalBar bossLifeBar;
+    [SerializeField] UIVerticalBar lifeBar;
     [SerializeField] GameObject weaponUpgradePanel;
     [SerializeField] Image basicWeaponBarFill;
     [SerializeField] Image typhoonWeaponBarFill;
@@ -45,6 +39,7 @@ public class UIManagerScriptsPopulator : MonoBehaviour
     [SerializeField] Image basicWeaponChargeDisplayWheelFill;
     [SerializeField] Image spikeWeaponChargeDisplayWheelFill;
     [SerializeField] Image discoWeaponChargeDisplayWheelFill;
+    [SerializeField] GameObject pauseScreen;
     private void Awake()
     {
 #if UNITY_EDITOR
@@ -55,7 +50,7 @@ public class UIManagerScriptsPopulator : MonoBehaviour
         }
 #endif
         //I love readability
-        UIManager.Initialize(lifeBarOutline, lifeBarFill, weaponBarOutline, weaponBarFill, bossLifeBarOutline, bossLifeBarFill, bossLifeBarBack, lifeBarBack, weaponBarBack, livesLeftText);
+        UIManager.Initialize(weaponBar, lifeBar, bossLifeBar, livesLeftText, pauseScreen);
         PlayerWeaponManager.Initialize(
             leftWheelPartTransform, leftWheelPartLockTransform, rightWheelPartTransform, rightWheelPartLockTransform,
             upWheelPartTransform, upWheelPartLockTransform, bottomWheelPartTransform, bottomWheelPartLockTransform,
@@ -63,11 +58,13 @@ public class UIManagerScriptsPopulator : MonoBehaviour
             typhoonWeaponIcon, basicWeaponIcon, spikeWeaponIcon, discoWeaponIcon,
             typhoonWeaponChargeDisplayWheelFill, basicWeaponChargeDisplayWheelFill, spikeWeaponChargeDisplayWheelFill, discoWeaponChargeDisplayWheelFill
         );
-
         for (int i = 0; i < uiThingsToAnimate.Length; i++)
         {
             GameManager.AddToPausedUpatedObjs(uiThingsToAnimate[i]);
         }
+        GameManager.AddToPausedUpatedObjs(lifeBar);
+        GameManager.AddToPausedUpatedObjs(weaponBar);
+        GameManager.AddToPausedUpatedObjs(bossLifeBar);
         //gameobj has other scripts, so only destroy the script component, not the game object
         Destroy(this);
     }

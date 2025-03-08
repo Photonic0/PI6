@@ -71,9 +71,9 @@ public class SpikeBossAI : Enemy
 
 
     const int SpikeShockwaveActionCount = 1;//The action is the shockwave creation
-    const float SpikeShockwaveGoToAirStallPointDuration = .4f;
+    const float SpikeShockwaveGoToAirStallPointDuration = .25f;
     const float SpikeShockwaveAirStallHeight = 5.5f;
-    const float SpikeShockwaveAirStallDuration = .35f;
+    const float SpikeShockwaveAirStallDuration = .25f;
     const float SpikeShockwaveDownMovementDuration = .1f;
     const float SpikeShockwaveGroundStayDuration = .25f;
 
@@ -92,7 +92,7 @@ public class SpikeBossAI : Enemy
     const float SwingingSpikeBallDelay = 2f;
     const float SwingingSpikeBallSwingDuration = 2f;
 
-    public override int LifeMax => 70;
+    public override int LifeMax => 120;
     bool StateJustStarted => stateTimer >= 0 && stateTimer < 1E-20f;
     bool IsOnLeftSideOfArena => transform.position.x < arenaCenter.x;
     bool IsOnRightSideOfArena => transform.position.x > arenaCenter.x;
@@ -628,24 +628,16 @@ public class SpikeBossAI : Enemy
         {
             spikeBalls[i].gameObject.SetActive(false);
         }
-        DeathParticle.Spawn(transform.position, FlipnoteColors.Yellow, audioSource);
-        rb.isKinematic = true;
-        GetComponent<BoxCollider2D>().enabled = false;
-        StartCoroutine(DoBigExplosionReturnToMainMenuAfter3SecAndUnlockUpgrade());
+        for (int i = 0; i < fallingSpikePool.Length; i++)
+        {
+            fallingSpikePool[i].gameObject.SetActive(false);
+        }
+        swingingSpikeBall.GetComponent<Collider2D>().enabled = false;
+        PlayerWeaponManager.UnlockSpike();
+        BossHelper.BossDeath(gameObject, this, null, FlipnoteColors.Yellow, arenaCenter);
         return false;
     }
-    IEnumerator DoBigExplosionReturnToMainMenuAfter3SecAndUnlockUpgrade()
-    {
-        ScreenShakeManager.AddTinyShake();
-        yield return new WaitForSecondsRealtime(DeathParticle.SpinEffectDuration);
-        ScreenShakeManager.AddLargeShake();
-        sprite.enabled = false;
-        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
-        yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration);
-        PlayerWeaponManager.UnlockSpike();
-        LevelInfo.PrepareStageChange();
-        SceneManager.LoadScene(SceneIndices.MainMenu);
-    }
+
     Vector2 LimitDirection(Vector2 throwPos, Vector2 target)
     {
         Vector2 arenaBottomLeft = arenaCenter;

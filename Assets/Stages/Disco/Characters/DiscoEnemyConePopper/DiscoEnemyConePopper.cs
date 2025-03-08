@@ -2,7 +2,7 @@ using Assets.Common.Consts;
 using Assets.Helpers;
 using UnityEngine;
 
-public class DiscoEnemyConePopper : Enemy, IMusicSyncable
+public class DiscoEnemyConePopper : Enemy, IMusicSyncable, IMusicSyncableWithoutSlightDelay
 {
     static readonly int AnimIDRise = Animator.StringToHash("Rise");
     static readonly int AnimIDFall = Animator.StringToHash("Fall");
@@ -25,17 +25,23 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
     [SerializeField] int direction;
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] AudioSource audioSource;
-    public void DoMusicSyncedAction()
+    public void DoMusicSyncedActionWithoutDelay()
     {
-        if(life <= 0)
+        if (life <= 0 && enabled)
         {
             RollForDrop();
             gameObject.SetActive(true);
             EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
             CommonSounds.PlayBwow(audioSource);
+            enabled = false;
+            GetComponent<SpriteRenderer>().enabled = false;
+            Destroy(gameObject, 1f);
             return;
         }
-        if (state == StateIDPostAttack || state == StateIDAboutToAttack)
+    }
+    public void DoMusicSyncedAction()
+    {
+        if (!enabled || state == StateIDPostAttack || state == StateIDAboutToAttack)
         {
             return;
         }
@@ -73,6 +79,7 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
     public override void Start()
     {
         DiscoMusicEventManager.AddSyncableObject(this);
+        DiscoMusicEventManager.AddSyncableObjectWithoutSlightDelay(this);
         base.Start();
     }
     void Update()
@@ -192,4 +199,6 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable
         pos.y += 1;
         Gizmos.DrawWireSphere(pos, 1f);
     }
+
+
 }

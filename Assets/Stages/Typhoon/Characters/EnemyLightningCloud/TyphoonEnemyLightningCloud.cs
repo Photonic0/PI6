@@ -22,6 +22,7 @@ public class TyphoonEnemyLightningCloud : Enemy
     [SerializeField] SimpleLightningRenderer lightningEffect;
     [SerializeField] new Transform transform;
     [SerializeField] ParticleSystem lightningTelegraphParticles;
+    [SerializeField] AudioSource audioSource;
     public override void Start()
     {
         base.Start();
@@ -174,6 +175,7 @@ public class TyphoonEnemyLightningCloud : Enemy
     }
     public override bool PreKill()
     {
+        CommonSounds.Play(TyphoonStageSingleton.instance.typhoonEnemyDeath, audioSource);
         lightningEffect.Stop();
         TyphoonStageSingleton.RemoveLightningCloudEnemyFromList(this);
         EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position, 0.25f);

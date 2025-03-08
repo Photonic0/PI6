@@ -249,6 +249,13 @@ namespace Assets.Helpers
         {
             for (int i = 0; i < objects.Length; i++)
             {
+                if(objects[i].gameObject == null)
+                {
+                    objects[i] = objects[^1];
+                    Array.Resize(ref objects, objects.Length - 1);
+                    i--;
+                    continue;//needed because what if there are 2 null objs in a row
+                }
                 if (!objects[i].gameObject.activeInHierarchy)
                 {
                     index = i;
@@ -262,6 +269,13 @@ namespace Assets.Helpers
         {
             for (int i = 0; i < objects.Length; i++)
             {
+                if (objects[i].gameObject == null)
+                {
+                    objects[i] = objects[^1];
+                    Array.Resize(ref objects, objects.Length - 1);
+                    i--;
+                    continue;//needed because what if there are 2 null objs in a row
+                }
                 if (!objects[i].gameObject.activeInHierarchy)
                 {
                     obj = objects[i];

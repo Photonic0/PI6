@@ -40,6 +40,7 @@ namespace Assets.Common.Characters.Main.Scripts
             {
                 if (chances < 0)
                 {
+                    GameManager.startedGame = false;
                     LevelInfo.PrepareStageChange();
                     SceneManager.LoadScene(SceneIndices.MainMenu);
                     chances = StartingChances;
@@ -47,13 +48,16 @@ namespace Assets.Common.Characters.Main.Scripts
                 else
                 {
                     int activeSceneIndex = SceneManager.GetActiveScene().buildIndex;
-
+                    
                     //shouldn't awake of scene scripts be called here??
                     //apparently not
                     SceneManager.LoadScene(activeSceneIndex);//right here the gamemanager player references will be swapped.
-
+                    if (MusicManager.PlayingBossMusic)
+                    {
+                        MusicManager.RestartCurrentLevelMusic();
+                    }
                     //because thing didn't work, now the checkpoint respawn is called on
-                    //multiscene singleton populator
+                    //multiscene singleton populator            
                 }
             }
         }

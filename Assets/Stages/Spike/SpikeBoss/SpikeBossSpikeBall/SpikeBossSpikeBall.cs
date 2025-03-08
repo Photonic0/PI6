@@ -8,7 +8,7 @@ public class SpikeBossSpikeBall : Projectile
     public Rigidbody2D rb;
     float timer = 0;
     public bool dontSpawnShockwave;
-    public override int Damage => 2;
+    public override int Damage => 4;
     private void FixedUpdate()
     {
         if (!rb.isKinematic)

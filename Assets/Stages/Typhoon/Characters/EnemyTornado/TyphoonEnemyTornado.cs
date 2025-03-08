@@ -108,8 +108,15 @@ public class TyphoonEnemyTornado : Enemy
     }
     public override bool PreKill()
     {
+        CommonSounds.Play(TyphoonStageSingleton.instance.typhoonEnemyDeath, audioSource);
         TyphoonStageSingleton.RemoveTornadoEnemyFromList(this);
         EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        GetComponent<Collider2D>().enabled = false;
+        GetComponent<SpriteRenderer>().enabled = false;
+        GetComponent<Animator>().enabled = false;
+        rb.simulated = false;
+        enabled = false;
+        Destroy(parent.gameObject, 1f);
         return base.PreKill();
     }
 

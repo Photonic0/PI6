@@ -11,10 +11,15 @@ public class OneUp : MonoBehaviour
     bool collected;
     float timer;
     const float CollectAnimDuration = .25f;
+    private void Start()
+    {
+        sprite.color = LevelInfo.LevelColor;
+    }
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(Tags.Player))
         {
+            audioSource.volume = 0.8f * Settings.sfxVolume;
             audioSource.Play();
             PlayerLife.chances++;
             GetComponent<BoxCollider2D>().enabled = false;

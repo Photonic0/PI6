@@ -23,7 +23,7 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
     }
     void Update()
     {
-        
+
         switch (state)
         {
             case StateIDHarmful:
@@ -68,7 +68,8 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
             return;
         }
 
-        if (Input.GetKey(KeyCode.S))
+
+        if (GameManager.PlayerControl.CanInput && Input.GetKey(KeyCode.S))
         {
             collider.enabled = false;
             return;

@@ -32,7 +32,8 @@ public class DiscoBossAI : Enemy
         ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner = 12,
         SpotlightMiddleAndLeft = 13,
         SpotlightMiddleAndRight = 14,
-        ThrowBallThenSingleConfetti = 15
+        ThrowBallThenSingleConfetti = 15,
+        ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner_ConfettiAllAtOnceOnLastThrow = 16,
     }
     [Serializable]
     class StateData
@@ -168,6 +169,7 @@ public class DiscoBossAI : Enemy
             case StateID.ThrowBallMiddleLeftAndMiddleRight:
             case StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner:
             case StateID.ThrowBallThenSingleConfetti:
+            case StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner_ConfettiAllAtOnceOnLastThrow:
                 State_ThrowBall();
                 break;
             default://case StateIDNone 
@@ -362,15 +364,24 @@ public class DiscoBossAI : Enemy
                     }
                 }
             }
-            else if (state == StateID.ThrowBallThenSingleConfetti)
+            else if (state == StateID.ThrowBallThenSingleConfetti || state == StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner_ConfettiAllAtOnceOnLastThrow)
             {
                 int remainingActions = actionCount - (stateBeatCounter - startup) - 1;
                 if (remainingActions == 1 && beatFrame)
                 {
                     for (int i = 0; i < confettiEmitters1.Length; i++)
                     {
-                        //3 beats taken for full cycle
-                        confettiEmitters1[i].StartAnimation(SecondsPerBeat * .5f, SecondsPerBeat * 1.5f, SecondsPerBeat * .5f, SecondsPerBeat * .5f);
+                        if (state == StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner_ConfettiAllAtOnceOnLastThrow)
+                        {
+                            //4 beats for full cycle
+                            confettiEmitters1[i].StartAnimation(SecondsPerBeat * .5f, SecondsPerBeat * 2.5f, SecondsPerBeat * .5f, SecondsPerBeat * .5f, SecondsPerBeat);
+                            confettiEmitters2[i].StartAnimation(SecondsPerBeat * .5f, SecondsPerBeat * 2.5f, SecondsPerBeat * .5f, SecondsPerBeat * .5f, SecondsPerBeat);
+                        }
+                        else
+                        {
+                            //3 beats taken for full cycle
+                            confettiEmitters1[i].StartAnimation(SecondsPerBeat * .5f, SecondsPerBeat * 1.5f, SecondsPerBeat * .5f, SecondsPerBeat * .5f);
+                        }
                     }
                 }
             }
@@ -381,7 +392,7 @@ public class DiscoBossAI : Enemy
                 TryDiscardCurrentHeldBall();
                 Vector2[] launchTargetPoints;
                 StateID stateToCheck;
-                if (state == StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner)
+                if (state == StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner || state == StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner_ConfettiAllAtOnceOnLastThrow)
                 {
                     stateToCheck = ((stateBeatCounter - startup) / actionRate) % 2 == 0 ? StateID.ThrowBallMiddleLeftAndMiddleRight : StateID.ThrowBallMiddleAndOppositeCorner;
                 }
@@ -681,24 +692,9 @@ public class DiscoBossAI : Enemy
         {
             ballProjPool[i].gameObject.SetActive(false);
         }
-
-        rb.isKinematic = true;
-        GetComponent<Collider2D>().enabled = false;
-        DeathParticle.Spawn(transform.position, FlipnoteColors.Magenta, audioSource);
-        StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
-        return false;
-    }
-    IEnumerator ReturnToMainMenuAfter3SecAndUnlockUpgrade()
-    {
-        ScreenShakeManager.AddTinyShake();
-        yield return new WaitForSecondsRealtime(DeathParticle.SpinEffectDuration);
-        ScreenShakeManager.AddLargeShake();
-        sprite.enabled = false;
-        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
-        yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration);
         PlayerWeaponManager.UnlockDisco();
-        LevelInfo.PrepareStageChange();
-        SceneManager.LoadScene(SceneIndices.MainMenu);
+        BossHelper.BossDeath(gameObject, this, null, FlipnoteColors.Magenta, arenaCenter);
+        return false;
     }
     Vector3 GetArenaSide(bool falseForLeftTrueForRight, float padding = 1)
     {

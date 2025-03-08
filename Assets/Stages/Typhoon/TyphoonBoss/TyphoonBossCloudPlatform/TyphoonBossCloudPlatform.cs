@@ -162,31 +162,54 @@ public class TyphoonBossCloudPlatform : MonoBehaviour
     }
     public void EnableAppropriateMovementIndicator(sbyte oldPositionID, sbyte currentPositionID)
     {
-        if(oldPositionID > currentPositionID)
+        DisableMovementIndicators();
+
+        int movementDifference = currentPositionID - oldPositionID;
+        if (movementDifference > 0)
         {
-            downMovementIndicator.SetActive(true);
-            upMovementIndicator.SetActive(false);
-            doubleUpMovementIndicator.SetActive(false);
-            if(Mathf.Abs(oldPositionID - currentPositionID) > 1)
-            {
-                doubleDownMovementIndicator.SetActive(true);
-            }
-        }
-        else if(oldPositionID < currentPositionID)
-        {
-            downMovementIndicator.SetActive(false);
             upMovementIndicator.SetActive(true);
-            doubleDownMovementIndicator.SetActive(false);
-            if (Mathf.Abs(oldPositionID - currentPositionID) > 1)
+            if (movementDifference > 1)
             {
                 doubleUpMovementIndicator.SetActive(true);
             }
         }
-        else
+        else if (movementDifference < 0)
         {
-            DisableMovementIndicators();
+            downMovementIndicator.SetActive(true);
+            if (movementDifference < -1)
+            {
+                doubleDownMovementIndicator.SetActive(true);
+            }
         }
     }
+
+    //public void EnableAppropriateMovementIndicator(sbyte oldPositionID, sbyte currentPositionID)
+    //{
+    //    if(oldPositionID > currentPositionID)
+    //    {
+    //        downMovementIndicator.SetActive(true);
+    //        upMovementIndicator.SetActive(false);
+    //        doubleUpMovementIndicator.SetActive(false);
+    //        if(Mathf.Abs(oldPositionID - currentPositionID) > 1)
+    //        {
+    //            doubleDownMovementIndicator.SetActive(true);
+    //        }
+    //    }
+    //    else if(oldPositionID < currentPositionID)
+    //    {
+    //        downMovementIndicator.SetActive(false);
+    //        upMovementIndicator.SetActive(true);
+    //        doubleDownMovementIndicator.SetActive(false);
+    //        if (Mathf.Abs(oldPositionID - currentPositionID) > 1)
+    //        {
+    //            doubleUpMovementIndicator.SetActive(true);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        DisableMovementIndicators();
+    //    }
+    //}
     public void DisableMovementIndicators()
     {
         upMovementIndicator.SetActive(false);

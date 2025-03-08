@@ -20,8 +20,10 @@ namespace Assets.Common.Characters.Main.Scripts
             {
                 charge -= ChargePerUse;
                 weaponCooldown = Use();
+                UIManager.UpdateWeaponBar();
                 return true;    
             }
+            UIManager.UpdateWeaponBar();
             return false;
         }
         /// <returns>weapon cooldown in seconds</returns>

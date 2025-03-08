@@ -17,6 +17,7 @@ public class TyphoonEnemyCloud : Enemy
     [SerializeField] TyphoonEnemyCloudProjectile[] projPool;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] ParticleSystem deathParticle;
+    [SerializeField] AudioSource audioSource;
     int state;
     float timer;
     public override void Start()
@@ -80,7 +81,7 @@ public class TyphoonEnemyCloud : Enemy
             }
             TyphoonEnemyCloudProjectile proj = projPool[index];
             proj.gameObject.SetActive(true);
-            proj.transform.position = transform.position + new Vector3(Random2.Float(-0.6f, 0.6f), -1);
+            proj.transform.position = transform.position + new Vector3(Random2.Float(-0.6f, 0.6f), -0.7f);
             proj.rb.velocity = new Vector2(0, -RainFallSpeed);
         }
     }
@@ -88,9 +89,10 @@ public class TyphoonEnemyCloud : Enemy
     {
         if (life <= 0)
         {
+            CommonSounds.Play(TyphoonStageSingleton.instance.typhoonEnemyDeath, audioSource);
             deathParticle.transform.position = transform.position;
             deathParticle.Emit(50);
-            Destroy(parent.gameObject, 1);
+            Destroy(parent.gameObject, 1f);
         }
     }
     private void OnDisable()
@@ -105,6 +107,7 @@ public class TyphoonEnemyCloud : Enemy
     {
         TyphoonStageSingleton.RemoveCloudEnemyFromList(this);
         EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        gameObject.SetActive(false);
         return base.PreKill();
     }
 }

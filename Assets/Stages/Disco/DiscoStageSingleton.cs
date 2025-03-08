@@ -18,6 +18,9 @@ public class DiscoStageSingleton : MonoBehaviour
     }
     public static void PlayBwowLite(AudioSource audioSource)
     {
+        audioSource.pitch = 1f;
+        audioSource.volume = 1f * Settings.sfxVolume;
         audioSource.PlayOneShot(instance.bwowLite);
     }
 }
+ 

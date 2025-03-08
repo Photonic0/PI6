@@ -97,6 +97,7 @@ public class BossGate : MonoBehaviour
         if (boss is SpikeBossAI spikeBoss)
         {
             spikeBoss.ChangeToIntro();
+            MusicManager.StartBossMusic();
         }
         else if (boss is TyphoonBossAI typhoonBoss)
         {
@@ -108,6 +109,8 @@ public class BossGate : MonoBehaviour
                 FindObjectOfType<TyphoonCameraSystem>().enabled = false;
             }
             typhoonBoss.ChangeToIntro();
+            MusicManager.StartBossMusic();
+            
         }
         else if (boss is DiscoBossAI discoBoss)
         {

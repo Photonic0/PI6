@@ -2,12 +2,12 @@ using Assets.Common.Consts;
 using Assets.Helpers;
 using UnityEngine;
 
-public class DiscoEnemyBallRider : Enemy, IMusicSyncable
+public class DiscoEnemyBallRider : Enemy, IMusicSyncable, IMusicSyncableWithoutSlightDelay
 {
     public int BeatsPerAction => 1;
     public int BeatOffset => 0;
 
-    public override int LifeMax => 12;
+    public override int LifeMax => 9;
     [SerializeField] GameObject leftSprite;
     [SerializeField] GameObject rightSprite;
     [SerializeField] Transform leftSpriteTransform;
@@ -16,26 +16,36 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform ballTransform;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] DiscoEnemyBallRiderBall ball;
     float bounceTimer;
     public override void Start()
     {
         DiscoMusicEventManager.AddSyncableObject(this);
+        DiscoMusicEventManager.AddSyncableObjectWithoutSlightDelay(this);
         base.Start();
     }
-    public void DoMusicSyncedAction()
+    public void DoMusicSyncedActionWithoutDelay()
     {
-        if(life <= 0)
+        if (life <= 0 && enabled)
         {
+            CommonSounds.PlayBwow(audioSource);
             EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, leftSpriteTransform.position);
             EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, ballTransform.position);
             leftSprite.SetActive(false);
             rightSprite.SetActive(false);
-            ballTransform.gameObject.SetActive(false);
             RollForDrop();
+            enabled = false;
+            return;
+        }
+    }
+    public void DoMusicSyncedAction()
+    {
+        if (!enabled)
+        {
             return;
         }
         bounceTimer = 0;
-        if(leftSprite == null || rightSprite == null || ballTransform == null)
+        if (leftSprite == null || rightSprite == null || ballTransform == null)
         {
             return;
         }
@@ -47,7 +57,6 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
             rightSprite.SetActive(!rightActive);
         }
     }
-
     private void FixedUpdate()
     {
         Vector2 point = transform.position;
@@ -69,9 +78,10 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
         Vector3 playerPos = GameManager.PlayerPosition;
         Vector3 pos = transform.position;
         Vector2 vel = rb.velocity;
-        if (Helper.EnemyAggroCheck(pos, playerPos, 6, 3))
+        float horizontalAggroRange = Mathf.Abs(rb.velocity.x * 2) + 7;
+        if (Helper.EnemyAggroCheck(pos, playerPos, horizontalAggroRange, 3))
         {
-            vel.x = Helper.Decay(vel.x, Mathf.Sign(playerPos.x - pos.x) * 4f, 50);
+            vel.x = Helper.Decay(vel.x, Mathf.Sign(playerPos.x - pos.x) * 4.5f, 50);
             rb.velocity = vel;
         }
         pos.y += offsetY;
@@ -85,9 +95,11 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable
     }
     public override bool PreKill()
     {
+        ball.Release(rb.velocity);
         rb.velocity = Vector2.zero;
         rb.isKinematic = true;
-        GetComponent<Collider2D>().enabled = false; 
+        rb.simulated = false;
+        GetComponent<Collider2D>().enabled = false;
         return false;
     }
     private void OnDestroy()

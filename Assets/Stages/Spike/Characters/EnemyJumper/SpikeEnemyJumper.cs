@@ -161,7 +161,7 @@ public class SpikeEnemyJumper : Enemy
                 timeToReach = MinTimeToReach;
                 jumpXSpeed = Mathf.Abs(deltaX) / timeToReach;
             }
-            if(timeToReach > MaxTimeToReach)
+            if (timeToReach > MaxTimeToReach)
             {
                 timeToReach = MaxTimeToReach;
                 jumpXSpeed = Mathf.Abs(deltaX) / timeToReach;
@@ -208,6 +208,11 @@ public class SpikeEnemyJumper : Enemy
     {
         CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
         EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position, .25f);
+        sprite.enabled = false;
+        animator.enabled = false;
+        GetComponent<Collider2D>().enabled = false;
+        rb.simulated = false;
+        enabled = false;
         return base.PreKill();
     }
     public override void OnHit(int damageTaken)

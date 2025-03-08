@@ -812,8 +812,8 @@ public class TyphoonBossAI : Enemy
         if (StateJustStarted)
         {
             sbyte previousLeftPlatformTargetID = leftPlatformTargetID;
-            sbyte previousRightPlatformTargetID = rightPlatformTargetID;
             sbyte previousMiddlePlatformTargetID = middlePlatformTargetID;
+            sbyte previousRightPlatformTargetID = rightPlatformTargetID;
         RandomizationStart:
             GetRandomPlatformHeightID(out leftPlatformTargetID, out middlePlatformTargetID, out rightPlatformTargetID);
             int amountOfDifference = 0;
@@ -1029,26 +1029,9 @@ public class TyphoonBossAI : Enemy
     public override bool PreKill()
     {
         lightningRenderer.Stop();
-        for (int i = 0; i < lightningOrbs.Length; i++)
-        {
-            lightningOrbs[i].gameObject.SetActive(false);
-        }
-        rb.isKinematic = true;
-        GetComponent<Collider2D>().enabled = false;
-        DeathParticle.Spawn(transform.position, FlipnoteColors.Blue, audioSource);
-        StartCoroutine(ReturnToMainMenuAfter3SecAndUnlockUpgrade());
+        PlayerWeaponManager.UnlockTyphoon();
+        BossHelper.BossDeath(gameObject, this, null, FlipnoteColors.Blue, arenaCenter);
         return false;
-    }
-    IEnumerator ReturnToMainMenuAfter3SecAndUnlockUpgrade()
-    {
-        ScreenShakeManager.AddTinyShake();
-        yield return new WaitForSecondsRealtime(DeathParticle.SpinEffectDuration);
-        ScreenShakeManager.AddLargeShake();
-        sprite.enabled = false;
-        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Blue, transform.position);
-        yield return new WaitForSecondsRealtime(3f - DeathParticle.SpinEffectDuration); PlayerWeaponManager.UnlockTyphoon();
-        LevelInfo.PrepareStageChange();
-        SceneManager.LoadScene(SceneIndices.MainMenu);
     }
     static float Easing010(float progress)
     {

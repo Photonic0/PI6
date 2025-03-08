@@ -1,4 +1,3 @@
-using Assets.Common.Consts;
 using Assets.Common.Interfaces;
 using Assets.Helpers;
 using UnityEngine;
@@ -60,10 +59,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected void RollForDrop()
     {
-        bool spawnDrop = Random2.OneIn(7);
-#if UNITY_EDITOR
-        spawnDrop = true;
-#endif
+        bool spawnDrop = Random2.OneIn(5);
         if (spawnDrop)
         {
             RestoreDrop.SpawnRestore(transform.position);

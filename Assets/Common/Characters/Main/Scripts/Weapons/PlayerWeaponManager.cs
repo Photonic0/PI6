@@ -51,7 +51,9 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         public bool UnlockedSpikeWeapon { get => weaponUnlockFlags[SpikeWeaponIndex]; set => weaponUnlockFlags[SpikeWeaponIndex] = value; }
         public bool UnlockedDiscoWeapon { get => weaponUnlockFlags[DiscoWeaponIndex]; set => weaponUnlockFlags[DiscoWeaponIndex] = value; }
         [SerializeField] bool[] weaponUnlockFlags;
-
+        public bool weaponsMenuOpen;
+        public static bool WeaponsMenuOpen => instance.weaponsMenuOpen;
+        public bool IsNull => this == null;
         private void Awake()
         {
             if (instance != null && instance != this)
@@ -66,7 +68,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             weaponUnlockFlags = new bool[] { true, false, false, false };
             selectedWeaponIndex = BasicWeaponIndex;
             RechargeAll();
-        }
+        } 
         private void Update()
         {
             UpdateWithDT(Time.deltaTime);
@@ -82,17 +84,23 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
                 return;
             bool justPaused = false;
             pauseButtonReleaseLockoutTimer -= dt;
-            if (!GameManager.Paused && Input.GetKeyDown(KeyCode.Escape))
+            if (!OptionsMenu.optionsMenuOpen)
             {
-                pauseButtonReleaseLockoutTimer = .2f;
-                justPaused = true;
-                OpenMenu();
+                if (GameManager.PlayerControl.CanInput)
+                {
+                    if (!GameManager.Paused && !instance.weaponsMenuOpen && Input.GetKeyDown(Settings.openWeaponsMenuKey))
+                    {
+                        pauseButtonReleaseLockoutTimer = .2f;
+                        justPaused = true;
+                        OpenMenu();
+                    }
+                    else if (GameManager.Paused && ((Settings.IsWeaponSelectControlModeToggle && pauseButtonReleaseLockoutTimer < 0.1f && Input.GetKeyDown(Settings.openWeaponsMenuKey)) || (pauseButtonReleaseLockoutTimer <= 0 && Input.GetKeyUp(Settings.openWeaponsMenuKey) && Settings.IsWeaponSelectControlModeHold)))
+                    {
+                        CloseMenu();
+                    }
+                }
             }
-            else if (GameManager.Paused && ((pauseButtonReleaseLockoutTimer < 0.1f && (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0))) || (pauseButtonReleaseLockoutTimer <= 0 && Input.GetKeyUp(KeyCode.Escape))))
-            {
-                CloseMenu();
-            }
-            if (GameManager.Paused)
+            if (GameManager.Paused && weaponsMenuOpen)
             {
                 float scale = wheelRectTransform.localScale.x;
                 scale = Decay(scale, 1f, 30f, dt);
@@ -136,10 +144,10 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         }
         public static void OpenMenu()
         {
+            instance.weaponsMenuOpen = true;
             //instance.wheelGameObj.SetActive(true);
             CommonSounds.PlayUIConfirm();
             GameManager.PauseGame();
-            UIManager.LivesLeftText.text = $"Lives: {PlayerLife.chances}";
             instance.rightWheelPartLockTransform.gameObject.SetActive(!instance.weaponUnlockFlags[BasicWeaponIndex]);
             instance.bottomWheelPartLockTransform.gameObject.SetActive(!instance.weaponUnlockFlags[TyphoonWeaponIndex]);
             instance.leftWheelPartLockTransform.gameObject.SetActive(!instance.weaponUnlockFlags[SpikeWeaponIndex]);
@@ -151,11 +159,21 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         }
         public static void CloseMenu()
         {
+            instance.weaponsMenuOpen = false;
             instance.ResetScaleOfAllTransforms();
             //instance.wheelGameObj.SetActive(false);
             CommonSounds.PlayUIConfirm();
             GameManager.UnpauseGame();
-            GameManager.PlayerControl.weapon = weapons[instance.selectedWeaponIndex];
+            PlayerWeapon weapon = weapons[instance.selectedWeaponIndex];
+            GameManager.PlayerControl.weapon = weapon;
+            if (instance.selectedWeaponIndex == BasicWeaponIndex)
+            {
+                UIManager.DeactivateWeaponBar();
+            }
+            else
+            {
+                UIManager.ActivateWeaponBar(PlayerWeapon.GetWeaponColorSafely(weapon));
+            }
         }
         public static void Initialize(
             RectTransform leftWheelPartTransform, RectTransform leftWheelPartLockTransform, RectTransform rightWheelPartTransform, RectTransform rightWheelPartLockTransform,
@@ -297,6 +315,10 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
             currentValue = targetValue + (currentValue - targetValue) * Mathf.Exp(-decay * dt);
             currentValue = Mathf.MoveTowards(currentValue, targetValue, 0.001f);
             return currentValue;
+        }
+        private void OnDestroy()
+        {
+            GameManager.RemoveFromPausedUpdateObjs(this);
         }
     }
 }

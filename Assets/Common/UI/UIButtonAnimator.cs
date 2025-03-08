@@ -10,6 +10,7 @@ public class UIButtonAnimator : MonoBehaviour, IUpdatableWhenPaused
     int currentFrameIndex;
     [SerializeField] new GameObject gameObject;
     public GameObject GameObject => gameObject;
+    public bool IsNull => this == null || gameObject == null;
     void Start()
     {
         currentFrameIndex = 0;
@@ -37,5 +38,9 @@ public class UIButtonAnimator : MonoBehaviour, IUpdatableWhenPaused
             currentFrameIndex %= frames.Length;
             buttonImage.sprite = frames[currentFrameIndex];
         }
+    }
+    private void OnDestroy()
+    {
+       GameManager.RemoveFromPausedUpdateObjs(this);
     }
 }

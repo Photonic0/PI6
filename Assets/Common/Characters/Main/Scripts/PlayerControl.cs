@@ -9,8 +9,6 @@ public class PlayerControl : MonoBehaviour
     public const float MaxCoyoteTime = 4f / 60f;
     public Vector2 acceleration;
     public new Transform transform;
-    public static KeyCode jumpKey = KeyCode.W;
-    public static KeyCode shootKey = KeyCode.Mouse0;
     public PlayerWeapon weapon;
     [SerializeField] float moveSpeed;
     [SerializeField] float jumpSpeed;
@@ -23,14 +21,17 @@ public class PlayerControl : MonoBehaviour
     const float MaxJumpTime = 0.15f;
     public const float KBTime = .3f;
     public const float KBPushbackVelocity = 2;
+    bool canInput = true;
+    public bool CanInput => canInput;
+
 #if UNITY_EDITOR
     bool ignoreCoyoteTime;
 #endif
     public Vector3 Position { get; private set; }
     public bool NotInKBAnim => GameManager.PlayerLife.immuneTime < PlayerLife.ImmuneTimeMax - KBTime;
     public bool InKBAnim => GameManager.PlayerLife.immuneTime >= PlayerLife.ImmuneTimeMax - KBTime;
-    public bool SlowWalkKeyInput => Input.GetKey(KeyCode.LeftShift);
-    public float MoveSpeedMult => Input.GetKey(KeyCode.LeftShift) ? 0.5f : 1f;
+    public bool SlowWalkKeyInput => CanInput && Input.GetKey(Settings.slowWalkKey);
+    public float MoveSpeedMult => CanInput && Input.GetKey(Settings.slowWalkKey) ? 0.5f : 1f;
     private void Awake()//can do in awake because gamemanager instance will already be loaded from previous scene
     {
         GameManager.instance.playerControl = this;
@@ -79,23 +80,24 @@ public class PlayerControl : MonoBehaviour
 
     private void Movement()
     {
-
         Vector2 velocity = rb.velocity;
         Vector2 move = new(Input.GetAxisRaw("Horizontal") * moveSpeed * MoveSpeedMult, velocity.y);
-        bool justStartedJump = jumpTimeLeft == MaxJumpTime && Input.GetKeyDown(KeyCode.W);
-
-        if (jumpTimeLeft > 0 && Input.GetKey(KeyCode.W))
+        bool justStartedJump = jumpTimeLeft == MaxJumpTime && Input.GetKeyDown(Settings.jumpKey);
+        if (CanInput)
         {
-            if (move.y < jumpSpeed)
+            if (jumpTimeLeft > 0 && Input.GetKey(Settings.jumpKey))
             {
-                move.y = jumpSpeed;
+                if (move.y < jumpSpeed)
+                {
+                    move.y = jumpSpeed;
+                }
+                jumpTimeLeft -= Time.deltaTime;
             }
-            jumpTimeLeft -= Time.deltaTime;
-        }
-        if (jumpTimeLeft < MaxJumpTime && jumpTimeLeft > 0 && Input.GetKeyUp(KeyCode.W) && rb.velocity.y > 0)
-        {
-            move.y *= .5f;
-            jumpTimeLeft = 0;
+            if (jumpTimeLeft < MaxJumpTime && jumpTimeLeft > 0 && Input.GetKeyUp(Settings.jumpKey) && rb.velocity.y > 0)
+            {
+                move.y *= .5f;
+                jumpTimeLeft = 0;
+            }
         }
         //trying to make a thing where bonking on the ceiling will reset your speed
         if (!justStartedJump && coyoteTimeLeft == 0 && jumpTimeLeft < MaxJumpTime && Mathf.Approximately(rb.velocity.y, 0))
@@ -125,8 +127,9 @@ public class PlayerControl : MonoBehaviour
 
     private void CheckWeaponUse()
     {
+
         shootCooldown -= Time.deltaTime;
-        if (shootCooldown <= 0 && Input.GetKey(shootKey))
+        if (shootCooldown <= 0 && CanInput && Input.GetKey(Settings.shootKey))
         {
             weapon.TryUse(ref shootCooldown);
         }
@@ -184,6 +187,14 @@ public class PlayerControl : MonoBehaviour
                 coyoteTimeLeft = 0;
             }
         }
+    }
+    public static void DisableInputs()
+    {
+        GameManager.PlayerControl.canInput = false;
+    }
+    public static void EnableInputs()
+    {
+        GameManager.PlayerControl.canInput = true;
     }
     private void OnCollisionStay2D(Collision2D collision)
     {

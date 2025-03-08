@@ -35,6 +35,18 @@ public class DiscoBossMusicHandler : MonoBehaviour
     [SerializeField] int debug_startMusicAtBeat = -1;
     [SerializeField] bool debug_restartMusic;
 #endif
+    static DiscoBossMusicHandler instance;
+    private void Awake()
+    {
+        instance = this;
+    }
+    private void OnDestroy()
+    {
+        if(instance == this)
+        {
+            instance = null;
+        }
+    }
     private void Start()
     {
         DiscoMusicEventManager.instance.discoBossMusicHandler = this;
@@ -49,6 +61,7 @@ public class DiscoBossMusicHandler : MonoBehaviour
             return;
         }
 #endif
+        musicAudioSource.volume = Settings.musicVolume;
         DiscoMusicEventManager.PauseMusic();
         musicAudioSource.PlayOneShot(intro);
         playMusicFileNextBeat = false;
@@ -180,7 +193,13 @@ public class DiscoBossMusicHandler : MonoBehaviour
             DoBeatActions();
         }
     }
-
+    public static void SetVolume(float volume)
+    {
+        if(instance != null)
+        {
+            instance.musicAudioSource.volume = volume;
+        }
+    }
     private void DoBeatActions()
     {
         for (int i = 0; i < syncableObjs.Length; i++)

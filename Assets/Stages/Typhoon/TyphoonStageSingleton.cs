@@ -23,6 +23,7 @@ public class TyphoonStageSingleton : MonoBehaviour
     public float fanNoiseTimer;
     public Tilemap solidTiles;
 
+    public AudioClip typhoonEnemyDeath;//ADD THESE TO THE ENEMIES
 #if UNITY_EDITOR
     [SerializeField] TileBase middleTile;
     //                        oxo       xoo         ooo         ooo             ooo         ooo             ooo         oox

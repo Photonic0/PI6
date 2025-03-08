@@ -21,6 +21,7 @@ public class SpikeEnemySlam : Enemy
     static readonly int animAttack3 = Animator.StringToHash("attack3");
     static readonly int animAttack4 = Animator.StringToHash("attack4");
     [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioSource shockwaveAudioSource;
     [SerializeField] Animator animator;
     [SerializeField] new Transform transform;
     [SerializeField] new BoxCollider2D collider;
@@ -99,7 +100,7 @@ public class SpikeEnemySlam : Enemy
         if(timer <= float.Epsilon)
         {
             ScreenShakeManager.AddSmallShake();
-            SpikeWaveSpike.StartSpikeWave(transform.position - new Vector3(0, 1.5f), 3f, 8, .25f, .1f, audioSource);
+            SpikeWaveSpike.StartSpikeWave(transform.position - new Vector3(0, 1.5f), 3f, 8, .25f, .1f, shockwaveAudioSource);
             if(Physics2D.OverlapCircle(transform.position, 1f, Layers.PlayerHurtbox) != null)
             {
                 GameManager.PlayerLife.Damage(5);
@@ -154,7 +155,7 @@ public class SpikeEnemySlam : Enemy
         enabled = false;
         collider.enabled = false;
         sprite.enabled = false;
-        Destroy(gameObject, 1);//let any remaining sound effects play out
+        Destroy(gameObject, 1f);//let any remaining sound effects play out
         RollForDrop();
         return false;
     }

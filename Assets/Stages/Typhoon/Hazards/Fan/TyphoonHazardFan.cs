@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class TyphoonHazardFan : MonoBehaviour
 {
+
+    //TODO: KEEP PLAYER CONTROL AFTER BOSS DEATH, MAKE ORBS SPEED UP TOWARDS THE PLAYER INSTEAD.
+    //Change them to be simulated and have an initial velocity, instead of setting their position every frame. 
+    //then you can lerp smooth the velocity towards the player, make it act kindalike minecraft XP orbs but with infiniyte pickup range
+
     float timer = 0;
     int state;
     const int StateIDOn = 0;
     const int StateIDOff = 1;
-    const float OnDuration = 3;
+    const float OnDuration = 3.3f;
     const float OffDuration = 2;
     const float WindColumnWidth = 2.25f;//compensates for player width as well. It's going to be checking Rect x point
     const float WindColumnHeight = 15;
@@ -20,7 +25,7 @@ public class TyphoonHazardFan : MonoBehaviour
     //state begins at 0, being on, so don't need to call particleSystem.Stop() inside Start() method.
     private void Start()
     {
-        audioSource.volume = .5f;
+        audioSource.volume = .25f;
         audioSource.clip = TyphoonStageSingleton.instance.fanNoises[Random.Range(0, TyphoonStageSingleton.instance.fanNoises.Length)];
         audioSource.Play();
         GameManager.OnPause += PauseFanNoise;
@@ -72,7 +77,7 @@ public class TyphoonHazardFan : MonoBehaviour
         float halfWidth = WindColumnWidth / 2;
         float rotationAmount = -transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         playerPos = (playerPos - center).RotatedBy(rotationAmount) + center;
-        audioSource.volume = Mathf.InverseLerp(12f, 2f, (playerPos - center).magnitude) * .5f;
+        audioSource.volume = Mathf.InverseLerp(12f, 2f, (playerPos - center).magnitude) * .25f;
 #if UNITY_EDITOR
         debug_transformedPlayerPosition = playerPos;
 #endif

@@ -116,6 +116,7 @@ public class PlayerRenderer : MonoBehaviour
         {
             SetFootstepTimerForPlayingSound();
             bodyAnimator.CrossFade(fall, 0);
+
             armNormalAnimator.CrossFade(fallArmNormal, 0);
             armCannonAnimator.CrossFade(fallArmCannon, 0);
             return;
@@ -157,6 +158,71 @@ public class PlayerRenderer : MonoBehaviour
                 CommonSounds.PlayFootstep(footstepAudioSource);
             }
         }
+    }
+    public void SetToWalkingAnimation(float velX)
+    {
+        UpdateFlipForAnimSetFunctions(velX);
+        ResetAnimatorSpeeds();
+        armNormalSprite.gameObject.SetActive(true);
+        armCannonSprite.gameObject.SetActive(false);
+        bodyAnimator.CrossFade(walk, 0);
+        footstepTimer += Time.deltaTime;
+        if (footstepTimer > FootstepSoundTimerThreshold)
+        {
+            footstepTimer %= FootstepSoundTimerThreshold;
+            if (playFootSteps)
+            {
+                CommonSounds.PlayFootstep(footstepAudioSource);
+            }
+        }
+        bodySprite.enabled = true;
+        armNormalSprite.enabled = true;
+        armNormalAnimator.CrossFade(walkArmNormal, 0);
+        armCannonAnimator.CrossFade(walkArmCannon, 0);
+    }
+    void UpdateFlipForAnimSetFunctions(float velX)
+    {
+        bool? flip = null;
+        //get rid of very small decimal values, else animations become weird
+        velX = (10000 * velX) / 10000;
+        float absVelX = Mathf.Abs(velX);
+        if (absVelX > 0)
+        {
+            flip = velX > 0;
+        }
+        if (flip != null)
+        {
+            bodySprite.flipX = flip.Value;
+            armCannonSprite.flipX = flip.Value;
+            armNormalSprite.flipX = flip.Value;
+        }
+    }
+    public void SetToFallAnimation()
+    {
+        ResetAnimatorSpeeds();
+        bodySprite.enabled = true;
+        armNormalSprite.enabled = true;
+        armNormalSprite.gameObject.SetActive(true);
+        armCannonSprite.gameObject.SetActive(false);
+        bodyAnimator.CrossFade(fall, 0);
+        armNormalAnimator.CrossFade(fallArmNormal, 0);
+        armCannonAnimator.CrossFade(fallArmCannon, 0);
+    }
+    public void SetToRiseAnimation()
+    {
+        ResetAnimatorSpeeds();
+        bodySprite.enabled = true;
+        armNormalSprite.enabled = true;
+        bodyAnimator.CrossFade(rise, 0);
+        SetFootstepTimerForPlayingSound();
+        armNormalAnimator.CrossFade(riseArmNormal, 0);
+        armCannonAnimator.CrossFade(riseArmCannon, 0);
+    }
+    public void ResetAnimatorSpeeds()
+    {
+        bodyAnimator.speed = 1f;
+        armNormalAnimator.speed = 1f;
+        armCannonAnimator.speed = 1f;
     }
     private void SetFootstepTimerForPlayingSound()
     {

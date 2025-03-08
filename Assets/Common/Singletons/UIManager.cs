@@ -1,21 +1,15 @@
 using Assets.Common.Characters.Main.Scripts;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     const int SegmentsInDisplay = 27;
-    [SerializeField] Image lifeBarOutline;
-    [SerializeField] Image lifeBarFill;
-    [SerializeField] Image lifeBarBack;
-    [SerializeField] Image weaponBarOutline;
-    [SerializeField] Image weaponBarFill;
-    [SerializeField] Image weaponBarBack;
-    [SerializeField] Image bossLifeBarOutline;
-    [SerializeField] Image bossLifeBarFill;
-    [SerializeField] Image bossLifeBarBack;
     [SerializeField] TextMeshProUGUI livesLeftText;
+    [SerializeField] GameObject pauseScreen;
+    [SerializeField] UIVerticalBar lifeBar;
+    [SerializeField] UIVerticalBar weaponBar;
+    [SerializeField] UIVerticalBar bossLifeBar;
     public static TextMeshProUGUI LivesLeftText => instance.livesLeftText;
     static UIManager instance;
     [SerializeField] AudioSource audioSource;
@@ -35,58 +29,69 @@ public class UIManager : MonoBehaviour
     }
     public static void UpdatePlayerLifeBar(int currentLife, int lifeMax = PlayerLife.LifeMax)
     {
-        if (instance.lifeBarFill == null)
+        if (instance.lifeBar == null)
         {
             return;
         }
         float percent = (float)currentLife / lifeMax;
-        percent *= SegmentsInDisplay;
-        percent = Mathf.Ceil(percent);
-        percent /= SegmentsInDisplay;
-        instance.lifeBarFill.fillAmount = percent;
+        instance.lifeBar.UpdateFill(percent);
     }
     public static void ActivateBossLifeBar(Color color)
     {
-        instance.bossLifeBarBack.gameObject.SetActive(true);
-        instance.bossLifeBarFill.color = color;
-        instance.bossLifeBarOutline.color = Color.white;
+        instance.bossLifeBar.gameObject.SetActive(true);
+        instance.bossLifeBar.SetSegmentsColor(color);
+        instance.bossLifeBar.SetBackColor(Color.white);
     }
     public static void DeactivateBossLifeBar()
     {
-        instance.bossLifeBarBack.gameObject.SetActive(false);
+        instance.bossLifeBar.gameObject.SetActive(false);
     }
     public static void UpdateBossLifeBar(float percent)
     {
-        percent *= SegmentsInDisplay;
-        percent = Mathf.Ceil(percent);
-        percent /= SegmentsInDisplay;
-        instance.bossLifeBarFill.fillAmount = percent;
+        instance.bossLifeBar.UpdateFill(percent);
     }
     public static void UpdateWeaponBar()
     {
         PlayerWeapon weapon = GameManager.PlayerControl.weapon;
         float percent = (float)weapon.charge / PlayerWeapon.MaxCharge;
-        percent *= SegmentsInDisplay;
-        percent = Mathf.Ceil(percent);
-        percent /= SegmentsInDisplay;
-        instance.weaponBarFill.fillAmount = percent;
+        instance.weaponBar.UpdateFill(percent);
     }
-    public static void ChangePlayerLifeBarColor(Color color)
+    public static void ActivateWeaponBar(Color weaponColor)
     {
-        instance.lifeBarOutline.color = color;
+        instance.weaponBar.gameObject.SetActive(true);
+        instance.weaponBar.SetSegmentsColor(weaponColor);
+        instance.weaponBar.SetBackColor(Color.white);
+        UpdateWeaponBar();
+    }
+    public static void DeactivateWeaponBar()
+    {
+        instance.weaponBar.gameObject.SetActive(false);
     }
 
-    public static void Initialize(Image lifeBarOutline, Image lifeBarFill, Image weaponBarOutline, Image weaponBarFill, Image bossLifeBarOutline, Image bossLifeBarFill, Image bossLifeBarBack, Image lifeBarBack, Image weaponBarBack, TextMeshProUGUI livesLeftText)
+    public static void ChangePlayerLifeBarColor(Color color)
     {
-        instance.lifeBarOutline = lifeBarOutline;
-        instance.lifeBarFill = lifeBarFill;
-        instance.weaponBarOutline = weaponBarOutline;
-        instance.weaponBarFill = weaponBarFill;
-        instance.bossLifeBarOutline = bossLifeBarOutline;
-        instance.bossLifeBarFill = bossLifeBarFill;
-        instance.bossLifeBarBack = bossLifeBarBack;
-        instance.lifeBarBack = lifeBarBack;
-        instance.weaponBarBack = weaponBarBack;
+        instance.lifeBar.SetBackColor(color);
+    }
+    public static void DisplayPauseScreen()
+    {
+        instance.pauseScreen.SetActive(true);
+        OptionsMenu.optionsMenuOpen = true;
+        instance.livesLeftText.text = $"Lives: {PlayerLife.chances}";
+    }
+    public static void HidePauseScreen()
+    {
+        OptionsMenu.optionsMenuOpen = false;
+        instance.pauseScreen.SetActive(false);
+    }
+    public static void Initialize(UIVerticalBar weaponBar, UIVerticalBar lifeBar, UIVerticalBar bossLifeBar, TextMeshProUGUI livesLeftText, GameObject pauseScreen)
+    {
+        weaponBar.InitializeSegments();
+        lifeBar.InitializeSegments();
+        bossLifeBar.InitializeSegments();
+        instance.weaponBar = weaponBar;
+        instance.lifeBar = lifeBar;
+        instance.bossLifeBar = bossLifeBar;
         instance.livesLeftText = livesLeftText;
+        instance.pauseScreen = pauseScreen;
     }
 }

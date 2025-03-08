@@ -1,4 +1,5 @@
 using Assets.Common.Characters.Main.Scripts;
+using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
 using Assets.Common.Interfaces;
 using System.Collections;
@@ -29,13 +30,14 @@ public class GameManager : MonoBehaviour
 
     public static Camera CurrentCam => instance.currentCam;
     Camera currentCam;
+    public static bool startedGame = false;
 
     public static Transform CurrentCamTransform => instance.currentCamTransform;
     Transform currentCamTransform;
     [SerializeField] List<IUpdatableWhenPaused> thingsToUpdateWhenPaused;
     [SerializeField] GameObject playerProjsPool;
     public static GameObject PlayerProjsPool => instance.playerProjsPool;
-
+    public static bool IsInMainMenu => SceneManager.GetActiveScene().buildIndex == SceneIndices.MainMenu;
     private void Awake()//assign player scripts refs in awake of player scripts so it goes fine when changing scenes
     {
         if (instance != null && instance != this)
@@ -44,6 +46,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            startedGame = false;
             LevelInfo.latestCheckpointIndex = -1;
             PlayerLife.chances = PlayerLife.StartingChances;
             instance = this;
@@ -90,7 +93,22 @@ public class GameManager : MonoBehaviour
             ScreenShakeManager.AddLargeShake();
         }
 #endif
-
+        if (PlayerControl == null || playerControl.CanInput)
+        {
+            if (Input.GetKeyDown(Settings.pauseKey) && !OptionsMenu.ChangingKeybinds && !PlayerWeaponManager.WeaponsMenuOpen && !IsInMainMenu)
+            {
+                if (Paused)
+                {
+                    UIManager.HidePauseScreen();
+                    UnpauseGame();
+                }
+                else
+                {
+                    UIManager.DisplayPauseScreen();
+                    PauseGame();
+                }
+            }
+        }
     }
 
     public static event UnityAction OnPause;
@@ -118,7 +136,8 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 0; i < thingsToUpdateWhenPaused.Count; i++)
             {
-                if (thingsToUpdateWhenPaused[i].GameObject == null)
+                IUpdatableWhenPaused thingToUpdateWhenPaused = thingsToUpdateWhenPaused[i];
+                if (thingToUpdateWhenPaused == null || thingToUpdateWhenPaused.IsNull || thingToUpdateWhenPaused.GameObject == null)
                 {
                     thingsToUpdateWhenPaused.RemoveAt(i);
                     //reduce i and continue so that
@@ -127,7 +146,7 @@ public class GameManager : MonoBehaviour
                     i--;
                     continue;
                 }
-                thingsToUpdateWhenPaused[i].PausedUpdate(unscaledDT);
+                thingToUpdateWhenPaused.PausedUpdate(unscaledDT);
             }
             yield return new WaitForSecondsRealtime(unscaledDT);//60 fps updating
         }
@@ -136,11 +155,11 @@ public class GameManager : MonoBehaviour
     {
         Paused = false;
         Time.timeScale = 1;
-        int buildIndex = SceneManager.GetActiveScene().buildIndex;
-        if (buildIndex == SceneIndices.DiscoStage)
-        {
-            DiscoMusicEventManager.UnPauseMusic();
-        }
+        //int buildIndex = SceneManager.GetActiveScene().buildIndex;
+        //if (buildIndex == SceneIndices.DiscoStage)
+        //{
+        DiscoMusicEventManager.UnPauseMusic();
+        //}
         if (OnUnPause != null)
         {
             OnUnPause();
@@ -150,7 +169,8 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < instance.thingsToUpdateWhenPaused.Count; i++)
         {
-            if (instance.thingsToUpdateWhenPaused[i] == null)
+            IUpdatableWhenPaused thingToUpdateWhenPaused = instance.thingsToUpdateWhenPaused[i];
+            if (thingToUpdateWhenPaused == null || thingToUpdateWhenPaused.IsNull || thingToUpdateWhenPaused.GameObject == null)
             {
                 instance.thingsToUpdateWhenPaused.RemoveAt(i);
                 i--;
@@ -163,6 +183,10 @@ public class GameManager : MonoBehaviour
         {
             instance.thingsToUpdateWhenPaused.Add(obj);
         }
+    }
+    public static void RemoveFromPausedUpdateObjs(IUpdatableWhenPaused obj)
+    {
+        instance.thingsToUpdateWhenPaused.Remove(obj);
     }
     public static void UpdatePermanentlyDestroyedObjFlagsAndDestroyObj(GameObject objToBeDestroyed, float destructionDelay = 1f)
     {
