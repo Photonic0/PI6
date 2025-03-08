@@ -11,6 +11,8 @@ namespace Assets.Common.Systems
         //index is assigned by multi scene singleton populator
         public int index;
         [SerializeField] GameObject[] objsToDespawn;
+        [SerializeField]
+        GameObject[] objsToDestroy;
         VerletSimulator flagVerletSimulation;
         [SerializeField] LineRenderer lineRenderer;
         const float OscillationSpeed = 0.7f;
@@ -195,9 +197,19 @@ namespace Assets.Common.Systems
         //that way you kinda keep the reference, because the checkpoint obj will be replaced by a new one 
         public void RespawnAt()
         {
-            for (int i = 0; i < objsToDespawn.Length; i++)
+            if (objsToDespawn != null && objsToDespawn.Length > 1)
             {
-                objsToDespawn[i].SetActive(false);
+                for (int i = 0; i < objsToDespawn.Length; i++)
+                {
+                    objsToDespawn[i].SetActive(false);
+                }
+            }
+            if (objsToDestroy != null && objsToDestroy.Length > 0)
+            {
+                for (int i = 0; i < objsToDestroy.Length; i++)
+                {
+                    Destroy(objsToDestroy[i]);
+                }
             }
             PlayerControl player = GameManager.PlayerControl;
             Vector3 spawnPoint = transform.position;

@@ -8,11 +8,13 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
     const int StateIDHarmful = 1;
     const float HarmlessDuration = 3f;
     const float HarmfulDuration = 0.4f;
+    const float TelegraphDuration = 2f;
     static readonly int animHarmless = Animator.StringToHash("CloudPlatformHarmless");
     static readonly int animHarmful = Animator.StringToHash("CloudPlatformHarmful");
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] Animator animator;
     [SerializeField] new BoxCollider2D collider;
+    [SerializeField] ParticleSystem particles;
     float timer = 0;
     int state;
 
@@ -48,9 +50,10 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
     private void State_Harmless()
     {
         //flash as warning
-        if (timer > HarmlessDuration - 1)
+        if (timer > HarmlessDuration - TelegraphDuration)
         {
-            sprite.color = Helper.Remap(timer, HarmlessDuration - 1, HarmlessDuration, Color.white, Color.black);
+            LightningParticles();
+            //sprite.color = Helper.Remap(timer, HarmlessDuration - 1, HarmlessDuration, Color.white, Color.black);
         }
         if (timer > HarmlessDuration)
         {
@@ -96,6 +99,33 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
         if (state == StateIDHarmful && collision.gameObject.CompareTag(Tags.Player))
         {
             GameManager.PlayerLife.Damage(5);
+        }
+    }
+    void LightningParticles()
+    {
+        const float TimerOffset = .2f;
+        float chancePer120thSec = .5f;
+        Vector2 particlePos = particles.transform.position;
+        Vector2 center = transform.position;
+        center -= particlePos;
+        float timer = this.timer - TimerOffset;
+        float timeLeftUntilActivation = HarmlessDuration - timer - TimerOffset;
+        float sizeIncrease = Helper.Remap(timer, HarmlessDuration - TelegraphDuration, HarmlessDuration, 0.1f, 0.35f);
+        float ringDist = Helper.Remap(timer, HarmlessDuration - TelegraphDuration, HarmlessDuration, 2f, 0f);
+        if (Random2.Percent(chancePer120thSec, 120))
+        {
+            ParticleSystem.EmitParams emitParams = new();
+            Vector2 deltaPos = -center;
+            float lifetime = Random2.Float(.2f, .45f);
+            Vector2 targetPos = center + Random2.Circular(1f);
+
+            Vector2 spawnPos = center + Random2.Ring(ringDist, ringDist + .5f);
+            emitParams.position = spawnPos;
+            emitParams.velocity = (targetPos - spawnPos) / lifetime + Random2.Circular(.5f);
+            emitParams.startLifetime = Mathf.Clamp(timeLeftUntilActivation, 0.01f, lifetime);
+            emitParams.startColor = FlipnoteColors.Yellow;
+            emitParams.startSize = Random2.Float(.01f, .11f) + sizeIncrease;
+            particles.Emit(emitParams, 1);
         }
     }
 }
