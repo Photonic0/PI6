@@ -7,7 +7,7 @@ public class WeaponSpike : PlayerWeapon
 {
     public override int ChargePerUse => 10;
 
-    public override FlipnoteColors.ColorID EquipColor => FlipnoteColors.ColorID.Yellow;
+    public override FlipnoteStudioColors.ColorID EquipColor => FlipnoteStudioColors.ColorID.Yellow;
 
     protected override float Use()
     {

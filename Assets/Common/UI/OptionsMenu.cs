@@ -1,6 +1,10 @@
+using Assets.Common.Consts;
 using Assets.Common.Interfaces;
+using Assets.Helpers;
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour, IUpdatableWhenPaused
@@ -15,12 +19,41 @@ public class OptionsMenu : MonoBehaviour, IUpdatableWhenPaused
     [SerializeField] TextMeshProUGUI slowWalkKeyText;
     [SerializeField] Slider sfxVolumeSlider;
     [SerializeField] Slider musicVolumeSlider;
+    [SerializeField] Slider loadBar;
     Settings.KeybindID keybindIDToSet = Settings.KeybindID.None;
     static TextMeshProUGUI textToChangeAfterKeybindSet;
     public static bool optionsMenuOpen;
     public static bool ChangingKeybinds => textToChangeAfterKeybindSet != null;
     public bool IsNull => this == null;
     public GameObject GameObject => gameObject;
+    public void ExitLevel()
+    {
+        for (int i = 0; i < buttonsToDisableWhileChangingKeybinds.Length; i++)
+        {
+            buttonsToDisableWhileChangingKeybinds[i].interactable = false;
+        }
+        for (int i = 0; i < slidersToDisableWhileChangingKeybinds.Length; i++)
+        {
+            slidersToDisableWhileChangingKeybinds[i].interactable = false;
+        }
+        loadBar.gameObject.SetActive(true);
+        loadBar.value = 0f;
+        CommonSounds.PlayUIConfirm();
+        MusicManager.StopMusic();
+        StartCoroutine(ExitLevelInner());
+    }
+    IEnumerator ExitLevelInner()
+    {
+        AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.MainMenu);
+        loadStatus.allowSceneActivation = false;
+        while (loadStatus.progress < 0.9f)
+        {
+            loadBar.value = loadStatus.progress / 0.9f;
+            yield return null;
+        }
+        GameManager.UnpauseGame();
+        loadStatus.allowSceneActivation = true;
+    }
     public void SliderChange_SFXVolume(float value)
     {
         value = sfxVolumeSlider.value;

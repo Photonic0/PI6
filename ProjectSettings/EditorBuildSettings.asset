@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Stages/Disco/DiscoStageScene_TesteProDaniel.unity
     guid: acef4e1ac73bdf144907d7c578913bf1
-  - enabled: 0
+  - enabled: 1
     path: Assets/Stages/Explosive/ExplosiveStageScene.unity
     guid: 2b1f922ea5f5625409d83f488bb118cb
   m_configObjects: {}

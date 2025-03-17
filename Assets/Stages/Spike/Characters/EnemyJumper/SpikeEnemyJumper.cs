@@ -207,7 +207,7 @@ public class SpikeEnemyJumper : Enemy
     public override bool PreKill()
     {
         CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
-        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position, .25f);
+        EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Yellow, transform.position, .25f);
         sprite.enabled = false;
         animator.enabled = false;
         GetComponent<Collider2D>().enabled = false;

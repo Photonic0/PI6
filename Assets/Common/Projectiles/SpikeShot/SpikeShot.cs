@@ -18,7 +18,7 @@ public class SpikeShot : Projectile
         lifetime -= Time.fixedDeltaTime;
         if (lifetime < 0 || Physics2D.OverlapCircle(rb.position, 0.5f, Layers.Tiles))
         {
-            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.Yellow, transform.position);
+            EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.Yellow, transform.position);
             gameObject.SetActive(false);
         }
         transform.Rotate(new Vector3(0, 0, Time.fixedDeltaTime * 720));
@@ -28,7 +28,7 @@ public class SpikeShot : Projectile
         base.OnHit(objectHit);
         if(objectHit.TryGetComponent<Enemy>(out _))
         {
-            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
+            EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Yellow, transform.position);
             gameObject.SetActive(false);
         }
     }

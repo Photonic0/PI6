@@ -392,7 +392,7 @@ namespace Assets.Helpers
                     emitParams.position = node1 + Random2.Circular(0.1f);
                     emitParams.velocity = deltaPos / (1.7f * lifetime) + Random2.Circular(1);
                     emitParams.startLifetime = Mathf.Min(lifetime, timeLeftUntilActivation);
-                    emitParams.startColor = FlipnoteColors.Yellow;
+                    emitParams.startColor = FlipnoteStudioColors.Yellow;
                     emitParams.startSize = Random2.Float(.01f, .11f) + sizeIncrease;
                     lightningTelegraphParticles.Emit(emitParams, 1);
                 }
@@ -404,7 +404,7 @@ namespace Assets.Helpers
                     emitParams.position = node2 + Random2.Circular(0.1f);
                     emitParams.velocity = deltaPos / (1.7f * lifetime) + Random2.Circular(1);
                     emitParams.startLifetime = Mathf.Min(lifetime, timeLeftUntilActivation);
-                    emitParams.startColor = FlipnoteColors.Yellow;
+                    emitParams.startColor = FlipnoteStudioColors.Yellow;
                     emitParams.startSize = Random2.Float(.01f, .11f) + sizeIncrease;
                     lightningTelegraphParticles.Emit(emitParams, 1);
                 }

@@ -81,7 +81,7 @@ public class TyphoonEnemyCloud : Enemy
             }
             TyphoonEnemyCloudProjectile proj = projPool[index];
             proj.gameObject.SetActive(true);
-            proj.transform.position = transform.position + new Vector3(Random2.Float(-0.6f, 0.6f), -0.7f);
+            proj.transform.position = transform.position + new Vector3(Random2.Float(-0.3f, 0.3f), -0.6f);
             proj.rb.velocity = new Vector2(0, -RainFallSpeed);
         }
     }
@@ -106,7 +106,7 @@ public class TyphoonEnemyCloud : Enemy
     public override bool PreKill()
     {
         TyphoonStageSingleton.RemoveCloudEnemyFromList(this);
-        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.Blue, transform.position, 0.25f);
         gameObject.SetActive(false);
         return base.PreKill();
     }

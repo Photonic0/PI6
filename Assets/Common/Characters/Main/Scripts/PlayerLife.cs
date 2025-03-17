@@ -24,6 +24,9 @@ namespace Assets.Common.Characters.Main.Scripts
         public float deathRestartTimer;
         [SerializeField] AudioClip hitSound;
         public bool Dead => life <= 0;
+#if UNITY_EDITOR
+        [SerializeField] bool debug_dontTakeDamage;
+#endif
         private void Update()
         {
 
@@ -31,6 +34,10 @@ namespace Assets.Common.Characters.Main.Scripts
             if (Input.GetKey(KeyCode.H))
             {
                 HealMax();
+            }
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                debug_dontTakeDamage = !debug_dontTakeDamage;
             }
 #endif
 
@@ -48,7 +55,7 @@ namespace Assets.Common.Characters.Main.Scripts
                 else
                 {
                     int activeSceneIndex = SceneManager.GetActiveScene().buildIndex;
-                    
+
                     //shouldn't awake of scene scripts be called here??
                     //apparently not
                     SceneManager.LoadScene(activeSceneIndex);//right here the gamemanager player references will be swapped.
@@ -79,6 +86,12 @@ namespace Assets.Common.Characters.Main.Scripts
         }
         public void Damage(int damage)
         {
+#if UNITY_EDITOR
+            if (debug_dontTakeDamage)
+            {
+                return;
+            }
+#endif
             if (immuneTime > 0)
                 return;
             this.life -= damage;

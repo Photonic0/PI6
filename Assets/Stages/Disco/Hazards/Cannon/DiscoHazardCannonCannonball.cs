@@ -17,7 +17,7 @@ public class DiscoHazardCannonCannonball : Projectile
     }
     private void OnDisable()
     {
-        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Magenta, transform.position);
+        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.Magenta, transform.position);
     }
     private void Update()
     {

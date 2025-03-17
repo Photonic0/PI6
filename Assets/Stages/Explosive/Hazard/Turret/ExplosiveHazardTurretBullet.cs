@@ -12,7 +12,7 @@ public class ExplosiveHazardTurretBullet : Projectile
         if(timer > 4)
         {
             gameObject.SetActive(false);
-            EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.DarkGreen, transform.position);
+            EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.DarkGreen, transform.position);
         }
     }
     private void OnDisable()
@@ -22,6 +22,6 @@ public class ExplosiveHazardTurretBullet : Projectile
     public override void OnHit(GameObject objectHit)
     {
         gameObject.SetActive(false);
-        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.DarkGreen, transform.position);
+        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.DarkGreen, transform.position);
     }
 }

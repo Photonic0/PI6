@@ -9,7 +9,7 @@ namespace Assets.Common.Characters.Main.Scripts
     {
         public const int MaxCharge = 100;
         public abstract int ChargePerUse { get; }
-        public abstract FlipnoteColors.ColorID EquipColor { get; }
+        public abstract FlipnoteStudioColors.ColorID EquipColor { get; }
 
         public int charge = MaxCharge;
         public Vector2 CannonPosition => GameManager.PlayerControl.rb.position + new Vector2(Mathf.Sign(Helper.MouseWorld.x - GameManager.PlayerPosition.x), 0.2f);
@@ -41,9 +41,9 @@ namespace Assets.Common.Characters.Main.Scripts
         {
             if (weapon == null)
             {
-                return FlipnoteColors.Orange;
+                return FlipnoteStudioColors.Orange;
             }
-            return FlipnoteColors.GetColor(weapon.EquipColor);
+            return FlipnoteStudioColors.GetColor(weapon.EquipColor);
         }
     }
 }

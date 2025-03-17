@@ -29,9 +29,9 @@ public class DiscoEnemyConePopper : Enemy, IMusicSyncable, IMusicSyncableWithout
     {
         if (life <= 0 && enabled)
         {
-            RollForDrop();
+            OnDeathEvents();
             gameObject.SetActive(true);
-            EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
+            EffectsHandler.SpawnMediumExplosion(FlipnoteStudioColors.ColorID.Magenta, transform.position);
             CommonSounds.PlayBwow(audioSource);
             enabled = false;
             GetComponent<SpriteRenderer>().enabled = false;

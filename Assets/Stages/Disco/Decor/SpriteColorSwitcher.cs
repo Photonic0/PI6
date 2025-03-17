@@ -21,11 +21,11 @@ public class SpriteColorSwitcher : MonoBehaviour, IMusicSyncable
         colorID %= 2;
         if (colorID == 0)
         {
-            sprite.color = FlipnoteColors.Magenta;
+            sprite.color = FlipnoteStudioColors.Magenta;
         }
         else
         {
-            sprite.color = FlipnoteColors.Yellow;
+            sprite.color = FlipnoteStudioColors.Yellow;
         }
     }
     public void SwitchColor()
@@ -34,11 +34,11 @@ public class SpriteColorSwitcher : MonoBehaviour, IMusicSyncable
         colorID %= 2;
         if (colorID == 0)
         {
-            sprite.color = FlipnoteColors.Magenta;
+            sprite.color = FlipnoteStudioColors.Magenta;
         }
         else
         {
-            sprite.color = FlipnoteColors.Yellow;
+            sprite.color = FlipnoteStudioColors.Yellow;
         }
     }
     private void OnDestroy()

@@ -1,5 +1,4 @@
 using Assets.Common.Interfaces;
-using Assets.Helpers;
 using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour, IDamageable
@@ -51,17 +50,17 @@ public abstract class Enemy : MonoBehaviour, IDamageable
         {
             if (PreKill())
             {
-                RollForDrop();
+                OnDeathEvents();
                 Destroy(gameObject, 1f);
             }
         }
     }
 
-    protected void RollForDrop()
+    protected void OnDeathEvents()
     {
-        bool spawnDrop = Random2.OneIn(5);
-        if (spawnDrop)
+        if(++GameManager.EnemyKillCount > 5)
         {
+            GameManager.EnemyKillCount -= 5;
             RestoreDrop.SpawnRestore(transform.position);
         }
     }

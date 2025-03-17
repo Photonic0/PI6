@@ -101,7 +101,7 @@ public class ExplosiveHazardTurret : MonoBehaviour
                 {
                     ExplosiveHazardTurretBullet bullet = bulletProjPool[index];
                     Vector2 projOrigin = projOriginTransform.position;
-                    EffectsHandler.SpawnSmallExplosion(FlipnoteColors.DarkGreen, projOrigin);
+                    EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.DarkGreen, projOrigin);
                     Vector2 shootDirection = (turretHead.eulerAngles.z * -Mathf.Deg2Rad - Mathf.PI * .5f).PolarVector_Old();
                     bullet.transform.SetPositionAndRotation(projOrigin, shootDirection.ToRotation(90));
                     bullet.gameObject.SetActive(true);

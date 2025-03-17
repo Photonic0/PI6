@@ -135,7 +135,7 @@ public class FallingSpike : Projectile
                 CommonSounds.PlayRandom(SpikeStageSingleton.instance.spikeBreak, audioSOurce);
             }
             //CommonSounds.Play(SpikeStageSingleton.instance.spikeBreakNew, audioSOurce, .5f, Random2.Float(.9f, 1.1f));
-            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
+            EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Yellow, transform.position);
             if (dontRespawn)
             {
                 if (!dontDestroy)

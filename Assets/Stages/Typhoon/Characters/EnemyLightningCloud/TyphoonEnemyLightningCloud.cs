@@ -110,7 +110,7 @@ public class TyphoonEnemyLightningCloud : Enemy
             if (!lightningEffect.gameObject.activeInHierarchy)
             {
                 lightningEffect.ActivateAndSetAttributes(0.1f, start, end, AttackDuration);
-                EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, end, AttackDuration);
+                EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Yellow, end, AttackDuration);
             }
             Collider2D playerCollider = Physics2D.OverlapBox(boxCenter, boxSize, attackDirection.Atan2Deg(), Layers.PlayerHurtbox);
             if (playerCollider != null)
@@ -178,7 +178,7 @@ public class TyphoonEnemyLightningCloud : Enemy
         CommonSounds.Play(TyphoonStageSingleton.instance.typhoonEnemyDeath, audioSource);
         lightningEffect.Stop();
         TyphoonStageSingleton.RemoveLightningCloudEnemyFromList(this);
-        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Blue, transform.position, 0.25f);
         gameObject.SetActive(false);
         return base.PreKill();
     }

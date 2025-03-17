@@ -1,6 +1,6 @@
 using Assets.Common.Systems;
 using UnityEngine;
-using static Assets.Common.Consts.FlipnoteColors;
+using static Assets.Common.Consts.FlipnoteStudioColors;
 
 public static class LevelInfo
 {

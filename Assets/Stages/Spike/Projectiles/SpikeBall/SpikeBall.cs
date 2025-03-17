@@ -41,7 +41,7 @@ public class SpikeBall : Projectile
         {
             base.OnTriggerEnter2D(collision.collider);
             gameObject.SetActive(false);
-            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, transform.position);
+            EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Yellow, transform.position);
         }
         if (Mathf.Abs(rb.velocity.x) < 1f)
         {

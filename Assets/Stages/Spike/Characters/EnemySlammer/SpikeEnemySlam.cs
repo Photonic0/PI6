@@ -149,14 +149,14 @@ public class SpikeEnemySlam : Enemy
         CommonSounds.PlayRandom(SpikeStageSingleton.instance.hardwoodHit, audioSource, 1, 1f);
         Vector2 explosionPos = transform.position;
         //explosionPos.x -= 1;
-        EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, explosionPos);
+        EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.Yellow, explosionPos);
         //explosionPos.x += 2;
         //EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position, .3f);
         enabled = false;
         collider.enabled = false;
         sprite.enabled = false;
         Destroy(gameObject, 1f);//let any remaining sound effects play out
-        RollForDrop();
+        OnDeathEvents();
         return false;
     }
 #if UNITY_EDITOR

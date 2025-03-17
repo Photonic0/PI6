@@ -58,7 +58,7 @@ public class MainMenu : MonoBehaviour
     {
 #if UNITY_EDITOR
         explosiveStageButton.SetActive(true);
-        Debug.ClearDeveloperConsole();
+      //  Debug.ClearDeveloperConsole();
 #endif
         Resolution res = Screen.currentResolution;
         Vector3 canvasPos = canvasRectTransform.position;
@@ -73,7 +73,7 @@ public class MainMenu : MonoBehaviour
         if(GameManager.startedGame)
         {
             targetGlobalPosition = globalPositionForStageSelectScreen;
-            globalMovementTransform.position = globalPositionForDifficultySelectScreen;
+            globalMovementTransform.position = globalPositionForStageSelectScreen;
             stageSelectBackButton.SetActive(false);
         }
     }
@@ -92,7 +92,7 @@ public class MainMenu : MonoBehaviour
         CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         CommonSounds.LoadSpikeStageFootsteps();
-        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Yellow);
+        LevelInfo.SetLevelColor(FlipnoteStudioColors.ColorID.Yellow);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.SpikeStage);
         loadStatus.allowSceneActivation = false;
         while (loadStatus.progress < 0.9f)
@@ -118,7 +118,7 @@ public class MainMenu : MonoBehaviour
         CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         CommonSounds.LoadDiscoStageFootsteps();
-        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Magenta);
+        LevelInfo.SetLevelColor(FlipnoteStudioColors.ColorID.Magenta);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.DiscoStage);
         loadStatus.allowSceneActivation = false;
         while (loadStatus.progress < 0.9f)
@@ -144,7 +144,7 @@ public class MainMenu : MonoBehaviour
         CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         CommonSounds.LoadTyphoonStageFootsteps();
-        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.Blue);
+        LevelInfo.SetLevelColor(FlipnoteStudioColors.ColorID.Blue);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.TyphoonStage);
         loadStatus.allowSceneActivation = false;
         while (loadStatus.progress < 0.9f)
@@ -169,7 +169,7 @@ public class MainMenu : MonoBehaviour
         CommonSounds.PlayUIConfirm();
         LevelInfo.PrepareStageChange();
         //CommonSounds.LoadTyphoonStageFootsteps(); (if needed)
-        LevelInfo.SetLevelColor(FlipnoteColors.ColorID.DarkGreen);
+        LevelInfo.SetLevelColor(FlipnoteStudioColors.ColorID.DarkGreen);
         AsyncOperation loadStatus = SceneManager.LoadSceneAsync(SceneIndices.ExplosiveStage);
         loadStatus.allowSceneActivation = false;
         while (loadStatus.progress < 0.9f)

@@ -5,7 +5,7 @@ using UnityEngine;
 //Rigidbody velocity not working properly somehow?? wtf?
 public class TyphoonEnemyTornado : Enemy
 {
-    public override int LifeMax => 10;
+    public override int LifeMax => 8;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform parent;
     [SerializeField] TyphoonEnemyTornadoLightning[] lightningProjPool;
@@ -64,6 +64,7 @@ public class TyphoonEnemyTornado : Enemy
     private void State_Aggrod()
     {
         Vector3 plrPos = GameManager.PlayerControl.Position;
+        plrPos = plrPos + (transform.position - plrPos).normalized * 0.7f;
         AccelerateTowards(plrPos);
         if (timer > ProjFireDelay)    
         {
@@ -110,7 +111,7 @@ public class TyphoonEnemyTornado : Enemy
     {
         CommonSounds.Play(TyphoonStageSingleton.instance.typhoonEnemyDeath, audioSource);
         TyphoonStageSingleton.RemoveTornadoEnemyFromList(this);
-        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Blue, transform.position, 0.25f);
+        EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.Blue, transform.position, 0.25f);
         GetComponent<Collider2D>().enabled = false;
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<Animator>().enabled = false;

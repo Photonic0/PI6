@@ -40,7 +40,7 @@ public class DiscoEnemyBallRiderBall : MonoBehaviour
     }
     private void DestroyBall()
     {
-        EffectsHandler.SpawnMediumExplosion(FlipnoteColors.Magenta, transform.position);
+        EffectsHandler.SpawnMediumExplosion(FlipnoteStudioColors.Magenta, transform.position);
         CommonSounds.PlayBwow(audioSource);
         ballSprite.enabled = false;
         outlineGameObj.SetActive(false);

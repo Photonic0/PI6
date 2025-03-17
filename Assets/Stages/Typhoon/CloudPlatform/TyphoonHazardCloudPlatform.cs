@@ -1,6 +1,7 @@
 using Assets.Common.Consts;
 using Assets.Helpers;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TyphoonHazardCloudPlatform : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] new BoxCollider2D collider;
     [SerializeField] ParticleSystem particles;
+    [SerializeField] Sprite[] telegraphSheet;
+    [SerializeField] GameObject telegraphObj;
+    [SerializeField] SpriteRenderer telegraphSprite;
     float timer = 0;
     int state;
 
@@ -52,7 +56,16 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
         //flash as warning
         if (timer > HarmlessDuration - TelegraphDuration)
         {
-            LightningParticles();
+            int telegraphIndex = (int)Helper.Remap(timer, HarmlessDuration - TelegraphDuration, HarmlessDuration, 0, telegraphSheet.Length);
+            if(telegraphIndex >= telegraphSheet.Length)
+            {
+                telegraphSprite.sprite = null;
+            }
+            else
+            {
+                telegraphSprite.sprite = telegraphSheet[telegraphIndex];
+            }
+            //LightningParticles();
             //sprite.color = Helper.Remap(timer, HarmlessDuration - 1, HarmlessDuration, Color.white, Color.black);
         }
         if (timer > HarmlessDuration)
@@ -115,7 +128,6 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
         if (Random2.Percent(chancePer120thSec, 120))
         {
             ParticleSystem.EmitParams emitParams = new();
-            Vector2 deltaPos = -center;
             float lifetime = Random2.Float(.2f, .45f);
             Vector2 targetPos = center + Random2.Circular(1f);
 
@@ -123,7 +135,7 @@ public class TyphoonHazardCloudPlatform : MonoBehaviour
             emitParams.position = spawnPos;
             emitParams.velocity = (targetPos - spawnPos) / lifetime + Random2.Circular(.5f);
             emitParams.startLifetime = Mathf.Clamp(timeLeftUntilActivation, 0.01f, lifetime);
-            emitParams.startColor = FlipnoteColors.Yellow;
+            emitParams.startColor = FlipnoteStudioColors.Yellow;
             emitParams.startSize = Random2.Float(.01f, .11f) + sizeIncrease;
             particles.Emit(emitParams, 1);
         }

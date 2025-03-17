@@ -38,6 +38,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject playerProjsPool;
     public static GameObject PlayerProjsPool => instance.playerProjsPool;
     public static bool IsInMainMenu => SceneManager.GetActiveScene().buildIndex == SceneIndices.MainMenu;
+    private int enemyKillCount;
+    public static int EnemyKillCount
+    {
+        get { return instance.enemyKillCount; }
+        set { instance.enemyKillCount = value; }
+    }
+
     private void Awake()//assign player scripts refs in awake of player scripts so it goes fine when changing scenes
     {
         if (instance != null && instance != this)
@@ -46,6 +53,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            Settings.ResetVolumeLevels();
             startedGame = false;
             LevelInfo.latestCheckpointIndex = -1;
             PlayerLife.chances = PlayerLife.StartingChances;

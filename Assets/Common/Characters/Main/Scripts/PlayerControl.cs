@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     public float coyoteTimeLeft;
-    public const float MaxCoyoteTime = 4f / 60f;
+    public const float MaxCoyoteTime = 3f / 60f;
     public Vector2 acceleration;
     public new Transform transform;
     public PlayerWeapon weapon;
@@ -14,7 +14,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] float jumpSpeed;
     public AudioSource shootAudioSource;
     public Rigidbody2D rb;
-    public Collider2D tileCollider;
+    public PolygonCollider2D tileCollider;
     public CapsuleCollider2D hurtboxCollider;
     public float shootCooldown;
     public float jumpTimeLeft = MaxJumpTime;
@@ -22,6 +22,7 @@ public class PlayerControl : MonoBehaviour
     public const float KBTime = .3f;
     public const float KBPushbackVelocity = 2;
     bool canInput = true;
+    const float FallAccel = 10;
     public bool CanInput => canInput;
 
 #if UNITY_EDITOR
@@ -144,7 +145,7 @@ public class PlayerControl : MonoBehaviour
             return;
         }
 
-        acceleration += 10 * Time.fixedDeltaTime * Physics2D.gravity;
+        acceleration += FallAccel * Time.fixedDeltaTime * Physics2D.gravity;
         rb.velocity += acceleration;
         acceleration.x = 0;
         acceleration.y = 0;
@@ -233,5 +234,35 @@ public class PlayerControl : MonoBehaviour
         GetTopBoxOverlapBoxParams(out point, out size);
         Gizmos.color = Color.white;
         Gizmos.DrawCube(point, size);
+
+        Vector3 rightEdge = tileCollider.points[4];
+        Vector3 leftEdge = tileCollider.points[3];
+        rightEdge += transform.position;
+        leftEdge += transform.position;
+        DrawJumpArc(leftEdge, 1);
+        DrawJumpArc(rightEdge, 1);
+        DrawJumpArc(leftEdge, -1);
+        DrawJumpArc(rightEdge, -1);
+    }
+
+    private void DrawJumpArc(Vector3 arcStart, float xDir)
+    {
+        const float ModMaxJumpTime = MaxJumpTime - 0.02f;
+        Vector2 initialJumpEnd = arcStart;
+        initialJumpEnd.y += ModMaxJumpTime * jumpSpeed;
+        initialJumpEnd.x += ModMaxJumpTime * moveSpeed * MoveSpeedMult * xDir;
+        Gizmos.DrawLine(arcStart, initialJumpEnd);
+        float accel = FallAccel * Physics2D.gravity.y;
+        Vector2 prevPos = initialJumpEnd;
+        for (float i = 0; i < 0.5f; i += 0.01f)
+        {
+            Vector2 curPos = initialJumpEnd;
+            curPos.x += i * moveSpeed * xDir;
+
+            curPos.y += jumpSpeed * i;//V0
+            curPos.y += accel * i * i * 0.5f;//(AT^2)/2
+            Gizmos.DrawLine(prevPos, curPos);
+            prevPos = curPos;
+        }
     }
 }

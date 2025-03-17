@@ -148,7 +148,7 @@ public class SpikeBossAI : Enemy
         animator.CrossFade(AnimIDIdle, 0);
         if (StateJustStarted)
         {
-            UIManager.ActivateBossLifeBar(FlipnoteColors.Yellow);
+            UIManager.ActivateBossLifeBar(FlipnoteStudioColors.Yellow);
         }
         UIManager.UpdateBossLifeBar(Mathf.Clamp01(stateTimer / IntroDuration));
         if (stateTimer > IntroDuration)
@@ -634,7 +634,7 @@ public class SpikeBossAI : Enemy
         }
         swingingSpikeBall.GetComponent<Collider2D>().enabled = false;
         PlayerWeaponManager.UnlockSpike();
-        BossHelper.BossDeath(gameObject, this, null, FlipnoteColors.Yellow, arenaCenter);
+        BossHelper.BossDeath(gameObject, this, null, FlipnoteStudioColors.Yellow, arenaCenter);
         return false;
     }
 

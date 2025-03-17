@@ -1,0 +1,820 @@
+fileFormatVersion: 2
+guid: e9e1af950f8442049bcfae917a1b959e
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 50
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 605
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f68e9d3c90ed94a439a6105622440116
+      internalID: -1451768993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_1
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 605
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8647e4bf973c4d14bbcca229241a8366
+      internalID: -729785140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_2
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 605
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b33891bc652d5474b9a017c6e5d17a75
+      internalID: 89132008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_3
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 605
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd1b85a81db04314e962c032b23254bb
+      internalID: -864698977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_4
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 605
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adb7159cf32acbb459174d77438e5cf7
+      internalID: -1506852968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 484
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c6afcee3bedc80f4bab563eb3daec466
+      internalID: 1990370550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_6
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 484
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7dcd41c1eb1f41246a2195a679daa5fc
+      internalID: 73415413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_7
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 484
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae4dd88409341a8478eb92fb7ade5bbc
+      internalID: 5135517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_8
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 484
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e4807ab2f22e6d45b00ba8240e9991e
+      internalID: 2125653267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_9
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 484
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 611a7bdb87828dc4d8f7040f498a9936
+      internalID: 1804479344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 363
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c54e9bdf82fdcfc4a8631da167baa1bb
+      internalID: -962835884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_11
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 363
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 851f434a0d6ccb84ea074b26e5a034a2
+      internalID: 1425565517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_12
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 363
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dddfcd328e5adbe4e8f4f285e43efcbb
+      internalID: -536526814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_13
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 363
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5f11884dc617d741a38e2836f78e035
+      internalID: -559537812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_14
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 363
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6961955f6512a6b4d89bc2247bb05124
+      internalID: -622494417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 242
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e3ce0b23371f5648aee310075c3815f
+      internalID: -2091171944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_16
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 242
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 282a03f4246017546b4f17736e192820
+      internalID: 1079911952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_17
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 242
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef4e9c3eb3f53174996c660099638212
+      internalID: 883890489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_18
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 242
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4a1265196c1a504e996b6da94315b12
+      internalID: -975068155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_19
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 242
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccb5ca2bd96a9ac4d8c03d3e6d583b46
+      internalID: -855075818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 121
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d98a00c00e40e3f4384587081366c510
+      internalID: 762851647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_21
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 121
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d315284437e3f14da8b8b9e6900ed93
+      internalID: 1141547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_22
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 121
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d5cb4dfebcc97c4c9f3ca8b9e412ba9
+      internalID: -575979686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_23
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 121
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bce90d783034f544aabb511fd91b3a6
+      internalID: -2008454973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_24
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 121
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7503a2efe1461144fa4eb5742b7fb970
+      internalID: 463923572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_25
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc31618cbb9d42d43b9c6fd2ff098ffb
+      internalID: -1270231273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_26
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 0
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4afa53eceb9e1a0459f47f912539076b
+      internalID: -521919783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_27
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 0
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e4bf7b9530f19744a392cfc49a3a88b
+      internalID: 413088997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_28
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 0
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a77f7ce666e2e3b4e8975bb81d04309b
+      internalID: 1435315859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TyphoonHazardCLoudPlatformTelegraph_29
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 0
+        width: 186
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd3d790f4bd277741b90c0ee904d20b7
+      internalID: 301813937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      TyphoonHazardCLoudPlatformTelegraph_10: -962835884
+      TyphoonHazardCLoudPlatformTelegraph_11: 1425565517
+      TyphoonHazardCLoudPlatformTelegraph_7: 5135517
+      TyphoonHazardCLoudPlatformTelegraph_22: -575979686
+      TyphoonHazardCLoudPlatformTelegraph_9: 1804479344
+      TyphoonHazardCLoudPlatformTelegraph_28: 1435315859
+      TyphoonHazardCLoudPlatformTelegraph_6: 73415413
+      TyphoonHazardCLoudPlatformTelegraph_12: -536526814
+      TyphoonHazardCLoudPlatformTelegraph_4: -1506852968
+      TyphoonHazardCLoudPlatformTelegraph_2: 89132008
+      TyphoonHazardCLoudPlatformTelegraph_20: 762851647
+      TyphoonHazardCLoudPlatformTelegraph_24: 463923572
+      TyphoonHazardCLoudPlatformTelegraph_15: -2091171944
+      TyphoonHazardCLoudPlatformTelegraph_19: -855075818
+      TyphoonHazardCLoudPlatformTelegraph_17: 883890489
+      TyphoonHazardCLoudPlatformTelegraph_1: -729785140
+      TyphoonHazardCLoudPlatformTelegraph_13: -559537812
+      TyphoonHazardCLoudPlatformTelegraph_5: 1990370550
+      TyphoonHazardCLoudPlatformTelegraph_3: -864698977
+      TyphoonHazardCLoudPlatformTelegraph_21: 1141547
+      TyphoonHazardCLoudPlatformTelegraph_26: -521919783
+      TyphoonHazardCLoudPlatformTelegraph_25: -1270231273
+      TyphoonHazardCLoudPlatformTelegraph_14: -622494417
+      TyphoonHazardCLoudPlatformTelegraph_16: 1079911952
+      TyphoonHazardCLoudPlatformTelegraph_29: 301813937
+      TyphoonHazardCLoudPlatformTelegraph_0: -1451768993
+      TyphoonHazardCLoudPlatformTelegraph_23: -2008454973
+      TyphoonHazardCLoudPlatformTelegraph_18: -975068155
+      TyphoonHazardCLoudPlatformTelegraph_27: 413088997
+      TyphoonHazardCLoudPlatformTelegraph_8: 2125653267
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

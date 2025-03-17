@@ -22,7 +22,7 @@ public class SpikeBossSpikeBall : Projectile
                 Collider2D tilesCollider = Physics2D.OverlapCircle(pos, radius, Layers.Tiles);
                 if (tilesCollider != null)
                 {
-                    EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, pos);
+                    EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Yellow, pos);
                     gameObject.SetActive(false);
                     timer = 0;
                     DisablePhysics();

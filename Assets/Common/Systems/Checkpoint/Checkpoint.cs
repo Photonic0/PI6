@@ -89,10 +89,10 @@ namespace Assets.Common.Systems
             lineRenderer.positionCount = positions.Length;
             lineRenderer.SetPositions(positions);
             lineRenderer.widthMultiplier = 3f / 50f;
-            lineRenderer.startColor = FlipnoteColors.DarkGreen;
-            lineRenderer.endColor = FlipnoteColors.DarkGreen;
+            lineRenderer.startColor = FlipnoteStudioColors.DarkGreen;
+            lineRenderer.endColor = FlipnoteStudioColors.DarkGreen;
             SetMeshData(dots);
-            meshColor = FlipnoteColors.DarkGreen;
+            meshColor = FlipnoteStudioColors.DarkGreen;
             meshColor.r = Mathf.GammaToLinearSpace(meshColor.r);
             meshColor.g = Mathf.GammaToLinearSpace(meshColor.g);
             meshColor.b = Mathf.GammaToLinearSpace(meshColor.b);

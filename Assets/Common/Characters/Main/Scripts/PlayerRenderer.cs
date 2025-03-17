@@ -18,8 +18,8 @@ public class PlayerRenderer : MonoBehaviour
     public AudioSource FootstepAudioSource => footstepAudioSource;
     float footstepTimer;
     const float FootstepSoundTimerThreshold = .2f;
-    FlipnoteColors.ColorID currentColorID;
-    public Color Color { get => FlipnoteColors.GetColor(currentColorID); }
+    FlipnoteStudioColors.ColorID currentColorID;
+    public Color Color { get => FlipnoteStudioColors.GetColor(currentColorID); }
     public int SpriteDirection => bodySprite.flipX ? 1 : -1;
     static readonly int idle = Animator.StringToHash("Idle");
     static readonly int hurt = Animator.StringToHash("Hurt");
@@ -228,7 +228,7 @@ public class PlayerRenderer : MonoBehaviour
     {
         footstepTimer = FootstepSoundTimerThreshold + 0.001f;
     }
-    public void SetPlayerColor(FlipnoteColors.ColorID colorID)
+    public void SetPlayerColor(FlipnoteStudioColors.ColorID colorID)
     {
         currentColorID = colorID;
         UIManager.ChangePlayerLifeBarColor(Color);

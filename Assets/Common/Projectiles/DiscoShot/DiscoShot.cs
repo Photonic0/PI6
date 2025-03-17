@@ -88,7 +88,7 @@ public class DiscoShot : Projectile
             {
                 hitTimer = hitRate;
                 exploded = true;
-                EffectsHandler.SpawnSmallExplosion(FlipnoteColors.Magenta, transform.position);
+                EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.Magenta, transform.position);
                 for (int i = 0; i < sparkleTimers.Length; i++)
                 {
                     sparkleTimers[i] = Random2.Float(SparkleFrequency);

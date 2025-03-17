@@ -33,6 +33,11 @@ public static class Settings
     public static KeyCode slowWalkKey = KeyCode.LeftShift;
     public static KeyCode openWeaponsMenuKey = KeyCode.E;
     public static KeyCode pauseKey = KeyCode.Escape;
+    public static void ResetVolumeLevels()
+    {
+        sfxVolume = 1f;
+        musicVolume = 1f;
+    }
     //public static Settings instance;
     //void Awake()
     //{

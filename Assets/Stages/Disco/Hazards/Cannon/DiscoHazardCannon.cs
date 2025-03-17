@@ -42,7 +42,7 @@ public class DiscoHazardCannon : MonoBehaviour, IMusicSyncable
             Array.Resize(ref ammoPool, ammoPool.Length + 1);
             ammoPool[^1] = projectile;
         }
-        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Magenta, firepoint);
+        EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Magenta, firepoint);
         projectile.rb.velocity = projDirection * ProjectileSpeed;
         barrelRotation.recoilTimer = 0f;
     }

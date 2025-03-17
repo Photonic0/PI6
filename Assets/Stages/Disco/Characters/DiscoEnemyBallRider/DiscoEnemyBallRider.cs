@@ -29,11 +29,11 @@ public class DiscoEnemyBallRider : Enemy, IMusicSyncable, IMusicSyncableWithoutS
         if (life <= 0 && enabled)
         {
             CommonSounds.PlayBwow(audioSource);
-            EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, leftSpriteTransform.position);
-            EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, ballTransform.position);
+            EffectsHandler.SpawnMediumExplosion(FlipnoteStudioColors.ColorID.Magenta, leftSpriteTransform.position);
+            EffectsHandler.SpawnMediumExplosion(FlipnoteStudioColors.ColorID.Magenta, ballTransform.position);
             leftSprite.SetActive(false);
             rightSprite.SetActive(false);
-            RollForDrop();
+            OnDeathEvents();
             enabled = false;
             return;
         }

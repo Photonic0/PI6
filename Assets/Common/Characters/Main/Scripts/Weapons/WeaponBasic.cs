@@ -8,7 +8,7 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
     {
         public override int ChargePerUse => 0;
 
-        public override FlipnoteColors.ColorID EquipColor => FlipnoteColors.ColorID.Orange;
+        public override FlipnoteStudioColors.ColorID EquipColor => FlipnoteStudioColors.ColorID.Orange;
 
         protected override float Use()
         {

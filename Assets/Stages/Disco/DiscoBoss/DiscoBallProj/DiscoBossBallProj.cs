@@ -68,7 +68,7 @@ public class DiscoBossBallProj : Projectile
         if (collision.CompareTag(Tags.Tiles))
         {
             gameObject.SetActive(false);
-            EffectsHandler.SpawnMediumExplosion(FlipnoteColors.ColorID.Magenta, transform.position);
+            EffectsHandler.SpawnMediumExplosion(FlipnoteStudioColors.ColorID.Magenta, transform.position);
         }
 
     }

@@ -7,7 +7,7 @@ public class WeaponDisco : PlayerWeapon
 {
     public override int ChargePerUse => 10;
 
-    public override FlipnoteColors.ColorID EquipColor => FlipnoteColors.ColorID.Magenta;
+    public override FlipnoteStudioColors.ColorID EquipColor => FlipnoteStudioColors.ColorID.Magenta;
 
     protected override float Use()
     {

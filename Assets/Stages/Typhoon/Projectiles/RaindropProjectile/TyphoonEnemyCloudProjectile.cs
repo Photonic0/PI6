@@ -20,13 +20,13 @@ public class TyphoonEnemyCloudProjectile : Projectile
     {
         if (Physics2D.OverlapCircle(transform.position, .1f, Layers.Tiles))
         {
-            EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position);
+            EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Blue, transform.position);
             gameObject.SetActive(false);
         }
     }
     public override void OnHit(GameObject objectHit)
     {
-        EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Blue, transform.position);
+        EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Blue, transform.position);
         gameObject.SetActive(false);
     }
     

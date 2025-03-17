@@ -222,7 +222,7 @@ public class DiscoBossAI : Enemy
         if (StateJustStarted)
         {
             GetComponent<Collider2D>().enabled = true;
-            UIManager.ActivateBossLifeBar(FlipnoteColors.Magenta);
+            UIManager.ActivateBossLifeBar(FlipnoteStudioColors.Magenta);
             musicHandler.StartMusic();
         }
         float progress = floatTimer / (IntroDuration * SecondsPerBeat);
@@ -693,7 +693,7 @@ public class DiscoBossAI : Enemy
             ballProjPool[i].gameObject.SetActive(false);
         }
         PlayerWeaponManager.UnlockDisco();
-        BossHelper.BossDeath(gameObject, this, null, FlipnoteColors.Magenta, arenaCenter);
+        BossHelper.BossDeath(gameObject, this, null, FlipnoteStudioColors.Magenta, arenaCenter);
         return false;
     }
     Vector3 GetArenaSide(bool falseForLeftTrueForRight, float padding = 1)

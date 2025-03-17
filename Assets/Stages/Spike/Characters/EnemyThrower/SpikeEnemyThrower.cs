@@ -186,7 +186,7 @@ public class SpikeEnemyThrower : Enemy
         }
         enabled = false;
         Destroy(parentObject, 5);
-        EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteColors.ColorID.Yellow, transform.position);
+        EffectsHandler.SpawnMediumExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.Yellow, transform.position);
         return base.PreKill();
     }
 #if UNITY_EDITOR

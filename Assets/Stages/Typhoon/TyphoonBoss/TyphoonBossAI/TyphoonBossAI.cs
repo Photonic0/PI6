@@ -205,7 +205,7 @@ public class TyphoonBossAI : Enemy
     {
         if (StateJustStarted)
         {
-            UIManager.ActivateBossLifeBar(FlipnoteColors.Blue);
+            UIManager.ActivateBossLifeBar(FlipnoteStudioColors.Blue);
         }
         float progress = stateTimer / IntroDuration;
         if (progress <= .5f)
@@ -319,7 +319,7 @@ public class TyphoonBossAI : Enemy
             {
                 Vector2 targetPos = GameManager.PlayerPosition;
                 targetPos.x += LightningTelegraphDuration * GameManager.PlayerControl.rb.velocity.x;
-                targetPos.x = Mathf.Clamp(targetPos.x - arenaCenter.x, -ArenaWidth / 2f + 1, ArenaHeight / 2f - 1) + arenaCenter.x;
+                targetPos.x = Mathf.Clamp(targetPos.x - arenaCenter.x, -ArenaWidth / 2f + 1, ArenaWidth / 2f - 1) + arenaCenter.x;
                 RaycastHit2D hit = Physics2D.Raycast(targetPos, Vector2.down, 20f, Layers.Tiles);
                 movementTargetPoint.Set(targetPos.x, hit.point.y + LightningBossYDistFromGround);
                 lightningTargetPoint.Set(targetPos.x, hit.point.y);
@@ -336,7 +336,7 @@ public class TyphoonBossAI : Enemy
                     CommonSounds.PlayRandom(thunderShoot, audioSource, 1f, 1f);
                     ScreenShakeManager.AddSmallShake();
                     animator.CrossFade(AnimIDLightning, 0);
-                    EffectsHandler.SpawnSmallExplosion(FlipnoteColors.ColorID.Yellow, lightningTargetPoint, LightningDuration);
+                    EffectsHandler.SpawnSmallExplosion(FlipnoteStudioColors.ColorID.Yellow, lightningTargetPoint, LightningDuration);
                     lightningRenderer.ActivateAndSetAttributes(.1f, transform.position + new Vector3(0, LightningSpawnYOffset), lightningTargetPoint, LightningDuration);
                 }
                 Vector2 lightningCenter = lightningRenderer.CenterPoint;
@@ -670,7 +670,7 @@ public class TyphoonBossAI : Enemy
                     CommonSounds.PlayRandom(thunderShoot, audioSource, 1f, 1f);
                     ScreenShakeManager.AddSmallShake();
                     animator.CrossFade(AnimIDLightning, 0);
-                    EffectsHandler.SpawnSmallExplosion(arenaCenterTransform, FlipnoteColors.Yellow, lightningTargetPoint, LightningPhase2Duration);
+                    EffectsHandler.SpawnSmallExplosion(arenaCenterTransform, FlipnoteStudioColors.Yellow, lightningTargetPoint, LightningPhase2Duration);
                     lightningRenderer.ActivateAndSetAttributes(.1f, transform.position + new Vector3(0, LightningSpawnYOffset), lightningTargetPoint, LightningPhase2Duration);
                     Collider2D cloudCollider = Physics2D.OverlapCircle(lightningTargetPoint, 0.2f, Layers.Tiles);
                     if (cloudCollider != null && cloudCollider.TryGetComponent(out TyphoonBossCloudPlatform cloudPlatform))
@@ -1030,7 +1030,7 @@ public class TyphoonBossAI : Enemy
     {
         lightningRenderer.Stop();
         PlayerWeaponManager.UnlockTyphoon();
-        BossHelper.BossDeath(gameObject, this, null, FlipnoteColors.Blue, arenaCenter);
+        BossHelper.BossDeath(gameObject, this, null, FlipnoteStudioColors.Blue, arenaCenter);
         return false;
     }
     static float Easing010(float progress)

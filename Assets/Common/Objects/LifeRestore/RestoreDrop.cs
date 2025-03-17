@@ -6,8 +6,19 @@ public class RestoreDrop : MonoBehaviour
 {
     [SerializeField] GameObject parentObj;
     [SerializeField] SpriteRenderer sprite;
+    [SerializeField] bool levelSpawned = false;
+    private void Start()
+    {
+        if (levelSpawned)
+        {
+            GameObject obj = gameObject;
+            obj.GetComponent<RestoreDrop>().sprite.color =
+         PlayerWeapon.GetWeaponColorSafely(GameManager.PlayerControl.weapon);
+            parentObj.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        }
+    }
     public static void SpawnRestore(Vector3 position)
-    { 
+    {
         position.z = 0;
         GameObject obj = Instantiate(CommonPrefabs.RestoreDrop, position, Quaternion.identity);
         obj.GetComponentInChildren<RestoreDrop>().sprite.color =
