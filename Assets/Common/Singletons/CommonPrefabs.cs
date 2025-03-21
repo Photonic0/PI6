@@ -17,6 +17,8 @@ public class CommonPrefabs : MonoBehaviour
     [SerializeField] GameObject explosionSmall;
     public static GameObject SimpleLightningLineRenderer => instance.simpleLightningLineRenderer;
     [SerializeField] GameObject simpleLightningLineRenderer;
+    public static GameObject FloatingText => instance.floatingText;
+    [SerializeField] GameObject floatingText;
     private void Awake()
     {
         if (instance != null && instance != this)

@@ -1,3 +1,4 @@
+using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
 using Assets.Helpers;
 using System.Collections;
@@ -34,6 +35,14 @@ public class MainMenu : MonoBehaviour
     [SerializeField] TextMeshProUGUI slowWalkKeyText;
     [SerializeField] Slider sfxVolumeSlider;
     [SerializeField] Slider musicVolumeSlider;
+    [SerializeField] GameObject spikeStageCheckmark;
+    [SerializeField] Button spikeStageButton;
+    [SerializeField] GameObject discoStageCheckmark;
+    [SerializeField] Button discoStageButton;
+    [SerializeField] GameObject typhoonStageCheckmark;
+    [SerializeField] Button typhoonStageButton;
+    [SerializeField] GameObject thankYouText;
+    [SerializeField] GameObject[] objsToDisableOnThankYouScreen;
     Settings.KeybindID keybindIDToSet = Settings.KeybindID.None;
     TextMeshProUGUI textToChangeAfterKeybindSet;
     //fix typhoon weapon bug where it tries to damage already dead enemies
@@ -70,11 +79,48 @@ public class MainMenu : MonoBehaviour
         globalPositionForOptions = canvasPos - optionsMenuParentTransform.position;
         globalPositionForDifficultySelectScreen = canvasPos - difficultySelectScreenParentTransform.position;
         targetGlobalPosition = globalPositionForStartingMenu;
-        if(GameManager.startedGame)
+        bool allLevelsCleared = PlayerWeaponManager.UnlockedDiscoWeapon && PlayerWeaponManager.UnlockedSpikeWeapon && PlayerWeaponManager.UnlockedTyphoonWeapon;
+        if (GameManager.startedGame && !allLevelsCleared)
         {
             targetGlobalPosition = globalPositionForStageSelectScreen;
             globalMovementTransform.position = globalPositionForStageSelectScreen;
             stageSelectBackButton.SetActive(false);
+        }
+        if (!allLevelsCleared)
+        {
+            if (PlayerWeaponManager.UnlockedDiscoWeapon)
+            {
+                discoStageButton.enabled = false;
+                discoStageCheckmark.gameObject.SetActive(true);
+            }
+            if (PlayerWeaponManager.UnlockedSpikeWeapon)
+            {
+                spikeStageButton.enabled = false;
+                spikeStageCheckmark.gameObject.SetActive(true);
+            }
+            if (PlayerWeaponManager.UnlockedTyphoonWeapon)
+            {
+                typhoonStageButton.enabled = false;
+                typhoonStageCheckmark.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            thankYouText.gameObject.SetActive(true);
+            for (int i = 0; i < objsToDisableOnThankYouScreen.Length; i++)
+            {
+                objsToDisableOnThankYouScreen[i].SetActive(false);
+            }
+            StartCoroutine(EndThankYouScreen());
+        }
+    }
+    IEnumerator EndThankYouScreen()
+    {
+        yield return new WaitForSecondsRealtime(8f);
+        thankYouText.gameObject.SetActive(false);
+        for (int i = 0; i < objsToDisableOnThankYouScreen.Length; i++)
+        {
+            objsToDisableOnThankYouScreen[i].SetActive(true);
         }
     }
     //ADD 1UP WHICH IS AN UPWARDS POINTING ARROW

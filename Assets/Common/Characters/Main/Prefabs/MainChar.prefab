@@ -62,10 +62,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: -7989776954300564212}
-  life: 27
+  life: 31
   immuneTime: 0
   deathRestartTimer: 0
   hitSound: {fileID: 8300000, guid: b600b6732721bd344a54d2f62bd686ca, type: 3}
+  debug_dontTakeDamage: 0
 --- !u!1 &3506313461167279896
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,6 +38,7 @@ public static class BossHelper
             }
         }
         DeathParticle deathParticles = DeathParticle.Spawn(obj.transform.position, deathParticleColor, audioSource);
+        deathParticles.popupText = "New weapon unlocked! \n Press E while in a level to select a weapon";
         //PlayerControl.DisableInputs();
         PlayerWeaponManager.CloseMenu();
         ScreenShakeManager.AddTinyShake();
@@ -53,7 +54,7 @@ public static class BossHelper
         {
             deathParticles.BeAbsorbedByPlayer();
         }
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
         LevelInfo.PrepareStageChange();
         SceneManager.LoadScene(SceneIndices.MainMenu);
     }

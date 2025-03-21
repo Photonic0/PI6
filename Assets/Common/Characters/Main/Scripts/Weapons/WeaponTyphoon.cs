@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WeaponTyphoon : PlayerWeapon
 {
-    public override int ChargePerUse => 10;
+    public override int ChargePerUse => 7;
     public override FlipnoteStudioColors.ColorID EquipColor => FlipnoteStudioColors.ColorID.Blue;
     protected override float Use()
     {

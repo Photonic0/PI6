@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WeaponSpike : PlayerWeapon
 {
-    public override int ChargePerUse => 10;
+    public override int ChargePerUse => 7;
 
     public override FlipnoteStudioColors.ColorID EquipColor => FlipnoteStudioColors.ColorID.Yellow;
 

@@ -11,12 +11,14 @@ public class DeathParticle : MonoBehaviour
     const float TotalEffectDuration = 7;
     const float ParticleSpreadSpeed = 3f;
     const float AbsorbedByPlayerAnimationDuration = 2f;
-    float ParticleAbsorbSpeed  => 20f;// Helper.Remap(timer, 0, 4, ParticleSpreadSpeed, 20f);
+    float ParticleAbsorbSpeed => 20f;// Helper.Remap(timer, 0, 4, ParticleSpreadSpeed, 20f);
     Vector2 center;
     //so effect goes like this
     //first 2 circles spin around the character's center, each one spins 360 degrees, and both are on opposite sides
     //after that, spawn a ring of 8 particles and a slower spreading ring of 4 particles
     bool beingAbsorbedByPlayer;
+    public string popupText = string.Empty;
+    public bool spawnedPopupText;
     void Update()
     {
         if (beingAbsorbedByPlayer)
@@ -86,13 +88,18 @@ public class DeathParticle : MonoBehaviour
         timer += Time.deltaTime;
         Vector3 playerPos = GameManager.PlayerPosition;
         const float DecaySpeed = 4f;
+        bool anyActive = false;
         for (int i = 2; i < 14; i++)
         {
             Transform current = particles[i];
+            if (!current.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+            anyActive = true;
             Vector3 currentPos = current.position;
             Vector3 targetDir = (playerPos - currentPos).normalized * ParticleAbsorbSpeed;
             velocities[i] = Helper.DecayVec3(velocities[i], targetDir, DecaySpeed);
-
             for (int j = 2; j < 14; j++)
             {
                 Transform check = particles[j];
@@ -101,7 +108,7 @@ public class DeathParticle : MonoBehaviour
                     continue;
                 }
                 Vector3 deltaPos = (check.position - current.position);//need to use this position because it's what it'll be updated
-                
+
                 float dist = deltaPos.magnitude;
                 const float RadiusCurrent = 0.35f;
                 const float RadiusOther = 0.35f;
@@ -113,11 +120,16 @@ public class DeathParticle : MonoBehaviour
                 }
             }
             current.position += velocities[i] * Time.deltaTime;
-            if((current.position - playerPos).magnitude < 0.3f)
+            if ((current.position - playerPos).magnitude < 0.3f)
             {
                 current.gameObject.SetActive(false);
             }
-        }        
+        }
+        if(!anyActive && !spawnedPopupText)
+        {
+            spawnedPopupText = true;
+            FloatingText.SpawnText(GameManager.PlayerPosition + new Vector3(0, 3), popupText);
+        }
     }
     public void BeAbsorbedByPlayer()
     {

@@ -47,9 +47,9 @@ namespace Assets.Common.Characters.Main.Scripts.Weapons
         const int SpikeWeaponIndex = 2;
         const int DiscoWeaponIndex = 3;
         float pauseButtonReleaseLockoutTimer = 0;
-        public bool UnlockedTyphoonWeapon { get => weaponUnlockFlags[TyphoonWeaponIndex]; set => weaponUnlockFlags[TyphoonWeaponIndex] = value; }
-        public bool UnlockedSpikeWeapon { get => weaponUnlockFlags[SpikeWeaponIndex]; set => weaponUnlockFlags[SpikeWeaponIndex] = value; }
-        public bool UnlockedDiscoWeapon { get => weaponUnlockFlags[DiscoWeaponIndex]; set => weaponUnlockFlags[DiscoWeaponIndex] = value; }
+        public static bool UnlockedTyphoonWeapon { get => instance.weaponUnlockFlags[TyphoonWeaponIndex]; set => instance.weaponUnlockFlags[TyphoonWeaponIndex] = value; }
+        public static bool UnlockedSpikeWeapon { get => instance.weaponUnlockFlags[SpikeWeaponIndex]; set => instance.weaponUnlockFlags[SpikeWeaponIndex] = value; }
+        public static  bool UnlockedDiscoWeapon { get => instance.weaponUnlockFlags[DiscoWeaponIndex]; set => instance.weaponUnlockFlags[DiscoWeaponIndex] = value; }
         [SerializeField] bool[] weaponUnlockFlags;
         public bool weaponsMenuOpen;
         public static bool WeaponsMenuOpen => instance.weaponsMenuOpen;
