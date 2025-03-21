@@ -91,22 +91,22 @@ public class MainMenu : MonoBehaviour
             if (PlayerWeaponManager.UnlockedDiscoWeapon)
             {
                 discoStageButton.enabled = false;
-                discoStageCheckmark.gameObject.SetActive(true);
+                discoStageCheckmark.SetActive(true);
             }
             if (PlayerWeaponManager.UnlockedSpikeWeapon)
             {
                 spikeStageButton.enabled = false;
-                spikeStageCheckmark.gameObject.SetActive(true);
+                spikeStageCheckmark.SetActive(true);
             }
             if (PlayerWeaponManager.UnlockedTyphoonWeapon)
             {
                 typhoonStageButton.enabled = false;
-                typhoonStageCheckmark.gameObject.SetActive(true);
+                typhoonStageCheckmark.SetActive(true);
             }
         }
         else
         {
-            thankYouText.gameObject.SetActive(true);
+            thankYouText.SetActive(true);
             for (int i = 0; i < objsToDisableOnThankYouScreen.Length; i++)
             {
                 objsToDisableOnThankYouScreen[i].SetActive(false);
@@ -117,7 +117,7 @@ public class MainMenu : MonoBehaviour
     IEnumerator EndThankYouScreen()
     {
         yield return new WaitForSecondsRealtime(8f);
-        thankYouText.gameObject.SetActive(false);
+        thankYouText.SetActive(false);
         for (int i = 0; i < objsToDisableOnThankYouScreen.Length; i++)
         {
             objsToDisableOnThankYouScreen[i].SetActive(true);
