@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            RestoreDrop.spawnedText = false;
             Settings.ResetVolumeLevels();
             startedGame = false;
             LevelInfo.latestCheckpointIndex = -1;

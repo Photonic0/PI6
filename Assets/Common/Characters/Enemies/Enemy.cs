@@ -58,7 +58,13 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     protected void OnDeathEvents()
     {
-        if(++GameManager.EnemyKillCount > 5)
+#if UNITY_EDITOR
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            GameManager.EnemyKillCount += 5;
+        }
+#endif
+        if(++GameManager.EnemyKillCount >= 5)
         {
             GameManager.EnemyKillCount -= 5;
             RestoreDrop.SpawnRestore(transform.position);

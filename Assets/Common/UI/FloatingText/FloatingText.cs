@@ -5,6 +5,7 @@ public class FloatingText : MonoBehaviour
 {
     [SerializeField] TMP_Text tmp;
     [SerializeField] float scaleMult;
+    float timer = 0f;
     public static void SpawnText(Vector3 position, string text, float scaleMult = 1f)
     {
         if(text == null || text == string.Empty)
@@ -14,7 +15,8 @@ public class FloatingText : MonoBehaviour
         GameObject obj = Instantiate(CommonPrefabs.FloatingText, position, Quaternion.identity);
         FloatingText floatingText = obj.GetComponent<FloatingText>();
         floatingText.tmp.text = text;
-        floatingText.scaleMult = scaleMult; 
+        floatingText.scaleMult = scaleMult;
+        floatingText.timer = 0f;
     }
 
     void Update()
@@ -24,5 +26,10 @@ public class FloatingText : MonoBehaviour
         float scale = 100f / res.height;
         scale *= scaleMult;
         transform.localScale = new Vector3(scale, scale, scale);
+        timer += Time.deltaTime;
+        if(timer > 6f)
+        {
+            Destroy(gameObject);
+        }
     }
 }

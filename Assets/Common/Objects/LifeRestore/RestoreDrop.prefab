@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6900290278389727986}
   - component: {fileID: 6900290278389727996}
   - component: {fileID: 2880143735612141176}
+  - component: {fileID: 6539809064394246390}
   m_Layer: 12
   m_Name: RestoreDrop
   m_TagString: Untagged
@@ -145,6 +146,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 5
+--- !u!114 &6539809064394246390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6900290278389727998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e1da45947b5f142838415c27492e51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8558966241033495425
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,3 +221,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentObj: {fileID: 6900290278389727998}
   sprite: {fileID: 6900290278389727985}
+  levelSpawned: 0
+  rb: {fileID: 0}

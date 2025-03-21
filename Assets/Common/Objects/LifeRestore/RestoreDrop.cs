@@ -1,5 +1,6 @@
 using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Consts;
+using Assets.Helpers;
 using UnityEngine;
 
 public class RestoreDrop : MonoBehaviour
@@ -7,15 +8,18 @@ public class RestoreDrop : MonoBehaviour
     [SerializeField] GameObject parentObj;
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] bool levelSpawned = false;
+    [SerializeField] Rigidbody2D rb;
+    public static bool spawnedText;//initialized as false in gamemanager
     private void Start()
     {
+        rb = parentObj.GetComponent<Rigidbody2D>();
         if (levelSpawned)
         {
-            GameObject obj = gameObject;
-            obj.GetComponent<RestoreDrop>().sprite.color =
+            gameObject.GetComponent<RestoreDrop>().sprite.color =
          PlayerWeapon.GetWeaponColorSafely(GameManager.PlayerControl.weapon);
-            parentObj.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            rb.velocity = new Vector2(0, -0.01f);
         }
+      
     }
     public static void SpawnRestore(Vector3 position)
     {
@@ -23,8 +27,9 @@ public class RestoreDrop : MonoBehaviour
         GameObject obj = Instantiate(CommonPrefabs.RestoreDrop, position, Quaternion.identity);
         obj.GetComponentInChildren<RestoreDrop>().sprite.color =
            PlayerWeapon.GetWeaponColorSafely(GameManager.PlayerControl.weapon);
-        obj.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        obj.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -0.01f);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(Tags.Player))
