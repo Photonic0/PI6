@@ -1,3 +1,4 @@
+using Assets.Common.Characters.Main.Scripts;
 using Assets.Common.Characters.Main.Scripts.Weapons;
 using Assets.Common.Consts;
 using Assets.Helpers;
@@ -50,11 +51,17 @@ public class MainMenu : MonoBehaviour
     //ADD WEAPON SWITCH CONTROL STYLE
     //ADD VOLUME SLIDER
     //ADD MUSIC SLIDER 
+    [SerializeField] GameObject stageSelectScreen;
+    [SerializeField] GameObject optionsScreen;
+    [SerializeField] GameObject creditsScreen;
+    [SerializeField] GameObject startMenu;
+
 #if UNITY_EDITOR
     [SerializeField] GameObject explosiveStageButton;
 #endif
     private void Awake()
     {
+        return;
         Resolution res = Screen.currentResolution;
         Vector3 parentPos = startMenuParentTransform.position;
         //AdjustDistanceForScreenResolution(res, startMenuParentTransform);
@@ -67,25 +74,9 @@ public class MainMenu : MonoBehaviour
     {
 #if UNITY_EDITOR
         explosiveStageButton.SetActive(true);
-      //  Debug.ClearDeveloperConsole();
+        //  Debug.ClearDeveloperConsole();
 #endif
-        Resolution res = Screen.currentResolution;
-        Vector3 canvasPos = canvasRectTransform.position;
-        canvasPos.x += res.width / 2f;
-        canvasPos.y += res.height / 2f;
-        globalPositionForStartingMenu = canvasPos - startMenuParentTransform.position;
-        globalPositionForCredits = canvasPos - creditsParentTransform.position;
-        globalPositionForStageSelectScreen = canvasPos - stageSelectButtonsParentTransform.position;
-        globalPositionForOptions = canvasPos - optionsMenuParentTransform.position;
-        globalPositionForDifficultySelectScreen = canvasPos - difficultySelectScreenParentTransform.position;
-        targetGlobalPosition = globalPositionForStartingMenu;
-        bool allLevelsCleared = PlayerWeaponManager.UnlockedDiscoWeapon && PlayerWeaponManager.UnlockedSpikeWeapon && PlayerWeaponManager.UnlockedTyphoonWeapon;
-        if (GameManager.startedGame && !allLevelsCleared)
-        {
-            targetGlobalPosition = globalPositionForStageSelectScreen;
-            globalMovementTransform.position = globalPositionForStageSelectScreen;
-            stageSelectBackButton.SetActive(false);
-        }
+        bool allLevelsCleared = AdjustTransforms();
         if (!allLevelsCleared)
         {
             if (PlayerWeaponManager.UnlockedDiscoWeapon)
@@ -114,6 +105,30 @@ public class MainMenu : MonoBehaviour
             StartCoroutine(EndThankYouScreen());
         }
     }
+
+    private bool AdjustTransforms()
+    {
+        //Resolution res = Screen.currentResolution;
+        //Vector3 canvasPos = canvasRectTransform.position;
+        //canvasPos.x += res.width / 2f;
+        //canvasPos.y += res.height / 2f;
+        //globalPositionForStartingMenu = canvasPos - startMenuParentTransform.position;
+        //globalPositionForCredits = canvasPos - creditsParentTransform.position;
+        //globalPositionForStageSelectScreen = canvasPos - stageSelectButtonsParentTransform.position;
+        //globalPositionForOptions = canvasPos - optionsMenuParentTransform.position;
+        //globalPositionForDifficultySelectScreen = canvasPos - difficultySelectScreenParentTransform.position;
+        //targetGlobalPosition = globalPositionForStartingMenu;
+        bool allLevelsCleared = PlayerWeaponManager.UnlockedDiscoWeapon && PlayerWeaponManager.UnlockedSpikeWeapon && PlayerWeaponManager.UnlockedTyphoonWeapon;
+        if (GameManager.startedGame && !allLevelsCleared)
+        {
+          //  targetGlobalPosition = globalPositionForStageSelectScreen;
+           // globalMovementTransform.position = globalPositionForStageSelectScreen;
+           // stageSelectBackButton.SetActive(false);
+        }
+
+        return allLevelsCleared;
+    }
+
     IEnumerator EndThankYouScreen()
     {
         yield return new WaitForSecondsRealtime(8f);
@@ -122,6 +137,7 @@ public class MainMenu : MonoBehaviour
         {
             objsToDisableOnThankYouScreen[i].SetActive(true);
         }
+        PlayerLife.chances = 999;
     }
     //ADD 1UP WHICH IS AN UPWARDS POINTING ARROW
     //ADD A BIG LIFE UP WHICH IS A BATTERY
@@ -236,21 +252,31 @@ public class MainMenu : MonoBehaviour
     public void MoveToStageSelectScreen()
     {
         targetGlobalPosition = globalPositionForStageSelectScreen;
+        stageSelectScreen.SetActive(true);
+        startMenu.SetActive(false);
         CommonSounds.PlayUIConfirm();
     }
     public void MoveToCredits()
     {
         targetGlobalPosition = globalPositionForCredits;
+        creditsScreen.SetActive(true);
+        startMenu.SetActive(false);
         CommonSounds.PlayUIConfirm();
     }
     public void MoveToOptions()
     {
         targetGlobalPosition = globalPositionForOptions;
+        optionsScreen.SetActive(true);
+        startMenu.SetActive(false);
         CommonSounds.PlayUIConfirm();
     }
     public void MoveToStartMenu()
     {
         targetGlobalPosition = globalPositionForStartingMenu;
+        creditsScreen.SetActive(false);
+        optionsScreen.SetActive(false);
+        stageSelectScreen.SetActive(false);
+        startMenu.SetActive(true);
         CommonSounds.PlayUIConfirm();
     }
     public void QuitGame()
@@ -271,8 +297,8 @@ public class MainMenu : MonoBehaviour
         //make it so completing a level shows a text on how to switch weapons
         //make every weapon unlock have a video showing how to switch to and how the weapon works
         //add some grid sprite or something? idk. I guess some random square particles too
-        globalMovementTransform.position = Helper.DecayVec3(globalMovementTransform.position, targetGlobalPosition, 20f);
-        globalMovementTransform.position = Vector3.MoveTowards(globalMovementTransform.position, targetGlobalPosition, Time.deltaTime);
+       // globalMovementTransform.position = Helper.DecayVec3(globalMovementTransform.position, targetGlobalPosition, 20f);
+      //  globalMovementTransform.position = Vector3.MoveTowards(globalMovementTransform.position, targetGlobalPosition, Time.deltaTime);
 
         if (keybindIDToSet != Settings.KeybindID.None)
         {

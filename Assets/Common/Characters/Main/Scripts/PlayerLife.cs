@@ -16,7 +16,7 @@ namespace Assets.Common.Characters.Main.Scripts
         [SerializeField] AudioSource audioSource;
         public const int StartingChances = 6;
         public static int chances;
-        public const int LifeMax = 27;
+        public const int LifeMax = 31;
         public int life = LifeMax;
         public const float ImmuneTimeMax = 1;
         public float immuneTime;

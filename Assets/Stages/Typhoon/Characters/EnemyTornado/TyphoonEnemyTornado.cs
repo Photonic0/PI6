@@ -11,17 +11,20 @@ public class TyphoonEnemyTornado : Enemy
     [SerializeField] TyphoonEnemyTornadoLightning[] lightningProjPool;
     [SerializeField] AudioClip[] thunderShoot;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] Sprite[] telegraphSheet;
+    [SerializeField] SpriteRenderer telegraphObj;
     int state;
     float timer;
     Vector2 initialPosition;
     Vector2 randomOffset;
     public const int StateIDIdle = 0;
     public const int StateIDAggrod = 1;
-    public const float TopSpeed = 4;
-    public const float AggroRange = 6;
-    public const float ProjSpeed = 6;
-    public const float ProjFireDelay = 2;
-    public const float Acceleration = 10;
+    public const float TopSpeed = 4f;
+    public const float AggroRange = 6f;
+    public const float ProjSpeed = 6f;
+    public const float ProjFireDelay = 2f;
+    public const float TelegraphDuration = 1.5f;
+    public const float Acceleration = 10f;
     public override void Start()
     {
         base.Start();
@@ -56,7 +59,7 @@ public class TyphoonEnemyTornado : Enemy
         if (Helper.EnemyAggroCheck(transform.position, GameManager.PlayerControl.Position, AggroRange))
         {
             state = StateIDAggrod;
-            timer = -Time.deltaTime + ProjFireDelay;
+            timer = -Time.deltaTime + ProjFireDelay - TelegraphDuration;
         }
 
     }
@@ -64,8 +67,18 @@ public class TyphoonEnemyTornado : Enemy
     private void State_Aggrod()
     {
         Vector3 plrPos = GameManager.PlayerControl.Position;
-        plrPos = plrPos + (transform.position - plrPos).normalized * 0.7f;
+        plrPos += (transform.position - plrPos).normalized * 0.7f;
         AccelerateTowards(plrPos);
+        int telegraphSpriteIndex = (int)Helper.Remap(timer, ProjFireDelay - TelegraphDuration, ProjFireDelay, telegraphSheet.Length - 1, -1, false);
+        if (telegraphSpriteIndex < 0 || telegraphSpriteIndex >= telegraphSheet.Length)
+        {
+            telegraphObj.enabled = false;
+        }
+        else
+        {
+            telegraphObj.enabled = true;
+            telegraphObj.sprite = telegraphSheet[telegraphSpriteIndex];
+        }
         if (timer > ProjFireDelay)    
         {
             timer -= ProjFireDelay;
@@ -109,6 +122,7 @@ public class TyphoonEnemyTornado : Enemy
     }
     public override bool PreKill()
     {
+        telegraphObj.gameObject.SetActive(false);
         CommonSounds.Play(TyphoonStageSingleton.instance.typhoonEnemyDeath, audioSource);
         TyphoonStageSingleton.RemoveTornadoEnemyFromList(this);
         EffectsHandler.SpawnSmallExplosion(Assets.Common.Consts.FlipnoteStudioColors.ColorID.Blue, transform.position, 0.25f);

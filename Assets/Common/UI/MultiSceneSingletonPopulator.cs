@@ -3,7 +3,6 @@ using Assets.Common.Systems;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Tilemaps;
 //doing this because gamemanager, uimanager etc are DontDestroyOnLoad
 //and these objects are scene-specific.
 //don't use this for UI elements. use script on canvas prefab instead.
