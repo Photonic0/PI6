@@ -34,6 +34,7 @@ public class DiscoBossAI : Enemy
         SpotlightMiddleAndRight = 14,
         ThrowBallThenSingleConfetti = 15,
         ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner_ConfettiAllAtOnceOnLastThrow = 16,
+        ThrowRollingBall = 17
     }
     [Serializable]
     class StateData
@@ -92,6 +93,7 @@ public class DiscoBossAI : Enemy
     [SerializeField] ParticleSystem[] teleportParticles;
     [SerializeField] AudioClip teleportSound;
     [SerializeField] float slideTimer;
+    [SerializeField] DiscoBossRollingBall[] rollingBallPool;
 
 #if UNITY_EDITOR
     [Header("debug fields")]
@@ -109,6 +111,7 @@ public class DiscoBossAI : Enemy
     float DirectionSign => sprite.flipX ? -1 : 1;
 
     [SerializeField] StateData[] states;
+    [SerializeField] Vector2 rollingBallInitialVelocity;
     public override void Start()
     {
         base.Start();
@@ -170,6 +173,7 @@ public class DiscoBossAI : Enemy
             case StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner:
             case StateID.ThrowBallThenSingleConfetti:
             case StateID.ThrowBallAlternateBetween_MiddleLeftAndMiddleRight_And_MiddleAndOppositeCorner_ConfettiAllAtOnceOnLastThrow:
+            case StateID.ThrowRollingBall:
                 State_ThrowBall();
                 break;
             default://case StateIDNone 
@@ -341,6 +345,14 @@ public class DiscoBossAI : Enemy
     [SerializeField] float animOffset;
     private void State_ThrowBall()
     {
+        if(state == StateID.ThrowRollingBall && StateJustStarted)
+        {
+            //if on the same arena side as the player
+            if (Mathf.Sign(GameManager.PlayerPosition.x - arenaCenter.x) == Mathf.Sign(transform.position.x - arenaCenter.x))
+            {
+                TeleportToOtherSide();
+            }
+        }
         sprite.flipX = transform.position.x < arenaCenter.x;
         if (stateBeatCounter < startup)
         {
@@ -400,7 +412,12 @@ public class DiscoBossAI : Enemy
                 {
                     stateToCheck = state;
                 }
-                if (stateToCheck == StateID.ThrowBallMiddleLeftAndMiddleRight)
+                if(stateToCheck == StateID.ThrowRollingBall)
+                {
+                    launchTargetPoints = new Vector2[] { transform.position };
+                    launchTargetPoints[0].x -= DirectionSign * .5f;
+                }
+                else if (stateToCheck == StateID.ThrowBallMiddleLeftAndMiddleRight)
                 {
                     launchTargetPoints = new Vector2[]
                     {
@@ -424,22 +441,41 @@ public class DiscoBossAI : Enemy
                 Vector2 from = transform.position;
                 from.x -= 0.4f;
                 from.y += 1.2f;
+
+
                 for (int i = 0; i < launchTargetPoints.Length; i++)
                 {
-                    if (Helper.TryFindFreeIndex(ballProjPool, out int index))
+                    if(state == StateID.ThrowRollingBall)
                     {
-                        DiscoBossBallProj proj = ballProjPool[index];
-                        proj.transform.position = from;
-                        proj.EnablePhysics();
-                        proj.Start();
-                        proj.gameObject.SetActive(true);
-                        proj.rb.gravityScale = ballGrav;
-                        DiscoBossBallProj.GetLaunchVelocity(from, launchTargetPoints[i], 4.5f, Physics2D.gravity.y * proj.rb.gravityScale, ballPeakHeight, out _, out Vector2 onWayDown);
-                        proj.rb.velocity = onWayDown;
-
+                        if (Helper.TryFindFreeIndex(rollingBallPool, out int index))
+                        {
+                            DiscoBossRollingBall proj = rollingBallPool[index];
+                            proj.transform.position = from;
+                            proj.EnablePhysics();
+                            proj.Start();
+                            proj.timeLeft = Mathf.Abs((ArenaWidth - 1) / rollingBallInitialVelocity.x);
+                            proj.gameObject.SetActive(true);
+                            proj.rb.gravityScale = 7;
+                            Vector2 launchVel = rollingBallInitialVelocity;
+                            launchVel.x *= -DirectionSign;
+                            proj.rb.velocity = launchVel;
+                        }
+                    }
+                    else
+                    {
+                        if (Helper.TryFindFreeIndex(ballProjPool, out int index))
+                        {
+                            DiscoBossBallProj proj = ballProjPool[index];
+                            proj.transform.position = from;
+                            proj.EnablePhysics();
+                            proj.Start();
+                            proj.gameObject.SetActive(true);
+                            proj.rb.gravityScale = ballGrav;
+                            DiscoBossBallProj.GetLaunchVelocity(from, launchTargetPoints[i], 4.5f, Physics2D.gravity.y * proj.rb.gravityScale, ballPeakHeight, out _, out Vector2 onWayDown);
+                            proj.rb.velocity = onWayDown;
+                        }
                     }
                 }
-
             }
         }
         else if (stateBeatCounter < startup + actionCount * actionRate + delay)
